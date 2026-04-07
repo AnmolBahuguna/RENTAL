@@ -11,7 +11,7 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 5000,
     rolldownOptions: {
       checks: {
         pluginTimings: false,
