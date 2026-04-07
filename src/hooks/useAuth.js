@@ -42,10 +42,10 @@ export const useAuth = () => {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
       
       // If no profile exists (e.g., first-time OAuth), create one automatically
-      if (error && error.code === 'PGRST116') {
+      if (!data && !error) {
 
         const { data: { user } } = await supabase.auth.getUser()
         const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
@@ -60,7 +60,7 @@ export const useAuth = () => {
             created_at: new Date().toISOString()
           })
           .select()
-          .single()
+          .maybeSingle()
 
         if (upsertError) {
           console.error('Auth: Profile creation failed', upsertError)
@@ -107,8 +107,11 @@ export const useAuth = () => {
   }
 
   const signInWithGoogle = async () => {
-    // Priority: Env variable > current origin
-    const redirectUrl = import.meta.env.VITE_REDIRECT_URL || `${window.location.origin}/search`
+    // Priority: Saved return path > Env variable > current origin
+    const savedPath = localStorage.getItem('sb_return_to')
+    const redirectUrl = savedPath 
+      ? `${window.location.origin}${savedPath}`
+      : (import.meta.env.VITE_REDIRECT_URL || `${window.location.origin}/search`)
     
     console.log('Auth: Initiating Google Sign-In with redirect:', redirectUrl)
 
@@ -135,7 +138,7 @@ export const useAuth = () => {
       .update(updates)
       .eq('id', user.id)
       .select()
-      .single()
+      .maybeSingle()
     if (error) throw error
     dispatch(setProfile(data))
     return data

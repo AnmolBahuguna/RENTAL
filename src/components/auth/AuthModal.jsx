@@ -52,8 +52,16 @@ export const AuthModal = () => {
       } else {
         await signUp({ email: form.email, password: form.password, name: form.name, role: selectedRole })
         toast.success('Account created! Check your email to confirm.')
+        const returnTo = localStorage.getItem('sb_return_to')
         dispatch(closeAuthModal())
-        navigate(selectedRole === 'landlord' ? '/landlord' : '/dashboard')
+        if (selectedRole === 'landlord') {
+          navigate('/landlord')
+        } else if (returnTo) {
+          navigate(returnTo)
+          localStorage.removeItem('sb_return_to')
+        } else {
+          navigate('/dashboard')
+        }
       }
     } catch (err) {
       toast.error(err.message || 'Something went wrong')
@@ -63,6 +71,9 @@ export const AuthModal = () => {
   }
 
   const handleGoogle = async () => {
+    // Save current path to return back after OAuth redirect
+    localStorage.setItem('sb_return_to', window.location.pathname + window.location.search)
+    
     setGoogleLoading(true)
     try {
       await signInWithGoogle()

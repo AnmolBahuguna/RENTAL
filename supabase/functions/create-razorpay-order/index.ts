@@ -5,6 +5,9 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 const ALLOWED_ORIGINS = [
   'https://goeazy.in',
   'https://www.goeazy.in',
+  'https://goeazy.vercel.app',
+  'https://goeazy.app',
+  'https://www.goeazy.app',
 ]
 
 function getCorsHeaders(req: Request) {

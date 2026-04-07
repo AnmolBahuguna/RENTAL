@@ -32,8 +32,12 @@ export const RoleSelectionModal = () => {
       toast.success('Profile completed!')
       
       // Automatically redirect a newly registered landlord to their dashboard
+      const returnTo = localStorage.getItem('sb_return_to')
       if (selectedRole === 'landlord') {
         navigate('/landlord')
+      } else if (returnTo) {
+        navigate(returnTo)
+        localStorage.removeItem('sb_return_to')
       }
     } catch (err) {
       toast.error(err.message || 'Failed to update role')
