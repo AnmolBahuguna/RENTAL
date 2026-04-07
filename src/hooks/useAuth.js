@@ -107,10 +107,15 @@ export const useAuth = () => {
   }
 
   const signInWithGoogle = async () => {
+    // Priority: Env variable > current origin
+    const redirectUrl = import.meta.env.VITE_REDIRECT_URL || `${window.location.origin}/search`
+    
+    console.log('Auth: Initiating Google Sign-In with redirect:', redirectUrl)
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { 
-        redirectTo: window.location.origin + '/search',
+        redirectTo: redirectUrl,
         queryParams: {
           prompt: 'select_account'
         }
