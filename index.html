@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Sora:wght@100..800&display=swap" rel="stylesheet">
     
     <!-- Console Cleanup & Permissions Policy -->
-    <meta http-equiv="Permissions-Policy" content="accelerometer=*, gyroscope=*, magnetometer=*, camera=(), microphone=(), geolocation=()">
+    <meta http-equiv="Permissions-Policy" content="accelerometer=(self), gyroscope=(self), magnetometer=(self), camera=(), microphone=(), geolocation=()">
     <script>
       (function() {
         const ignoreStrings = [
@@ -20,17 +20,34 @@
           'deviceorientation events are blocked',
           'unsafe header',
           'x-rtb-fingerprint-id',
-          'Permissions policy violation'
+          'Permissions policy violation',
+          'Forced reflow',
+          'Mixed Content',
+          'local network request',
+          'request-id',
+          'accelerometer'
         ];
         const originalWarn = console.warn;
         const originalError = console.error;
+        const originalLog = console.log;
+        
+        const shouldIgnore = (args) => {
+          return args.some(arg => 
+            typeof arg === 'string' && ignoreStrings.some(s => arg.includes(s))
+          );
+        };
+
         console.warn = function(...args) {
-          if (args.length > 0 && typeof args[0] === 'string' && ignoreStrings.some(s => args[0].includes(s))) return;
+          if (shouldIgnore(args)) return;
           originalWarn.apply(console, args);
         };
         console.error = function(...args) {
-          if (args.length > 0 && typeof args[0] === 'string' && ignoreStrings.some(s => args[0].includes(s))) return;
+          if (shouldIgnore(args)) return;
           originalError.apply(console, args);
+        };
+        console.log = function(...args) {
+          if (shouldIgnore(args)) return;
+          originalLog.apply(console, args);
         };
       })();
     </script>

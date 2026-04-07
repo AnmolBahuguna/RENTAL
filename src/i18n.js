@@ -8,7 +8,7 @@ const resources = {
       nav: {
         home: 'Home',
         list: 'List',
-        nearby: 'Nearby Services',
+        nearby: 'Nearby',
         contact: 'Contact us',
         allCategory: 'ALL CATEGORY',
         login: 'Login',
@@ -162,7 +162,7 @@ const resources = {
       nav: {
         home: 'होम',
         list: 'लिस्ट करें',
-        nearby: 'नज़दीकी सेवाएँ',
+        nearby: 'नज़दीकी',
         contact: 'संपर्क करें',
         allCategory: 'सभी श्रेणियां',
         login: 'लॉगिन',

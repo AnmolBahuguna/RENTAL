@@ -113,8 +113,6 @@ export const useAuth = () => {
       ? `${window.location.origin}${savedPath}`
       : (import.meta.env.VITE_REDIRECT_URL || `${window.location.origin}/search`)
     
-    console.log('Auth: Initiating Google Sign-In with redirect:', redirectUrl)
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { 

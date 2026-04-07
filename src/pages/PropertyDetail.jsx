@@ -110,11 +110,6 @@ export const PropertyDetail = () => {
       if (!scriptLoaded) throw new Error('Razorpay SDK failed to load')
 
       // 3. Open Razorpay Checkout Modal
-      console.log('Initiating Razorpay with:', {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        order_id: orderData.id
-      })
-
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         order_id: orderData.id,
@@ -260,7 +255,7 @@ export const PropertyDetail = () => {
                    {formatPrice(p.price)}
                  </h1>
                  <div className="bg-brand-lime px-4 py-1.5 rounded-full text-brand-900 font-bold text-sm tracking-wide">
-                   {isAvailable ? t('labels.active') : t('labels.inactive')}
+                   {isAvailable ? t('property.labels.active') : t('property.labels.inactive')}
                  </div>
               </div>
               <div className="flex items-center gap-2 text-sm font-semibold text-gray-800 mb-2 whitespace-nowrap overflow-x-auto scrollbar-hide py-1">

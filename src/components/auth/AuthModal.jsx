@@ -126,6 +126,7 @@ export const AuthModal = () => {
             value={form.name}
             onChange={e => { setForm(f => ({ ...f, name: e.target.value })); setErrors(v => ({ ...v, name: '' })) }}
             error={errors.name}
+            autoComplete="name"
           />
         )}
 
@@ -137,6 +138,7 @@ export const AuthModal = () => {
           value={form.email}
           onChange={e => { setForm(f => ({ ...f, email: e.target.value })); setErrors(v => ({ ...v, email: '' })) }}
           error={errors.email}
+          autoComplete="email"
         />
 
         <Input
@@ -152,6 +154,7 @@ export const AuthModal = () => {
           value={form.password}
           onChange={e => { setForm(f => ({ ...f, password: e.target.value })); setErrors(v => ({ ...v, password: '' })) }}
           error={errors.password}
+          autoComplete={tab === 'signup' ? 'new-password' : 'current-password'}
         />
 
         {/* Role Selector (Sign Up only) */}
