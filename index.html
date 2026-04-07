@@ -8,6 +8,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+    
+    <!-- Console Cleanup & Permissions Policy -->
+    <meta http-equiv="Permissions-Policy" content="accelerometer=*, gyroscope=*, magnetometer=*, camera=(), microphone=(), geolocation=()">
+    <script>
+      (function() {
+        const ignoreStrings = [
+          'non-passive event listener',
+          'accelerometer is not allowed',
+          'devicemotion events are blocked',
+          'deviceorientation events are blocked',
+          'unsafe header',
+          'x-rtb-fingerprint-id',
+          'Permissions policy violation'
+        ];
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        console.warn = function(...args) {
+          if (args.length > 0 && typeof args[0] === 'string' && ignoreStrings.some(s => args[0].includes(s))) return;
+          originalWarn.apply(console, args);
+        };
+        console.error = function(...args) {
+          if (args.length > 0 && typeof args[0] === 'string' && ignoreStrings.some(s => args[0].includes(s))) return;
+          originalError.apply(console, args);
+        };
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
