@@ -10,8 +10,15 @@ import { LandlordDashboard } from './pages/LandlordDashboard'
 import { PropertyNew } from './pages/PropertyNew'
 import { PropertyEdit } from './pages/PropertyEdit'
 import { NotFound } from './pages/NotFound'
+import { Settings } from './pages/Settings'
+import PrivacyPolicy from './pages/legal/PrivacyPolicy'
+import TermsOfService from './pages/legal/TermsOfService'
+import CookiePolicy from './pages/legal/CookiePolicy'
+import RefundPolicy from './pages/legal/RefundPolicy'
+import { NearbyServices } from './pages/NearbyServices'
 import { useAuth } from './hooks/useAuth'
 import { RoleSelectionModal } from './components/auth/RoleSelectionModal'
+import ScrollToTop from './components/common/ScrollToTop'
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, role, loading } = useAuth()
@@ -32,6 +39,7 @@ function App() {
   
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <RoleSelectionModal />
       <Layout>
         <Routes>
@@ -39,10 +47,23 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
           
+          {/* Legal Routes */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/refund" element={<RefundPolicy />} />
+          <Route path="/nearby" element={<NearbyServices />} />
+          
           {/* User Routes */}
           <Route path="/dashboard" element={
             <ProtectedRoute allowedRoles={['user', null]}>
               <UserDashboard />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           } />
           

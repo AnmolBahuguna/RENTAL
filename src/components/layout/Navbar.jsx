@@ -7,14 +7,32 @@ import { toggleMobileMenu, closeMobileMenu } from '../../store/uiSlice'
 import { useAuth } from '../../hooks/useAuth'
 import { useProperties } from '../../hooks/useProperties'
 import { cn, getInitials } from '../../utils/helpers'
+import { useTranslation } from 'react-i18next'
 
 export const Navbar = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { t, i18n } = useTranslation()
   const { user, profile, role, signOut } = useAuth()
   const { filters, updateFilters } = useProperties()
   const { mobileMenuOpen } = useSelector(s => s.ui)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [cityMenuOpen, setCityMenuOpen] = useState(false)
+  const [langMenuOpen, setLangMenuOpen] = useState(false)
+  const [selectedCity, setSelectedCity] = useState('Dehradun')
+
+  const languages = [
+    { code: 'en', label: 'English', short: 'EN' },
+    { code: 'hi', label: 'हिंदी', short: 'HI' }
+  ]
+  const currentLang = languages.find(l => l.code === (i18n.language?.split('-')[0] || 'en')) || languages[0]
+
+  const changeLanguage = (code) => {
+    i18n.changeLanguage(code)
+    setLangMenuOpen(false)
+  }
+
+  const CITIES = ['Dehradun', 'Srinagar', 'Rishikesh', 'Haldwani', 'Nainital', 'Haridwar', 'Roorkee', 'Rudrapur']
 
   const handleSignOut = async () => {
     await signOut()
@@ -23,10 +41,10 @@ export const Navbar = () => {
   }
 
   const categoryTabs = [
-    { name: 'Rooms', value: 'Room', icon: <Home size={18} /> },
-    { name: 'Flats', value: 'Flat', icon: <Building size={18} /> },
-    { name: 'Hostels', value: 'Hostel', icon: <Tent size={18} /> },
-    { name: 'PGs', value: 'PG', icon: <Building size={18} /> },
+    { name: t('property.types.Room'), value: 'Room', icon: <Home size={18} /> },
+    { name: t('property.types.Flat'), value: 'Flat', icon: <Building size={18} /> },
+    { name: t('property.types.Hostel'), value: 'Hostel', icon: <Tent size={18} /> },
+    { name: t('property.types.PG'), value: 'PG', icon: <Building size={18} /> },
   ]
 
   return (
@@ -38,16 +56,42 @@ export const Navbar = () => {
           {/* Logo & EN */}
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg border-2 border-brand-500 rounded-tl-xl rounded-br-xl text-brand-500 flex flex-col items-center justify-center font-bold font-display rotate-3">
-                <span className="-rotate-3 text-lg leading-none">A</span>
+              <div className="w-9 h-9 rounded-lg border-2 border-brand-500 rounded-tl-xl rounded-br-xl bg-white shadow-sm flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-6 transition-transform">
+                <div className="-rotate-3 flex items-end justify-center">
+                  <span className="text-brand-500 text-[20px] font-black leading-none">G</span>
+                  <span className="text-brand-600 text-[14px] font-black leading-none rotate-12 -ml-0.5 mb-0.5">E</span>
+                </div>
               </div>
               <span className="font-display font-bold text-2xl text-gray-900 tracking-tight">
-                aceplace
+                GoEazy
               </span>
             </Link>
-            <button className="hidden md:flex items-center gap-1 text-sm font-semibold text-gray-700">
-              EN <ChevronDown size={14} />
-            </button>
+            
+            <div className="relative">
+              <button 
+                onClick={() => setLangMenuOpen(!langMenuOpen)}
+                className="hidden md:flex items-center gap-1.5 text-sm font-bold text-gray-700 hover:text-brand-500 transition-colors uppercase"
+              >
+                {currentLang.short} <ChevronDown size={14} className={`transition-transform duration-200 ${langMenuOpen ? 'rotate-180 text-brand-500' : ''}`} />
+              </button>
+
+              {langMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setLangMenuOpen(false)} />
+                  <div className="absolute left-0 top-full mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden py-1">
+                    {languages.map(l => (
+                      <button
+                        key={l.code}
+                        onClick={() => changeLanguage(l.code)}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors ${currentLang.code === l.code ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
+                      >
+                        {l.label} ({l.short})
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Search Bar */}
@@ -58,7 +102,9 @@ export const Navbar = () => {
               </div>
               <input
                 type="text"
-                placeholder="Search"
+                id="desktop-search"
+                name="desktop-search"
+                placeholder={t('hero.searchPlaceholder')}
                 className="w-full bg-gray-50 border-none rounded-full py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </div>
@@ -67,19 +113,19 @@ export const Navbar = () => {
           {/* Right Links & Auth */}
           <div className="hidden md:flex items-center gap-6">
             <div className="flex items-center space-x-6 text-sm font-medium text-gray-500">
-              <button className="px-3 py-1 bg-brand-lime text-gray-900 rounded-md font-semibold">Buy</button>
-              <button className="hover:text-gray-900">Sell</button>
-              <button className="hover:text-gray-900">Rent</button>
-              <button className="hover:text-gray-900">Contact us</button>
+              <Link to="/search" className="px-3 py-1 bg-brand-lime text-gray-900 rounded-md font-semibold hover:bg-lime-400 transition-colors">{t('nav.home')}</Link>
+              <button onClick={() => user ? navigate('/landlord') : dispatch(openAuthModal('login'))} className="hover:text-gray-900 transition-colors">{t('nav.list')}</button>
+              <Link to="/nearby" className="hover:text-gray-900 transition-colors py-2">{t('nav.nearby')}</Link>
+              <button className="hover:text-gray-900 transition-colors">{t('nav.contact')}</button>
             </div>
             
             <div className="w-px h-6 bg-gray-200"></div>
 
             <button className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs overflow-hidden border border-gray-200">
-                🇺🇸
+              <div className="w-6 h-6 rounded-full bg-brand-50 flex items-center justify-center text-xs overflow-hidden border border-brand-100">
+                <img src="/INR.webp" alt="INR" className="w-full h-full object-cover" />
               </div>
-              USD <ChevronDown size={14} />
+              INR <ChevronDown size={14} />
             </button>
 
             {user ? (
@@ -105,13 +151,19 @@ export const Navbar = () => {
                           onClick={() => { navigate(role === 'landlord' ? '/landlord' : '/dashboard'); setUserMenuOpen(false) }}
                           className="w-full flex flex-col items-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                          Dashboard
+                          {t('nav.dashboard')}
+                        </button>
+                        <button
+                          onClick={() => { navigate('/settings'); setUserMenuOpen(false) }}
+                          className="w-full flex flex-col items-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100"
+                        >
+                          {t('nav.settings')}
                         </button>
                         <button
                           onClick={handleSignOut}
                           className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors"
                         >
-                           Sign Out
+                           {t('nav.signOut')}
                         </button>
                       </div>
                     </div>
@@ -123,7 +175,7 @@ export const Navbar = () => {
                 onClick={() => dispatch(openAuthModal('login'))}
                 className="px-6 py-2.5 rounded-full bg-[#0B0F19] text-white text-sm font-semibold hover:bg-[#FF3366] transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-xl shadow-black/20"
               >
-                Login
+                {t('nav.login')}
               </button>
             )}
           </div>
@@ -139,13 +191,13 @@ export const Navbar = () => {
       </div>
 
       {/* Secondary Navbar (Categories) */}
-      <div className="w-full border-t border-b border-gray-100 bg-white">
-        <div className="flex items-center h-16 ml-4 sm:ml-8 gap-6 overflow-x-auto scrollbar-hide">
+      <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
+        <div className="flex items-center h-16 ml-4 sm:ml-8 gap-6 overflow-x-auto scrollbar-hide flex-1">
           <button 
             onClick={() => updateFilters({ type: '' })}
             className="flex items-center gap-2 px-6 h-full bg-gradient-to-r from-brand-pink to-brand-500 text-white font-semibold rounded-tr-3xl"
           >
-            <Grid size={18} /> ALL CATEGORY <ChevronDown size={16} />
+            <Grid size={18} /> {t('nav.allCategory')} <ChevronDown size={16} />
           </button>
 
           <div className="flex items-center gap-8 px-4 font-semibold text-sm flex-1 whitespace-nowrap min-w-max">
@@ -165,20 +217,41 @@ export const Navbar = () => {
               </button>
             ))}
           </div>
+        </div>
 
-          <div className="hidden lg:flex items-center h-16 border-l border-gray-100 pl-6 pr-8 bg-white min-w-max">
+        <div className="hidden lg:flex items-center h-16 border-l border-gray-100 pl-6 pr-8 bg-white min-w-max relative cursor-pointer shrink-0" onClick={() => setCityMenuOpen(!cityMenuOpen)}>
             <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-full border border-gray-200 overflow-hidden bg-blue-50 flex items-center justify-center p-1">
-                <MapPin size={24} className="text-pink-400 absolute" />
+              <div className="relative w-10 h-10 rounded-full border border-gray-200 overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+                <img src="/1.webp" alt="City" className="w-full h-full object-cover" />
               </div>
               <div className="flex flex-col text-sm">
-                <span className="font-semibold text-gray-900 leading-tight">Dubai City</span>
-                <span className="text-gray-500 text-xs">Jumeirah</span>
+                <span className="font-semibold text-gray-900 leading-tight">{selectedCity}</span>
+                <span className="text-gray-500 text-xs">Uttarakhand</span>
               </div>
-              <ChevronDown size={16} className="text-gray-400 ml-4" />
+              <ChevronDown size={16} className={`text-gray-400 ml-4 transition-transform duration-200 ${cityMenuOpen ? 'rotate-180' : ''}`} />
             </div>
+
+            {/* City Dropdown Menu */}
+            {cityMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setCityMenuOpen(false); }} />
+                <div className="absolute right-4 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 z-20 overflow-hidden py-2" onClick={(e) => e.stopPropagation()}>
+                  {CITIES.map(city => (
+                    <button
+                      key={city}
+                      onClick={() => {
+                        setSelectedCity(city)
+                        setCityMenuOpen(false)
+                      }}
+                      className={`w-full text-left px-5 py-2.5 text-sm font-semibold transition-colors ${selectedCity === city ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
+                    >
+                      {city}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-        </div>
       </div>
       
        {/* Mobile Menu */}
@@ -191,15 +264,17 @@ export const Navbar = () => {
               </div>
               <input
                 type="text"
-                placeholder="Search"
+                id="mobile-search"
+                name="mobile-search"
+                placeholder={t('hero.searchPlaceholder')}
                 className="w-full bg-gray-50 border-none rounded-full py-3 pl-12 pr-4 text-sm font-medium focus:outline-none"
               />
             </div>
             
-            <Link className="block font-semibold text-gray-700 py-2">Buy</Link>
-            <Link className="block font-semibold text-gray-700 py-2">Sell</Link>
-            <Link className="block font-semibold text-gray-700 py-2">Rent</Link>
-            <Link className="block font-semibold text-gray-700 py-2">Contact us</Link>
+            <Link to="/search" onClick={() => dispatch(closeMobileMenu())} className="block font-semibold text-gray-700 py-2">{t('nav.home')}</Link>
+            <button onClick={() => { dispatch(closeMobileMenu()); user ? navigate('/landlord') : dispatch(openAuthModal('login')) }} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.list')}</button>
+            <Link to="/nearby" onClick={() => dispatch(closeMobileMenu())} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.nearby')}</Link>
+            <button className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.contact')}</button>
             
             <div className="w-full h-px bg-gray-100 my-4" />
             
@@ -209,13 +284,19 @@ export const Navbar = () => {
                   className="block font-semibold text-gray-700 py-2"
                   onClick={() => dispatch(closeMobileMenu())}
                 >
-                  Dashboard
+                  {t('nav.dashboard')}
+                </Link>
+                <Link to="/settings"
+                  className="block font-semibold text-gray-700 py-2"
+                  onClick={() => dispatch(closeMobileMenu())}
+                >
+                  {t('nav.settings')}
                 </Link>
                 <button
                   onClick={handleSignOut}
                   className="block font-semibold text-red-500 py-2"
                 >
-                  Sign Out
+                  {t('nav.signOut')}
                 </button>
                </>
             ) : (
@@ -223,7 +304,7 @@ export const Navbar = () => {
                 onClick={() => { dispatch(openAuthModal('login')); dispatch(closeMobileMenu()); }}
                 className="w-full py-3 rounded-full bg-[#0B0F19] text-white text-sm font-semibold hover:bg-[#FF3366] transition-all active:scale-95"
               >
-                Login
+                {t('nav.login')}
               </button>
             )}
           </div>

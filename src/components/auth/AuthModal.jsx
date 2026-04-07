@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, User, Eye, EyeOff, Home, GraduationCap } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
@@ -11,8 +11,8 @@ import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 
 const ROLE_OPTIONS = [
-  { value: 'user',     label: 'Student / Professional', icon: '🎓', desc: 'Browse & save properties' },
-  { value: 'landlord', label: 'Landlord / Owner',        icon: '🏠', desc: 'List & manage properties' },
+  { value: 'user',     label: 'Student / Professional', icon: <GraduationCap size={20} className="text-brand-500" />, desc: 'Browse & save properties' },
+  { value: 'landlord', label: 'Landlord / Owner',        icon: <Home size={20} className="text-brand-500" />, desc: 'List & manage properties' },
 ]
 
 export const AuthModal = () => {
@@ -47,11 +47,11 @@ export const AuthModal = () => {
     try {
       if (tab === 'login') {
         await signIn({ email: form.email, password: form.password })
-        toast.success('Welcome back! 👋')
+        toast.success('Welcome back!')
         dispatch(closeAuthModal())
       } else {
         await signUp({ email: form.email, password: form.password, name: form.name, role: selectedRole })
-        toast.success('Account created! Check your email to confirm. 🎉')
+        toast.success('Account created! Check your email to confirm.')
         dispatch(closeAuthModal())
         navigate(selectedRole === 'landlord' ? '/landlord' : '/dashboard')
       }

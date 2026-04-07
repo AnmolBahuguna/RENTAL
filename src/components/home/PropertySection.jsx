@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Flame } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { PropertyCard } from '../property/PropertyCard'
@@ -22,7 +22,7 @@ const SectionSkeleton = () => (
   </div>
 )
 
-export const PropertySection = ({ title, type, emoji, viewAllPath }) => {
+export const PropertySection = ({ title, type, icon, viewAllPath }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { fetchByType } = useProperties()
@@ -42,7 +42,7 @@ export const PropertySection = ({ title, type, emoji, viewAllPath }) => {
     <section className="mb-12">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">{emoji}</span>
+          {icon}
           <h2 className="font-display font-bold text-xl text-gray-900">{title}</h2>
           {!loading && (
             <span className="text-sm text-gray-400 font-medium ml-1">({items.length})</span>
@@ -84,7 +84,7 @@ export const FeaturedSection = () => {
     <section className="mb-12">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🔥</span>
+          <Flame size={24} className="text-orange-500" />
           <h2 className="font-display font-bold text-xl text-gray-900">Most Popular</h2>
         </div>
         <Link to="/search" className="flex items-center gap-1 text-sm font-semibold text-brand-500 hover:text-brand-700 transition-colors">

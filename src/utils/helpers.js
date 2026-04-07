@@ -1,3 +1,6 @@
+import React from 'react'
+import { Wifi, Snowflake, Utensils, Box, WashingMachine, Dumbbell, ShieldCheck, Video, Zap, Droplets } from 'lucide-react'
+
 export const formatPrice = (price) => {
   if (!price && price !== 0) return '—'
   return new Intl.NumberFormat('en-IN', {
@@ -26,7 +29,14 @@ export const cn = (...classes) =>
 export const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 
 export const AMENITY_ICONS = {
-  wifi: '📶', ac: '❄️', food: '🍽️', parking: '🅿️',
-  laundry: '🧺', gym: '🏋️', security: '🔒', cctv: '📹',
-  power: '⚡', water: '💧',
+  wifi: Wifi,
+  ac: Snowflake,
+  food: Utensils,
+  parking: Box,
+  laundry: WashingMachine,
+  gym: Dumbbell,
+  security: ShieldCheck,
+  cctv: Video,
+  power: Zap,
+  water: Droplets,
 }

@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Bookmark, Star } from 'lucide-react'
+import { Bookmark, Star, Home } from 'lucide-react'
 import { openAuthModal } from '../../store/authSlice'
 import { useProperties } from '../../hooks/useProperties'
 import { cn } from '../../utils/helpers'
+import { useTranslation } from 'react-i18next'
 
 export const PropertyCard = ({ property, layout = 'grid' }) => {
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const { t } = useTranslation()
   const { user } = useSelector(s => s.auth)
   const { favorites, toggleFavorite } = useProperties()
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -45,12 +46,12 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
         </div>
         <div className="py-4 pr-4 flex flex-col justify-between flex-1">
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{property.type || 'VILLA'}</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t(`property.types.${property.type}`) || 'VILLA'}</p>
             <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2">{property.title}</h3>
-            <p className="text-sm text-gray-500">{numGuests} guests · {numBeds} bedrooms</p>
+            <p className="text-sm text-gray-500">{numGuests} {t('property.labels.guests')} · {numBeds} {t('property.labels.bedrooms')}</p>
           </div>
           <div className="flex items-center justify-between mt-4">
-             <p className="text-sm text-gray-500">From <span className="font-bold text-gray-900 text-base">{formatPrice(property.price)} USD</span></p>
+             <p className="text-sm text-gray-500">{t('property.labels.from')} <span className="font-bold text-gray-900 text-base">{formatPrice(property.price)}</span></p>
              <div className="flex items-center gap-1">
                <span className="font-bold text-sm text-gray-900">{rating}</span>
                <div className="flex text-orange-400">
@@ -94,7 +95,7 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200">
-            <span className="text-4xl text-gray-300">🏠</span>
+            <Home size={32} className="text-gray-300" />
           </div>
         )}
 
@@ -114,7 +115,7 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
       {/* Content */}
       <div className="px-1.5 sm:px-2 pb-1.5 sm:pb-2 flex-1 flex flex-col min-w-0">
         <p className="text-[9px] sm:text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1 sm:mb-1.5">
-          {property.type || 'VILLA'}
+          {t(`property.types.${property.type}`) || t('property.types.VILLA')}
         </p>
         
         <h3 className="font-bold text-gray-900 text-xs sm:text-[15px] leading-snug line-clamp-2 mb-1 sm:mb-1.5">
@@ -122,12 +123,12 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
         </h3>
         
         <p className="text-[10px] sm:text-sm text-gray-500 mb-3 sm:mb-6">
-           {numGuests} guests · {numBeds} beds
+           {numGuests} {t('property.labels.guests')} · {numBeds} {t('property.labels.beds')}
         </p>
  
         <div className="mt-auto flex items-center justify-between pb-0.5">
           <p className="text-[10px] sm:text-xs text-gray-500">
-            From <span className="font-bold text-gray-900 text-[11px] sm:text-sm">{formatPrice(property.price)}</span>
+            {t('property.labels.from')} <span className="font-bold text-gray-900 text-[11px] sm:text-sm">{formatPrice(property.price)}</span>
           </p>
           <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
             <span className="font-bold text-[10px] sm:text-xs text-gray-900">{rating}</span>

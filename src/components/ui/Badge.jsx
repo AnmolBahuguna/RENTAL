@@ -1,5 +1,5 @@
-import React from 'react'
 import { cn } from '../../utils/helpers'
+import { Home, Building, Tent, MapPin } from 'lucide-react'
 
 export const Badge = ({ children, variant = 'default', className = '' }) => {
   const variants = {
@@ -23,11 +23,11 @@ export const Badge = ({ children, variant = 'default', className = '' }) => {
 
 export const TypeBadge = ({ type }) => {
   const map = {
-    Room:   { variant: 'brand',   icon: '🛏️' },
-    Flat:   { variant: 'success', icon: '🏢' },
-    Hostel: { variant: 'warning', icon: '🏨' },
-    PG:     { variant: 'purple',  icon: '🏠' },
+    Room:   { variant: 'brand',   icon: <Home size={12} /> },
+    Flat:   { variant: 'success', icon: <Building size={12} /> },
+    Hostel: { variant: 'warning', icon: <Tent size={12} /> },
+    PG:     { variant: 'purple',  icon: <Building size={12} /> },
   }
-  const { variant = 'default', icon = '📌' } = map[type] || {}
+  const { variant = 'default', icon = <MapPin size={12} /> } = map[type] || {}
   return <Badge variant={variant}>{icon} {type}</Badge>
 }

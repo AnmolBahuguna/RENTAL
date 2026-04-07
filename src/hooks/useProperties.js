@@ -19,35 +19,55 @@ export const useProperties = () => {
   const fetchProperties = useCallback(async (reset = false) => {
     dispatch(setLoading(true))
     try {
-      // Try Supabase first, fallback to mock data
-      const { data, error } = await supabase
+      let query = supabase
         .from('properties')
         .select('*, profiles!properties_landlord_id_fkey(full_name, avatar_url, phone)')
         .eq('availability', true)
-        .order(filters.sortBy, { ascending: filters.sortOrder === 'asc' })
+
+      if (filters.type) query = query.eq('type', filters.type)
+      if (filters.priceMin > 0) query = query.gte('price', filters.priceMin)
+      if (filters.priceMax < 100000) query = query.lte('price', filters.priceMax)
+      
+      if (filters.amenities?.length > 0) {
+        query = query.contains('amenities', filters.amenities)
+      }
+
+      if (filters.city) {
+        query = query.ilike('city', `%${filters.city}%`)
+      }
+
+      if (filters.area) {
+        // Fuzzy matching: e.g. "bndra" -> "%b%n%d%r%a%"
+        const fuzzyPattern = '%' + filters.area.toLowerCase().split('').filter(c => c.trim()).join('%') + '%'
+        query = query.ilike('area', fuzzyPattern)
+      }
+
+      const { data, error } = await query
+        .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
         .range(reset ? 0 : page * PAGE_SIZE, (reset ? 0 : page * PAGE_SIZE) + PAGE_SIZE - 1)
 
       if (error) throw error
 
-      let result = data || []
-      // Apply client-side filters
-      if (filters.city) result = result.filter(p => p.city?.toLowerCase().includes(filters.city.toLowerCase()))
-      if (filters.area) result = result.filter(p => p.area?.toLowerCase().includes(filters.area.toLowerCase()))
-      if (filters.type) result = result.filter(p => p.type === filters.type)
-      if (filters.amenities?.length) result = result.filter(p => filters.amenities.every(a => p.amenities?.includes(a)))
-      result = result.filter(p => p.price >= filters.priceMin && p.price <= filters.priceMax)
-
-      if (reset) dispatch(setListings(result))
-      else dispatch(appendListings(result))
-      dispatch(setHasMore(result.length === PAGE_SIZE))
+      if (reset) dispatch(setListings(data || []))
+      else dispatch(appendListings(data || []))
+      
+      // If we got fewer items than PAGE_SIZE, we hit the end
+      dispatch(setHasMore((data || []).length === PAGE_SIZE))
       dispatch(setPage(reset ? 1 : page + 1))
-    } catch {
-      // Fallback to mock data
+    } catch (err) {
+      console.error(err)
+      // Fallback to mock data with client filtering
       let result = [...MOCK_PROPERTIES]
       if (filters.city) result = result.filter(p => p.city?.toLowerCase().includes(filters.city.toLowerCase()))
       if (filters.type) result = result.filter(p => p.type === filters.type)
       if (filters.amenities?.length) result = result.filter(p => filters.amenities.every(a => p.amenities?.includes(a)))
       result = result.filter(p => p.price >= filters.priceMin && p.price <= filters.priceMax)
+      
+      if (filters.area) {
+        const fuzzyRegex = new RegExp(filters.area.toLowerCase().split('').filter(c => c.trim()).join('.*'))
+        result = result.filter(p => fuzzyRegex.test(p.area?.toLowerCase()))
+      }
+
       if (reset) dispatch(setListings(result))
       else dispatch(appendListings(result))
       dispatch(setHasMore(false))
@@ -93,7 +113,7 @@ export const useProperties = () => {
         .from('properties')
         .select('*, profiles!properties_landlord_id_fkey(full_name, avatar_url, phone, bio)')
         .eq('id', id)
-        .single()
+        .maybeSingle()
       if (error) throw error
       dispatch(setCurrentProperty(data))
       // Increment view count
@@ -104,7 +124,7 @@ export const useProperties = () => {
         await supabase.from('recently_viewed').upsert({ user_id: user.id, property_id: id, viewed_at: new Date().toISOString() })
       }
     } catch {
-      const mock = MOCK_PROPERTIES.find(p => p.id === id)
+      const mock = MOCK_PROPERTIES.find(p => String(p.id) === String(id))
       dispatch(setCurrentProperty(mock || null))
     }
   }, [user])
@@ -126,7 +146,7 @@ export const useProperties = () => {
       .from('properties')
       .insert({ ...propertyData, landlord_id: user.id, images: imageUrls, views: 0 })
       .select()
-      .single()
+      .maybeSingle()
     if (error) throw error
     return data
   }
@@ -150,7 +170,7 @@ export const useProperties = () => {
       .eq('id', id)
       .eq('landlord_id', user.id)
       .select()
-      .single()
+      .maybeSingle()
     if (error) throw error
     return data
   }

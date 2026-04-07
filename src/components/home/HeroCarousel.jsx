@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { CAROUSEL_SLIDES } from '../../utils/constants'
 
@@ -48,7 +48,9 @@ export const HeroCarousel = () => {
             onClick={() => navigate('/search')}
             className="bg-white text-gray-900 font-bold px-6 py-3 rounded-xl hover:shadow-lg hover:scale-105 transition-all"
           >
-            {slide.cta} →
+            <span className="flex items-center gap-2">
+              {slide.cta} <ArrowRight size={18} />
+            </span>
           </button>
         </div>
       </div>

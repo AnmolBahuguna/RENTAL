@@ -1,24 +1,29 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Home, Mail, Phone } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export const Footer = () => {
+  const { t } = useTranslation()
   return (
     <footer className="bg-gray-950 text-gray-300 mt-20">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-brand-500 rounded-xl flex items-center justify-center">
-                <Home size={16} className="text-white" />
+            <div className="flex items-center gap-3 mb-6 group cursor-pointer">
+              <div className="w-9 h-9 rounded-lg border-2 border-brand-500 rounded-tl-xl rounded-br-xl bg-white shadow-sm flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-6 transition-transform">
+                <div className="-rotate-3 flex items-end justify-center">
+                  <span className="text-brand-500 text-[20px] font-black leading-none">G</span>
+                  <span className="text-brand-600 text-[14px] font-black leading-none rotate-12 -ml-0.5 mb-0.5">E</span>
+                </div>
               </div>
-              <span className="font-display font-bold text-xl text-white tracking-tight">
-                GO<span className="text-brand-400">EASY</span>
+              <span className="font-display font-bold text-2xl text-white tracking-tight">
+                GoEazy
               </span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
-              India's premium platform for students and professionals to find their perfect home away from home.
+              {t('footer.description')}
             </p>
             <div className="flex gap-3">
               {/* Add social links here if needed */}
@@ -27,12 +32,18 @@ export const Footer = () => {
 
           {/* For Users */}
           <div>
-            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">For Renters</h4>
+            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forRenters')}</h4>
             <ul className="space-y-2.5">
-              {['Browse Rooms', 'Browse Flats', 'Browse Hostels', 'Browse PGs', 'Search by City'].map(item => (
-                <li key={item}>
-                  <Link to="/search" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    {item}
+              {[
+                { label: t('footer.links.rooms'), to: '/search' },
+                { label: t('footer.links.flats'), to: '/search' },
+                { label: t('footer.links.hostels'), to: '/search' },
+                { label: t('footer.links.pgs'), to: '/search' },
+                { label: t('footer.links.searchCity'), to: '/search' }
+              ].map(item => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors">
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -41,11 +52,17 @@ export const Footer = () => {
 
           {/* For Landlords */}
           <div>
-            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">For Landlords</h4>
+            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forLandlords')}</h4>
             <ul className="space-y-2.5">
-              {['List a Property', 'Manage Listings', 'View Analytics', 'Landlord Dashboard', 'Pricing Plans'].map(item => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors">{item}</a>
+              {[
+                { label: t('footer.links.list'), href: '#' },
+                { label: t('footer.links.manage'), href: '#' },
+                { label: t('footer.links.analytics'), href: '#' },
+                { label: t('footer.links.dashboard'), href: '#' },
+                { label: t('footer.links.pricing'), href: '#' }
+              ].map(item => (
+                <li key={item.label}>
+                  <a href={item.href} className="text-sm text-gray-400 hover:text-white transition-colors">{item.label}</a>
                 </li>
               ))}
             </ul>
@@ -53,27 +70,32 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Contact</h4>
+            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.contact')}</h4>
             <div className="space-y-3">
-              <a href="mailto:hello@goeazy.in" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
-                <Mail size={15} className="text-brand-400" /> hello@goeazy.in
+              <a href="mailto:supportgoeazy@gmail.com" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
+                <Mail size={15} className="text-brand-400" /> supportgoeazy@gmail.com
               </a>
-              <a href="tel:+918000000000" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
-                <Phone size={15} className="text-brand-400" /> +91 80000 00000
+              <a href="tel:8979452055" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
+                <Phone size={15} className="text-brand-400" /> +91 89794 52055
               </a>
             </div>
             <div className="mt-6 p-4 bg-gray-800/50 rounded-xl border border-gray-700/50">
-              <p className="text-xs text-gray-400 mb-1">Available across India</p>
-              <p className="text-sm font-semibold text-white">Mumbai · Delhi · Bangalore · Pune · Hyderabad</p>
+              <p className="text-xs text-gray-400 mb-1">{t('footer.availableIndia')}</p>
+              <p className="text-sm font-semibold text-white">{t('footer.cities')}</p>
             </div>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-500">© 2024 GoEazy. All rights reserved.</p>
-          <div className="flex gap-6">
-            {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(item => (
-              <a key={item} href="#" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{item}</a>
+          <p className="text-xs text-gray-500">{t('footer.allRights')}</p>
+          <div className="flex flex-wrap gap-6 justify-center sm:justify-end">
+            {[
+              { label: t('footer.links.privacy'), to: '/privacy' },
+              { label: t('footer.links.terms'), to: '/terms' },
+              { label: t('footer.links.cookie'), to: '/cookies' },
+              { label: t('footer.links.refund'), to: '/refund' }
+            ].map(item => (
+              <Link key={item.label} to={item.to} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{item.label}</Link>
             ))}
           </div>
         </div>

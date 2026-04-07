@@ -10,7 +10,7 @@ export const useAuth = () => {
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('Auth: Initial session check', { session, userId: session?.user?.id })
+
       if (error) console.error('Auth: Session error', error)
       
       dispatch(setUser(session?.user ?? null))
@@ -20,7 +20,7 @@ export const useAuth = () => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth: State change event', event, { userId: session?.user?.id })
+
       
       dispatch(setUser(session?.user ?? null))
       if (session?.user) {
@@ -46,7 +46,7 @@ export const useAuth = () => {
       
       // If no profile exists (e.g., first-time OAuth), create one automatically
       if (error && error.code === 'PGRST116') {
-        console.log('Auth: Target profile missing, creating new one for', userId)
+
         const { data: { user } } = await supabase.auth.getUser()
         const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
         
@@ -72,7 +72,7 @@ export const useAuth = () => {
         throw error
       }
 
-      console.log('Auth: Profile loaded', data)
+
       dispatch(setProfile(data))
     } catch (err) {
       console.error('Auth: fetchProfile catch block', err)

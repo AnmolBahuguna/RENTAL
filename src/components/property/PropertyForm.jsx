@@ -24,6 +24,9 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
     type: initialData?.type || PROPERTY_TYPES[0],
     amenities: initialData?.amenities || [],
     nearby_landmarks: initialData?.nearby_landmarks || '',
+    exact_location: initialData?.exact_location || '',
+    contact_phone: initialData?.contact_phone || '',
+    contact_email: initialData?.contact_email || '',
     availability: initialData?.availability ?? true
   })
 
@@ -128,13 +131,17 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
       <div className="space-y-4">
         <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Location</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Input
+          <Select
             label="City *"
-            placeholder="e.g. Pune"
             value={form.city}
             onChange={e => setForm({ ...form, city: e.target.value })}
             required
-          />
+          >
+            <option value="" disabled>Select a city</option>
+            {['Dehradun', 'Srinagar', 'Rishikesh', 'Haldwani', 'Nainital', 'Haridwar', 'Roorkee', 'Rudrapur'].map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </Select>
           <Input
             label="Area/Locality *"
             placeholder="e.g. Hinjewadi"
@@ -155,6 +162,31 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
           value={form.nearby_landmarks}
           onChange={e => setForm({ ...form, nearby_landmarks: e.target.value })}
         />
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Premium Contact Details <span className="text-sm text-brand-500 font-normal ml-2">(Locked for non-subscribers)</span></h3>
+        <Input
+          label="Exact Property Address"
+          placeholder="e.g. Flat 402, Building B, XYZ Apartments..."
+          value={form.exact_location}
+          onChange={e => setForm({ ...form, exact_location: e.target.value })}
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Owner Contact Phone"
+            placeholder="e.g. +91 9876543210"
+            value={form.contact_phone}
+            onChange={e => setForm({ ...form, contact_phone: e.target.value })}
+          />
+          <Input
+            label="Owner Contact Email"
+            type="email"
+            placeholder="e.g. owner@example.com"
+            value={form.contact_email}
+            onChange={e => setForm({ ...form, contact_email: e.target.value })}
+          />
+        </div>
       </div>
 
       <div className="space-y-4">

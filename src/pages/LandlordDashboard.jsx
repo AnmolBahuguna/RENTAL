@@ -97,7 +97,9 @@ export const LandlordDashboard = () => {
           </div>
         ) : properties.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-            <div className="text-5xl mb-4">🏠</div>
+            <div className="flex justify-center mb-4 text-gray-300">
+              <Home size={64} />
+            </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">No listings yet</h3>
             <p className="text-gray-500 max-w-sm mx-auto mb-6">
               Start adding your properties to reach thousands of potential renters.

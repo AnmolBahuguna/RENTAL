@@ -1,4 +1,5 @@
 import React from 'react'
+import { Home as HomeIcon, Building, Tent } from 'lucide-react'
 import { Hero } from '../components/home/Hero'
 import { HeroCarousel } from '../components/home/HeroCarousel'
 import { FeaturedSection, PropertySection } from '../components/home/PropertySection'
@@ -12,9 +13,9 @@ export const Home = () => {
           <HeroCarousel />
         </div>
         <FeaturedSection />
-        <PropertySection title="Premium Rooms" type="Room" emoji="🛏️" />
-        <PropertySection title="Spacious Flats" type="Flat" emoji="🏢" />
-        <PropertySection title="Affordable PGs" type="PG" emoji="🏠" />
+        <PropertySection title="Premium Rooms" type="Room" icon={<HomeIcon className="text-brand-500" />} />
+        <PropertySection title="Spacious Flats" type="Flat" icon={<Building className="text-brand-500" />} />
+        <PropertySection title="Affordable PGs" type="PG" icon={<Tent className="text-brand-500" />} />
       </div>
     </div>
   )

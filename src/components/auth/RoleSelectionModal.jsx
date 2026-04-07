@@ -3,14 +3,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
 import { useAuth } from '../../hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { Home, GraduationCap } from 'lucide-react'
 
 const ROLE_OPTIONS = [
-  { value: 'user',     label: 'Student / Professional', icon: '🎓', desc: 'Browse & save properties' },
-  { value: 'landlord', label: 'Landlord / Owner',        icon: '🏠', desc: 'List & manage properties' },
+  { value: 'user',     label: 'Student / Professional', icon: <GraduationCap size={28} className="text-brand-500" />, desc: 'Browse & save properties' },
+  { value: 'landlord', label: 'Landlord / Owner',        icon: <Home size={28} className="text-brand-500" />, desc: 'List & manage properties' },
 ]
 
 export const RoleSelectionModal = () => {
+  const navigate = useNavigate()
   const { user, profile, role, updateProfile } = useAuth()
   const [selectedRole, setSelectedRole] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -26,7 +29,12 @@ export const RoleSelectionModal = () => {
     setLoading(true)
     try {
       await updateProfile({ role: selectedRole })
-      toast.success('Profile completed! 🎉')
+      toast.success('Profile completed!')
+      
+      // Automatically redirect a newly registered landlord to their dashboard
+      if (selectedRole === 'landlord') {
+        navigate('/landlord')
+      }
     } catch (err) {
       toast.error(err.message || 'Failed to update role')
     } finally {
@@ -38,7 +46,7 @@ export const RoleSelectionModal = () => {
     <Modal open={isOpen} onClose={() => {}} preventClose={true} size="sm">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Complete your profile</h2>
-        <p className="text-gray-500">Please select how you'll be using Goeazy</p>
+        <p className="text-gray-500">Please select how you'll be using GoEazy</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 mb-8">
@@ -72,7 +80,7 @@ export const RoleSelectionModal = () => {
         onClick={handleConfirm}
         disabled={!selectedRole}
       >
-        Continue to Goeazy
+        Continue to GoEazy
       </Button>
     </Modal>
   )
