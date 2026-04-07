@@ -1,0 +1,93 @@
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { Search, TrendingUp, Shield, Star } from 'lucide-react'
+import { openAuthModal } from '../../store/authSlice'
+import { setFilters } from '../../store/propertySlice'
+import { Button } from '../ui/Button'
+import { CITIES } from '../../utils/constants'
+
+export const Hero = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [searchVal, setSearchVal] = React.useState('')
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    dispatch(setFilters({ city: searchVal }))
+    navigate('/search')
+  }
+
+  const stats = [
+    { icon: TrendingUp, value: '10,000+', label: 'Active Listings' },
+    { icon: Star,       value: '4.9★',    label: 'Average Rating' },
+    { icon: Shield,     value: '100%',    label: 'Verified Landlords' },
+  ]
+
+  return (
+    <section className="hero-gradient pt-32 pb-12">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 bg-brand-100 text-brand-700 rounded-full px-4 py-1.5 text-sm font-semibold mb-6 animate-fadeInUp">
+          <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
+          Trusted by 50,000+ students & professionals
+        </div>
+
+        {/* Logo / Heading */}
+        <h1 className="font-display font-bold text-5xl md:text-7xl text-gray-900 mb-4 animate-fadeInUp" style={{ animationDelay: '100ms' }}>
+          GO<span className="text-brand-500">EASY</span>
+        </h1>
+        <p className="text-xl md:text-2xl text-gray-500 font-light mb-3 animate-fadeInUp" style={{ animationDelay: '150ms' }}>
+          Find your perfect home, wherever you go.
+        </p>
+        <p className="text-base text-gray-400 mb-10 max-w-lg mx-auto animate-fadeInUp" style={{ animationDelay: '200ms' }}>
+          Rooms · Flats · Hostels · PGs — verified, affordable, and right where you need to be.
+        </p>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="max-w-2xl mx-auto flex gap-3 mb-8 animate-fadeInUp" style={{ animationDelay: '250ms' }}>
+          <div className="flex-1 relative">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              value={searchVal}
+              onChange={e => setSearchVal(e.target.value)}
+              placeholder="Search by city or area... (e.g. Koramangala, Pune)"
+              className="w-full pl-11 pr-4 py-4 rounded-2xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-100 text-gray-900 text-sm transition-all"
+            />
+          </div>
+          <Button type="submit" variant="primary" size="lg" className="px-7 rounded-2xl shadow-md">
+            Search
+          </Button>
+        </form>
+
+        {/* City Chips */}
+        <div className="flex flex-wrap justify-center gap-2.5 mb-12 animate-fadeInUp" style={{ animationDelay: '300ms' }}>
+          {CITIES.slice(0, 8).map(city => (
+            <button
+              key={city.name}
+              onClick={() => { dispatch(setFilters({ city: city.name })); navigate('/search') }}
+              className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-600 hover:border-brand-400 hover:text-brand-700 hover:bg-brand-50 transition-all shadow-sm hover:shadow-md"
+            >
+              <span>{city.emoji}</span> {city.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Stats */}
+        <div className="flex flex-wrap justify-center gap-8 animate-fadeInUp" style={{ animationDelay: '350ms' }}>
+          {stats.map(({ icon: Icon, value, label }) => (
+            <div key={label} className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+                <Icon size={18} className="text-brand-500" />
+              </div>
+              <div className="text-left">
+                <div className="font-bold text-lg text-gray-900">{value}</div>
+                <div className="text-xs text-gray-500">{label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
