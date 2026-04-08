@@ -9,6 +9,7 @@ import { useProperties } from '../../hooks/useProperties'
 import { cn } from '../../utils/helpers'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../ui/Skeleton'
+import { BannerSlider } from './BannerSlider'
 
 export const Navbar = () => {
   const dispatch = useDispatch()
@@ -40,6 +41,14 @@ export const Navbar = () => {
     await signOut()
     setUserMenuOpen(false)
     navigate('/')
+  }
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && e.target.value.trim()) {
+      updateFilters({ type: '', query: e.target.value.trim() })
+      navigate(`/search?query=${encodeURIComponent(e.target.value.trim())}`)
+      if (mobileMenuOpen) dispatch(closeMobileMenu())
+    }
   }
 
   const categoryTabs = [
@@ -107,6 +116,7 @@ export const Navbar = () => {
                 id="desktop-search"
                 name="desktop-search"
                 placeholder={t('hero.searchPlaceholder')}
+                onKeyDown={handleSearch}
                 className="w-full bg-gray-50 border-none rounded-full py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </div>
@@ -196,86 +206,94 @@ export const Navbar = () => {
 
       {/* Secondary Navbar (Categories) */}
       {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund', '/about'].some(r => location.pathname.startsWith(r)) && (
-        <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
-        <div className="flex items-center h-16 px-4 sm:px-10 md:px-16 lg:px-20 gap-6 overflow-x-auto scrollbar-hide flex-1">
-          <button 
-            onClick={() => updateFilters({ type: '' })}
-            className="flex items-center gap-2 px-6 h-full bg-gradient-to-r from-brand-pink to-brand-500 text-white font-semibold rounded-tr-3xl"
-          >
-            <Grid size={18} /> {t('nav.allCategory')}
-          </button>
-
-          <div className="flex items-center gap-8 px-4 font-semibold text-sm flex-1 whitespace-nowrap min-w-max">
-            {categoryTabs.map(tab => (
+        <>
+          <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
+            <div className="flex items-center h-16 px-4 sm:px-10 md:px-16 lg:px-20 gap-6 overflow-x-auto scrollbar-hide flex-1">
               <button 
-                key={tab.name}
-                onClick={() => {
-                  updateFilters({ type: tab.value })
-                  navigate(`/search?type=${tab.value}`)
-                }}
-                className={cn(
-                  "flex items-center gap-2 h-16 border-b-2 transition-all px-2",
-                  filters.type === tab.value ? "border-brand-purple text-brand-purple bg-purple-50/50" : "border-transparent text-gray-500 hover:text-gray-900"
-                )}
+                onClick={() => updateFilters({ type: '' })}
+                className="flex items-center gap-2 px-6 h-full bg-gradient-to-r from-brand-pink to-brand-500 text-white font-semibold rounded-tr-3xl"
               >
-                {tab.icon} {tab.name}
+                <Grid size={18} /> {t('nav.allCategory')}
               </button>
-            ))}
-          </div>
-        </div>
 
-        <div className="hidden lg:flex items-center h-16 border-l border-gray-100 pl-6 pr-8 bg-white min-w-max relative cursor-pointer shrink-0" onClick={() => setCityMenuOpen(!cityMenuOpen)}>
-            <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-full border border-gray-200 overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
-                <img src="/1.webp" alt="City" className="w-full h-full object-cover" />
+              <div className="flex items-center gap-8 px-4 font-semibold text-sm flex-1 whitespace-nowrap min-w-max">
+                {categoryTabs.map(tab => (
+                  <button 
+                    key={tab.name}
+                    onClick={() => {
+                      updateFilters({ type: tab.value })
+                      navigate(`/search?type=${tab.value}`)
+                    }}
+                    className={cn(
+                      "flex items-center gap-2 h-16 border-b-2 transition-all px-2",
+                      filters.type === tab.value ? "border-brand-purple text-brand-purple bg-purple-50/50" : "border-transparent text-gray-500 hover:text-gray-900"
+                    )}
+                  >
+                    {tab.icon} {tab.name}
+                  </button>
+                ))}
               </div>
-              <div className="flex flex-col text-sm">
-                <span className="font-semibold text-gray-900 leading-tight">{selectedCity}</span>
-                <span className="text-gray-500 text-xs">Uttarakhand</span>
-              </div>
-              <ChevronDown size={16} className={`text-gray-400 ml-4 transition-transform duration-200 ${cityMenuOpen ? 'rotate-180' : ''}`} />
             </div>
 
-            {/* City Dropdown Menu */}
-            {cityMenuOpen && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setCityMenuOpen(false); }} />
-                <div className="absolute right-4 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden py-2" onClick={(e) => e.stopPropagation()}>
-                  {CITIES.map(city => (
-                    <button
-                      key={city}
-                      onClick={() => {
-                        setSelectedCity(city)
-                        setCityMenuOpen(false)
-                      }}
-                      className={`w-full text-left px-5 py-2.5 text-sm font-semibold transition-colors ${selectedCity === city ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
-                    >
-                      {city}
-                    </button>
-                  ))}
+            <div className="hidden lg:flex items-center h-16 border-l border-gray-100 pl-6 pr-8 bg-white min-w-max relative cursor-pointer shrink-0" onClick={() => setCityMenuOpen(!cityMenuOpen)}>
+                <div className="flex items-center gap-3">
+                  <div className="relative w-10 h-10 rounded-full border border-gray-200 overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+                    <img src="/1.webp" alt="City" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex flex-col text-sm">
+                    <span className="font-semibold text-gray-900 leading-tight">{selectedCity}</span>
+                    <span className="text-gray-500 text-xs">Uttarakhand</span>
+                  </div>
+                  <ChevronDown size={16} className={`text-gray-400 ml-4 transition-transform duration-200 ${cityMenuOpen ? 'rotate-180' : ''}`} />
                 </div>
-              </>
-            )}
+
+                {/* City Dropdown Menu */}
+                {cityMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setCityMenuOpen(false); }} />
+                    <div className="absolute right-4 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden py-2" onClick={(e) => e.stopPropagation()}>
+                      {CITIES.map(city => (
+                        <button
+                          key={city}
+                          onClick={() => {
+                            setSelectedCity(city)
+                            setCityMenuOpen(false)
+                          }}
+                          className={`w-full text-left px-5 py-2.5 text-sm font-semibold transition-colors ${selectedCity === city ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
+                        >
+                          {city}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
           </div>
-        </div>
-      )}
-      
-       {/* Mobile Menu */}
-       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b border-gray-100 shadow-xl overflow-y-auto max-h-[80vh]">
-          <div className="px-4 py-4 space-y-4">
-             <div className="relative w-full mb-4">
+          <BannerSlider />
+          
+          {/* Mobile Search Bar (Out of menu, below banner) */}
+          <div className="md:hidden px-4 pb-3 pt-1 bg-slate-50 relative border-b border-gray-100 transition-all">
+            <div className="relative w-full">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                 <Search size={18} className="text-gray-400" />
               </div>
               <input
                 type="text"
-                id="mobile-search"
-                name="mobile-search"
+                id="mobile-search-outside"
+                name="mobile-search-outside"
                 placeholder={t('hero.searchPlaceholder')}
-                className="w-full bg-gray-50 border-none rounded-full py-3 pl-12 pr-4 text-sm font-medium focus:outline-none"
+                onKeyDown={handleSearch}
+                className="w-full bg-white border border-gray-200 rounded-full py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-100 shadow-sm"
               />
             </div>
+          </div>
+        </>
+      )}
+      
+       {/* Mobile Menu */}
+       {mobileMenuOpen && (
+        <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b border-gray-100 shadow-xl overflow-y-auto max-h-[80vh] z-50">
+          <div className="px-4 py-4 space-y-4">
             
             <Link to="/search" onClick={() => dispatch(closeMobileMenu())} className="block font-semibold text-gray-700 py-2">{t('nav.home')}</Link>
             <button onClick={() => { dispatch(closeMobileMenu()); user ? navigate('/landlord') : dispatch(openAuthModal('login')) }} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.list')}</button>
