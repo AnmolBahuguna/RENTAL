@@ -89,8 +89,8 @@ const PropertyCardComponent = ({ property, layout = 'grid' }) => {
   return (
     <div
       className={cn(
-        'group bg-white rounded-xl border border-gray-200 shadow-[0_10px_35px_rgb(0,0,0,0.08)]',
-        'hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden'
+        'group bg-white rounded-xl border border-gray-200 shadow-[0_0_25px_rgba(0,0,0,0.1)]',
+        'hover:shadow-[0_0_40px_rgba(0,0,0,0.15)] hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden'
       )}
       onClick={() => navigate(`/property/${property.id}`)}
     >
