@@ -269,11 +269,11 @@ export const PropertyDetail = () => {
         {/* MAIN CONTENT COLUMNS */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
-          {/* LEFT COLUMN - CONTENT */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* LEFT COLUMN - CONTENT GRID */}
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             
-            {/* Header Card */}
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+            {/* Header Card - Full Width */}
+            <div className="md:col-span-2 bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <div className="flex justify-between items-start mb-4">
                  <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2 font-display">
                    {formatPrice(p.price)}
@@ -294,36 +294,38 @@ export const PropertyDetail = () => {
               </p>
             </div>
 
-            {/* About Card */}
-            {p.description && (
-              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
-                {(hasUnlocked || p.landlord_id === user?.id) ? (
-                  <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
-                    {p.description}
-                  </div>
-                ) : (
-                  <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                    {/* Blurred preview */}
-                    <div className="absolute inset-0 p-6 text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
+            {/* About Card - Half Width */}
+            <div className="md:col-span-1 h-full">
+              {p.description && (
+                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
+                  {(hasUnlocked || p.landlord_id === user?.id) ? (
+                    <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
                       {p.description}
                     </div>
-                    {/* Lock overlay - Premium Red Glass Refinement */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
-                      <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
-                        <EyeOff size={28} className="text-brand-500" />
+                  ) : (
+                    <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
+                      {/* Blurred preview */}
+                      <div className="absolute inset-0 p-6 text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
+                        {p.description}
                       </div>
-                      <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      {/* Lock overlay - Premium Red Glass Refinement */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
+                        <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
+                          <EyeOff size={28} className="text-brand-500" />
+                        </div>
+                        <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
 
-            {/* Key Details Card */}
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+            {/* Key Details Card - Half Width */}
+            <div className="md:col-span-1 h-full bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 flex flex-col">
                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.keyDetails')}</h2>
-               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 gap-y-8 border-t border-gray-100 pt-6">
+               <div className="grid grid-cols-2 gap-6 gap-y-8 border-t border-gray-100 pt-6">
                  <div>
                    <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t(`property.types.${p.type}`) || t('search.properties')}</p>
                    <p className="text-gray-900 font-semibold">{t(`property.types.${p.type}`) || p.type}</p>
@@ -343,56 +345,60 @@ export const PropertyDetail = () => {
                </div>
             </div>
 
-            {/* Amenities Card */}
-            {p.amenities && p.amenities.length > 0 && (
-              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {p.amenities.map(a => (
-                    <div key={a} className="flex gap-3 items-center">
-                       <div className="w-10 h-10 rounded-full bg-[#F9F8F6] flex items-center justify-center text-gray-600">
-                         {(() => {
-                           const Icon = AMENITY_ICONS[a];
-                           return Icon ? <Icon size={20} /> : null;
-                         })()}
-                       </div>
-                       <span className="font-semibold text-gray-700 capitalize text-[15px]">{a}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Nearby Landmarks Card */}
-            {p.nearby_landmarks && (
-              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
-                {(hasUnlocked || p.landlord_id === user?.id) ? (
-                  <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
-                    <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
-                    <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
+            {/* Amenities Card - Half Width */}
+            <div className="md:col-span-1 h-full">
+              {p.amenities && p.amenities.length > 0 && (
+                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    {p.amenities.map(a => (
+                      <div key={a} className="flex gap-3 items-center">
+                         <div className="w-10 h-10 rounded-full bg-[#F9F8F6] flex items-center justify-center text-gray-600">
+                           {(() => {
+                             const Icon = AMENITY_ICONS[a];
+                             return Icon ? <Icon size={20} /> : null;
+                           })()}
+                         </div>
+                         <span className="font-semibold text-gray-700 capitalize text-[15px]">{a}</span>
+                      </div>
+                    ))}
                   </div>
-                ) : (
-                  <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                    {/* Blurred preview */}
-                    <div className="absolute inset-0 p-6 flex items-start gap-4 select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
+                </div>
+              )}
+            </div>
+
+            {/* Nearby Landmarks Card - Half Width */}
+            <div className="md:col-span-1 h-full">
+              {p.nearby_landmarks && (
+                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
+                  {(hasUnlocked || p.landlord_id === user?.id) ? (
+                    <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
                       <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
                       <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                     </div>
-                    {/* Lock overlay - Premium Red Glass Refinement */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
-                      <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
-                        <EyeOff size={28} className="text-brand-500" />
+                  ) : (
+                    <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
+                      {/* Blurred preview */}
+                      <div className="absolute inset-0 p-6 flex items-start gap-4 select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
+                        <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
+                        <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                       </div>
-                      <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      {/* Lock overlay - Premium Red Glass Refinement */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
+                        <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
+                          <EyeOff size={28} className="text-brand-500" />
+                        </div>
+                        <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
 
-            {/* Listing Agent Card */}
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+            {/* Listing Agent Card - Full Width */}
+            <div className="md:col-span-2 bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">Listing Agent</h2>
               <div className="flex items-center gap-6">
                 <img src={p.profiles?.avatar_url || p.landlord?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
