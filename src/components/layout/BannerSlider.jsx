@@ -12,26 +12,8 @@ const desktopBanners = [
   'https://ik.imagekit.io/goeazy/BANNER%203rd.webp'
 ];
 
-const mobileBanners = [
-  'https://ik.imagekit.io/goeazy/Mobile%20Banner%201st.webp',
-  'https://ik.imagekit.io/goeazy/Mobile%20Banner%202nd.webp',
-  'https://ik.imagekit.io/goeazy/Mobile%20Banner%203rd.webp'
-];
-
 export const BannerSlider = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    handleResize(); // Initial check
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const banners = isMobile ? mobileBanners : desktopBanners;
+  const banners = desktopBanners;
 
   return (
     <div className="w-full bg-slate-50 px-4 sm:px-10 lg:px-20 py-3 sm:py-4">

@@ -43,12 +43,16 @@ export const Navbar = () => {
     navigate('/')
   }
 
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && e.target.value.trim()) {
-      updateFilters({ type: '', query: e.target.value.trim() })
-      navigate(`/search?query=${encodeURIComponent(e.target.value.trim())}`)
-      if (mobileMenuOpen) dispatch(closeMobileMenu())
+  const handleLiveSearch = (e) => {
+    const value = e.target.value
+    updateFilters({ query: value })
+    
+    // Redirect to search page if not already there
+    if (!location.pathname.startsWith('/search')) {
+      navigate('/search')
     }
+    
+    if (mobileMenuOpen && value.length > 3) dispatch(closeMobileMenu())
   }
 
   const categoryTabs = [
@@ -115,9 +119,10 @@ export const Navbar = () => {
                 type="text"
                 id="desktop-search"
                 name="desktop-search"
+                value={filters.query || ''}
                 placeholder={t('hero.searchPlaceholder')}
-                onKeyDown={handleSearch}
-                className="w-full bg-gray-50 border-none rounded-full py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-100"
+                onChange={handleLiveSearch}
+                className="w-full bg-gray-50 border border-transparent focus:border-[#CA3433] focus:ring-2 focus:ring-[#CA3433]/10 rounded-full py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none transition-all"
               />
             </div>
           </div>
@@ -269,10 +274,9 @@ export const Navbar = () => {
                 )}
               </div>
           </div>
-          <BannerSlider />
           
-          {/* Mobile Search Bar (Out of menu, below banner) */}
-          <div className="md:hidden px-4 pb-3 pt-1 bg-slate-50 relative border-b border-gray-100 transition-all">
+          {/* Mobile Search Bar (Out of menu, above banner) */}
+          <div className="md:hidden px-4 py-3 bg-white relative border-b border-gray-100 transition-all">
             <div className="relative w-full">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                 <Search size={18} className="text-gray-400" />
@@ -281,12 +285,15 @@ export const Navbar = () => {
                 type="text"
                 id="mobile-search-outside"
                 name="mobile-search-outside"
+                value={filters.query || ''}
                 placeholder={t('hero.searchPlaceholder')}
-                onKeyDown={handleSearch}
-                className="w-full bg-white border border-gray-200 rounded-full py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-100 shadow-sm"
+                onChange={handleLiveSearch}
+                className="w-full bg-gray-50 border border-[#CA3433] rounded-full py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#CA3433]/20 shadow-sm transition-all"
               />
             </div>
           </div>
+
+          <BannerSlider />
         </>
       )}
       

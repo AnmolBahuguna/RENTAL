@@ -15,6 +15,7 @@ const propertySlice = createSlice({
       priceMin: 0,
       priceMax: 100000,
       amenities: [],
+      query: '',
       sortBy: 'created_at',
       sortOrder: 'desc',
     },
@@ -60,7 +61,7 @@ const propertySlice = createSlice({
       state.filters = {
         city: '', area: '', type: '',
         priceMin: 0, priceMax: 100000,
-        amenities: [], sortBy: 'created_at', sortOrder: 'desc',
+        amenities: [], query: '', sortBy: 'created_at', sortOrder: 'desc',
       }
       state.page = 0
       state.listings = []

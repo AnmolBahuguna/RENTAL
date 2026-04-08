@@ -42,6 +42,11 @@ export const useProperties = () => {
         query = query.ilike('area', fuzzyPattern)
       }
 
+      if (filters.query) {
+        const q = `%${filters.query}%`
+        query = query.or(`title.ilike.${q},city.ilike.${q},area.ilike.${q},description.ilike.${q}`)
+      }
+
       const { data, error } = await query
         .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
         .range(reset ? 0 : page * PAGE_SIZE, (reset ? 0 : page * PAGE_SIZE) + PAGE_SIZE - 1)
@@ -61,6 +66,17 @@ export const useProperties = () => {
       if (filters.city) result = result.filter(p => p.city?.toLowerCase().includes(filters.city.toLowerCase()))
       if (filters.type) result = result.filter(p => p.type === filters.type)
       if (filters.amenities?.length) result = result.filter(p => filters.amenities.every(a => p.amenities?.includes(a)))
+      
+      if (filters.query) {
+        const q = filters.query.toLowerCase()
+        result = result.filter(p => 
+          p.title?.toLowerCase().includes(q) || 
+          p.city?.toLowerCase().includes(q) || 
+          p.area?.toLowerCase().includes(q) || 
+          p.description?.toLowerCase().includes(q)
+        )
+      }
+
       result = result.filter(p => p.price >= filters.priceMin && p.price <= filters.priceMax)
       
       if (filters.area) {
