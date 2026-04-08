@@ -211,7 +211,7 @@ export const Navbar = () => {
                 key={tab.name}
                 onClick={() => {
                   updateFilters({ type: tab.value })
-                  if(window.location.pathname !== '/search') navigate('/search')
+                  navigate(`/search?type=${tab.value}`)
                 }}
                 className={cn(
                   "flex items-center gap-2 h-16 border-b-2 transition-all px-2",
