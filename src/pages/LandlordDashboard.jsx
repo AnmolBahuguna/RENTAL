@@ -137,7 +137,7 @@ export const LandlordDashboard = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties.map(p => (
-              <div key={p.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div className="relative h-40 bg-gray-50 p-2">
                   <img src={p.images?.[0] || ''} alt={p.title} className="w-full h-full object-contain" />
                   <div className="absolute top-3 left-3"><TypeBadge type={p.type} /></div>
