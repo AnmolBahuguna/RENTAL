@@ -240,54 +240,14 @@ export const PropertyDetail = () => {
           <ArrowLeft size={16} /> {t('property.labels.back')}
         </button>
 
-        {/* IMAGE SLIDER (Replaced Bento Grid) */}
-        <div className="w-full max-w-[800px] mx-auto mb-8">
-          <div className="relative w-full aspect-square bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group">
-            <Swiper
-              modules={[Autoplay, Pagination, Navigation]}
-              spaceBetween={0}
-              slidesPerView={1}
-              navigation
-              pagination={{ clickable: true, dynamicBullets: true }}
-              autoplay={{ delay: 4000, disableOnInteraction: false }}
-              className="w-full h-full property-detail-slider"
-            >
-              {images.map((img, i) => (
-                <SwiperSlide key={i}>
-                  <div 
-                    className="w-full h-full cursor-pointer flex items-center justify-center bg-gray-100"
-                    onClick={() => openGallery(i)}
-                  >
-                    <img 
-                      src={img} 
-                      alt={`${p.title} - View ${i + 1}`} 
-                      className="w-full h-full object-contain" 
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-            
-            {/* Overlay Actions */}
-            <div className="absolute top-4 right-4 flex gap-2 z-10">
-              <Button variant="secondary" className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm" onClick={handleShare}>
-                <Share2 size={16} />
-              </Button>
-              <Button variant="secondary" className={`bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center transition-colors shadow-sm ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-900 hover:bg-white'}`} onClick={handleFav}>
-                <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
-              </Button>
-            </div>
-          </div>
-        </div>
-
         {/* MAIN CONTENT COLUMNS */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mt-6">
           
           {/* LEFT COLUMN - CONTENT GRID */}
-          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
             
             {/* Header Card - Full Width */}
-            <div className="md:col-span-2 bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <div className="flex justify-between items-start mb-4">
                  <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2 font-display">
                    {formatPrice(p.price)}
@@ -309,7 +269,7 @@ export const PropertyDetail = () => {
             </div>
 
             {/* Amenities Card - Top Left */}
-            <div className="md:col-span-1 h-full">
+            <div className="h-full">
               {p.amenities && p.amenities.length > 0 && (
                 <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
@@ -331,7 +291,7 @@ export const PropertyDetail = () => {
             </div>
 
             {/* Key Details Card - Top Right */}
-            <div className="md:col-span-1 h-full bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 flex flex-col">
+            <div className="h-full bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 flex flex-col">
                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.keyDetails')}</h2>
                <div className="grid grid-cols-2 gap-6 gap-y-8 border-t border-gray-100 pt-6">
                  <div>
@@ -354,7 +314,7 @@ export const PropertyDetail = () => {
             </div>
 
             {/* About Card - Middle Left */}
-            <div className="md:col-span-1 h-full">
+            <div className="h-full">
               {p.description && (
                 <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
                   <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
@@ -380,7 +340,7 @@ export const PropertyDetail = () => {
             </div>
 
             {/* Nearby Landmarks Card - Middle Right */}
-            <div className="md:col-span-1 h-full">
+            <div className="h-full">
               {p.nearby_landmarks && (
                 <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
@@ -408,7 +368,7 @@ export const PropertyDetail = () => {
             </div>
 
             {/* Listing Agent Card - Full Width */}
-            <div className="md:col-span-2 bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">Listing Agent</h2>
               <div className="flex items-center gap-6">
                 <img src={p.profiles?.avatar_url || p.landlord?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
@@ -431,9 +391,50 @@ export const PropertyDetail = () => {
 
           </div>
 
-          {/* RIGHT COLUMN - SIDEBAR */}
-          <div className="lg:col-span-1" id="contact-section">
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] sticky top-28 border border-gray-100/50">
+          {/* RIGHT COLUMN - SLIDER & SIDEBAR */}
+          <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6 lg:sticky lg:top-28">
+            {/* IMAGE SLIDER */}
+            <div className="w-full">
+              <div className="relative w-full aspect-square bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group">
+                <Swiper
+                  modules={[Autoplay, Pagination, Navigation]}
+                  spaceBetween={0}
+                  slidesPerView={1}
+                  navigation
+                  pagination={{ clickable: true, dynamicBullets: true }}
+                  autoplay={{ delay: 4000, disableOnInteraction: false }}
+                  className="w-full h-full property-detail-slider"
+                >
+                  {images.map((img, i) => (
+                    <SwiperSlide key={i}>
+                      <div 
+                        className="w-full h-full cursor-pointer flex items-center justify-center bg-gray-100"
+                        onClick={() => openGallery(i)}
+                      >
+                        <img 
+                          src={img} 
+                          alt={`${p.title} - View ${i + 1}`} 
+                          className="w-full h-full object-contain" 
+                        />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                
+                {/* Overlay Actions */}
+                <div className="absolute top-4 right-4 flex gap-2 z-10">
+                  <Button variant="secondary" className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm" onClick={handleShare}>
+                    <Share2 size={16} />
+                  </Button>
+                  <Button variant="secondary" className={`bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center transition-colors shadow-sm ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-900 hover:bg-white'}`} onClick={handleFav}>
+                    <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* CONTACT SIDEBAR */}
+            <div id="contact-section" className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] border border-gray-100/50">
               <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.requestContact')}</h3>
               
               <div className="space-y-4 mb-8">
