@@ -59,8 +59,8 @@ const PropertyCardComponent = ({ property, layout = 'grid' }) => {
         className="group bg-white rounded-xl border border-gray-100 flex gap-4 cursor-pointer hover:shadow-lg transition-all overflow-hidden"
          onClick={() => navigate(`/property/${property.id}`)}
       >
-        <div className="relative w-48 h-full flex-shrink-0">
-          <img src={mainImage} className="w-full h-full object-cover" />
+        <div className="relative w-40 h-full flex-shrink-0 bg-gray-50">
+          <img src={mainImage} className="w-full h-full object-contain" />
         </div>
         <div className="py-4 pr-4 flex flex-col justify-between flex-1">
           <div>
@@ -95,7 +95,7 @@ const PropertyCardComponent = ({ property, layout = 'grid' }) => {
       onClick={() => navigate(`/property/${property.id}`)}
     >
       {/* Image Container - Bottom edges rounded more than card */}
-      <div className="relative w-full aspect-[1/1] sm:aspect-[4/3] bg-gray-100 isolate rounded-b-2xl overflow-hidden">
+      <div className="relative w-full aspect-video sm:aspect-video bg-gray-50 isolate rounded-b-2xl overflow-hidden p-1">
         {!imgLoaded && !imgError && (
           <div className="skeleton absolute inset-0 z-0" />
         )}
@@ -104,7 +104,7 @@ const PropertyCardComponent = ({ property, layout = 'grid' }) => {
             src={mainImage}
             alt={property.title}
             className={cn(
-              'w-full h-full object-cover group-hover:scale-105 transition-transform duration-700',
+              'w-full h-full object-contain group-hover:scale-105 transition-transform duration-700',
               imgLoaded ? 'opacity-100' : 'opacity-0'
             )}
             loading="lazy"
