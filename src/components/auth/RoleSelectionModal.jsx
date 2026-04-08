@@ -8,8 +8,8 @@ import toast from 'react-hot-toast'
 import { Home, GraduationCap } from 'lucide-react'
 
 const ROLE_OPTIONS = [
-  { value: 'user',     label: 'Student / Professional', icon: <GraduationCap size={28} className="text-brand-500" />, desc: 'Browse & save properties' },
-  { value: 'landlord', label: 'Landlord / Owner',        icon: <Home size={28} className="text-brand-500" />, desc: 'List & manage properties' },
+  { value: 'user',     label: 'Student / Professional', icon: <GraduationCap size={28} className="text-brand-500" /> },
+  { value: 'landlord', label: 'Landlord / Owner',        icon: <Home size={28} className="text-brand-500" /> },
 ]
 
 export const RoleSelectionModal = () => {
@@ -70,7 +70,6 @@ export const RoleSelectionModal = () => {
             </div>
             <div className="flex-1">
               <p className="font-bold text-gray-900">{opt.label}</p>
-              <p className="text-xs text-gray-500">{opt.desc}</p>
             </div>
           </button>
         ))}

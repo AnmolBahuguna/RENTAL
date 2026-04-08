@@ -1,10 +1,42 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Home, Mail, Phone } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useDispatch, useSelector } from 'react-redux'
+import { openAuthModal } from '../../store/authSlice'
 
 export const Footer = () => {
   const { t } = useTranslation()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { user } = useSelector(s => s.auth)
+
+  const handleLandlordClick = (e) => {
+    e.preventDefault()
+    if (user) {
+      navigate('/landlord')
+    } else {
+      localStorage.setItem('sb_return_to', '/landlord')
+      dispatch(openAuthModal('signup'))
+    }
+  }
+
+  // Renter links navigate directly to the correct search category
+  const renterLinks = [
+    { label: t('footer.links.rooms'), to: '/search?type=Room' },
+    { label: t('footer.links.flats'), to: '/search?type=Flat' },
+    { label: t('footer.links.hostels'), to: '/search?type=Hostel' },
+    { label: t('footer.links.pgs'), to: '/search?type=PG' },
+  ]
+
+  // Landlord links (pricing removed)
+  const landlordLinks = [
+    { label: t('footer.links.list') },
+    { label: t('footer.links.manage') },
+    { label: t('footer.links.analytics') },
+    { label: t('footer.links.dashboard') },
+  ]
+
   return (
     <footer className="bg-gray-950 text-gray-300 mt-20">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -36,13 +68,7 @@ export const Footer = () => {
             <div>
               <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forRenters')}</h4>
               <ul className="space-y-2.5">
-                {[
-                  { label: t('footer.links.rooms'), to: '/search' },
-                  { label: t('footer.links.flats'), to: '/search' },
-                  { label: t('footer.links.hostels'), to: '/search' },
-                  { label: t('footer.links.pgs'), to: '/search' },
-                  { label: t('footer.links.searchCity'), to: '/search' }
-                ].map(item => (
+                {renterLinks.map(item => (
                   <li key={item.label}>
                     <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors">
                       {item.label}
@@ -56,15 +82,11 @@ export const Footer = () => {
             <div>
               <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forLandlords')}</h4>
               <ul className="space-y-2.5">
-                {[
-                  { label: t('footer.links.list'), href: '#' },
-                  { label: t('footer.links.manage'), href: '#' },
-                  { label: t('footer.links.analytics'), href: '#' },
-                  { label: t('footer.links.dashboard'), href: '#' },
-                  { label: t('footer.links.pricing'), href: '#' }
-                ].map(item => (
+                {landlordLinks.map(item => (
                   <li key={item.label}>
-                    <a href={item.href} className="text-sm text-gray-400 hover:text-white transition-colors">{item.label}</a>
+                    <button onClick={handleLandlordClick} className="text-sm text-gray-400 hover:text-white transition-colors text-left">
+                      {item.label}
+                    </button>
                   </li>
                 ))}
               </ul>
