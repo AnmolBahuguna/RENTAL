@@ -53,12 +53,12 @@ export const Modal = ({ open, onClose, children, title, size = 'md', className =
         {!title && (
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 z-10 p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
+            className="absolute top-2 right-2 z-10 p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 sm:top-3 sm:right-3"
           >
             <X size={20} />
           </button>
         )}
-        <div className={cn('p-6', !title && 'pt-12')}>{children}</div>
+        <div className={cn('p-5 sm:p-6', !title && 'pt-10 sm:pt-12')}>{children}</div>
       </div>
     </div>
   )

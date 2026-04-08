@@ -210,7 +210,7 @@ export const Navbar = () => {
       </div>
 
       {/* Secondary Navbar (Categories) */}
-      {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund', '/about'].some(r => location.pathname.startsWith(r)) && (
+      {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund', '/about', '/nearby'].some(r => location.pathname.startsWith(r)) && (
         <>
           <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
             <div className="flex items-center h-16 px-4 sm:px-10 md:px-16 lg:px-20 gap-6 overflow-x-auto scrollbar-hide flex-1">

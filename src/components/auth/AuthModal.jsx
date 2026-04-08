@@ -91,7 +91,7 @@ export const AuthModal = () => {
   return (
     <Modal open={authModalOpen} onClose={() => dispatch(closeAuthModal())} size="sm">
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-gray-100 rounded-xl mb-6">
+      <div className="flex gap-1 p-1 bg-gray-100 rounded-xl mb-4">
         {['login', 'signup'].map(t => (
           <button
             key={t}
@@ -109,7 +109,7 @@ export const AuthModal = () => {
       <Button
         variant="secondary"
         size="lg"
-        className="w-full mb-4"
+        className="w-full mb-3"
         loading={googleLoading}
         onClick={handleGoogle}
         leftIcon={
@@ -124,7 +124,7 @@ export const AuthModal = () => {
         Continue with Google
       </Button>
 
-      <div className="relative flex items-center gap-3 mb-4">
+      <div className="relative flex items-center gap-3 mb-3">
         <div className="flex-1 h-px bg-gray-200" />
         <span className="text-xs text-gray-400 font-medium">or continue with email</span>
         <div className="flex-1 h-px bg-gray-200" />
@@ -199,15 +199,17 @@ export const AuthModal = () => {
         </Button>
       </form>
 
-      <p className="text-center text-sm text-gray-500 mt-4">
-        {tab === 'login' ? "Don't have an account? " : 'Already have an account? '}
-        <button
-          className="text-brand-500 font-semibold hover:underline"
-          onClick={() => { setTab(tab === 'login' ? 'signup' : 'login'); setErrors({}) }}
-        >
-          {tab === 'login' ? 'Sign Up' : 'Sign In'}
-        </button>
-      </p>
+      {tab === 'login' && (
+        <p className="text-center text-sm text-gray-500 mt-4">
+          Don't have an account?{" "}
+          <button
+            className="text-brand-500 font-semibold hover:underline"
+            onClick={() => { setTab('signup'); setErrors({}) }}
+          >
+            Sign Up
+          </button>
+        </p>
+      )}
     </Modal>
   )
 }

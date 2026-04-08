@@ -254,6 +254,6 @@ export const useProperties = () => {
     fetchProperties, fetchFeatured, fetchByType, fetchPropertyById,
     createProperty, updateProperty, deleteProperty,
     fetchFavorites, toggleFavorite, fetchRecentlyViewed, getLandlordProperties,
-    updateFilters: (f) => dispatch(setFilters(f)),
+    updateFilters: useCallback((f) => dispatch(setFilters(f)), [dispatch]),
   }
 }
