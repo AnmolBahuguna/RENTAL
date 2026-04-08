@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 export const PropertyCard = ({ property, layout = 'grid' }) => {
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const dispatch = useDispatch()
   const { user } = useSelector(s => s.auth)
   const { favorites, toggleFavorite } = useProperties()
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -38,15 +39,15 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
   if (layout === 'list') {
     return (
       <div 
-        className="group bg-white p-2 rounded-[24px] border border-gray-100 flex gap-4 cursor-pointer hover:shadow-lg transition-all"
+        className="group bg-white rounded-xl border border-gray-100 flex gap-4 cursor-pointer hover:shadow-lg transition-all overflow-hidden"
          onClick={() => navigate(`/property/${property.id}`)}
       >
-        <div className="relative w-48 h-48 flex-shrink-0">
-          <img src={mainImage} className="w-full h-full object-cover rounded-[20px]" />
+        <div className="relative w-48 h-full flex-shrink-0">
+          <img src={mainImage} className="w-full h-full object-cover" />
         </div>
         <div className="py-4 pr-4 flex flex-col justify-between flex-1">
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t(`property.types.${property.type}`) || 'VILLA'}</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t(`property.types.${property.type}`) || t('search.properties')}</p>
             <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2">{property.title}</h3>
             <p className="text-sm text-gray-500">{numGuests} {t('property.labels.guests')} · {numBeds} {t('property.labels.bedrooms')}</p>
           </div>
@@ -71,13 +72,13 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
   return (
     <div
       className={cn(
-        'group bg-white p-2 sm:p-2.5 rounded-[24px] border border-gray-100',
-        'hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col'
+        'group bg-white rounded-xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]',
+        'hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden'
       )}
       onClick={() => navigate(`/property/${property.id}`)}
     >
-      {/* Image Container */}
-      <div className="relative w-full aspect-[1/1] sm:aspect-[4/3] rounded-[16px] sm:rounded-[20px] overflow-hidden bg-gray-100 mb-2 sm:mb-4 isolate">
+      {/* Image Container - Bottom edges rounded more than card */}
+      <div className="relative w-full aspect-[1/1] sm:aspect-[4/3] bg-gray-100 isolate rounded-b-2xl overflow-hidden">
         {!imgLoaded && !imgError && (
           <div className="skeleton absolute inset-0 z-0" />
         )}
@@ -103,7 +104,7 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
         <button
           onClick={handleFav}
           className={cn(
-            'absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center z-10',
+            'absolute bottom-3 right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center z-10',
             'transition-all duration-200 shadow-md',
             isFav ? 'bg-brand-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-black'
           )}
@@ -112,28 +113,28 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
         </button>
       </div>
 
-      {/* Content */}
-      <div className="px-1.5 sm:px-2 pb-1.5 sm:pb-2 flex-1 flex flex-col min-w-0">
-        <p className="text-[9px] sm:text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1 sm:mb-1.5">
-          {t(`property.types.${property.type}`) || t('property.types.VILLA')}
+      {/* Content - Added consistent padding */}
+      <div className="p-4 flex-1 flex flex-col min-w-0">
+        <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1 shadow-sm sm:mb-2">
+          {t(`property.types.${property.type}`) || t('search.properties')}
         </p>
         
-        <h3 className="font-bold text-gray-900 text-xs sm:text-[15px] leading-snug line-clamp-2 mb-1 sm:mb-1.5">
+        <h3 className="font-bold text-gray-900 text-sm sm:text-lg leading-snug line-clamp-1 mb-1 sm:mb-2">
           {property.title}
         </h3>
         
-        <p className="text-[10px] sm:text-sm text-gray-500 mb-3 sm:mb-6">
+        <p className="text-[11px] sm:text-sm text-gray-500 mb-4 sm:mb-6">
            {numGuests} {t('property.labels.guests')} · {numBeds} {t('property.labels.beds')}
         </p>
  
-        <div className="mt-auto flex items-center justify-between pb-0.5">
-          <p className="text-[10px] sm:text-xs text-gray-500">
-            {t('property.labels.from')} <span className="font-bold text-gray-900 text-[11px] sm:text-sm">{formatPrice(property.price)}</span>
+        <div className="mt-auto flex items-center justify-between">
+          <p className="text-[11px] sm:text-sm text-gray-500">
+            {t('property.labels.from')} <span className="font-bold text-gray-900 text-[12px] sm:text-lg">{formatPrice(property.price)}</span>
           </p>
           <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
-            <span className="font-bold text-[10px] sm:text-xs text-gray-900">{rating}</span>
+            <span className="font-bold text-[11px] sm:text-sm text-gray-900">{rating}</span>
             <div className="flex text-orange-400 gap-0.5">
-               <Star size={8} className="sm:w-2.5 sm:h-2.5" fill="currentColor" strokeWidth={0} />
+               <Star size={10} className="sm:w-3 sm:h-3" fill="currentColor" strokeWidth={0} />
             </div>
           </div>
         </div>

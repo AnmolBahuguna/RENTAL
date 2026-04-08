@@ -30,7 +30,7 @@ export const Modal = ({ open, onClose, children, title, size = 'md', className =
       {/* Modal */}
       <div
         className={cn(
-          'relative w-full bg-white rounded-2xl shadow-2xl',
+          'relative w-full bg-white rounded-xl shadow-2xl',
           'max-h-[90vh] overflow-y-auto',
           'animate-fadeInUp',
           sizes[size],
@@ -53,12 +53,12 @@ export const Modal = ({ open, onClose, children, title, size = 'md', className =
         {!title && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors text-gray-500"
+            className="absolute top-3 right-3 z-10 p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         )}
-        <div className="p-6">{children}</div>
+        <div className={cn('p-6', !title && 'pt-12')}>{children}</div>
       </div>
     </div>
   )

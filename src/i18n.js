@@ -32,7 +32,7 @@ const resources = {
       },
       search: {
         quoteStart: '"Less searching, more living — that’s',
-        quoteEnd: 'Eazy Living."',
+        quoteEnd: 'Eazy Living',
         resultsFound: 'Explore {{count}} {{type}} ready for you',
         properties: 'Properties',
         filters: 'Filters',
@@ -55,8 +55,7 @@ const resources = {
           Room: 'Room',
           Flat: 'Flat',
           Hostel: 'Hostel',
-          PG: 'PG',
-          VILLA: 'VILLA'
+          PG: 'PG'
         },
         labels: {
           from: 'From',
@@ -186,7 +185,7 @@ const resources = {
       },
       search: {
         quoteStart: '"कम खोजें, ज़्यादा जिएं — यही है',
-        quoteEnd: 'ईज़ी लिविंग।"',
+        quoteEnd: 'ईज़ी लिविंग।',
         resultsFound: 'आपके लिए {{count}} {{type}} तैयार हैं',
         properties: 'प्रॉपर्टीज',
         filters: 'फिल्टर',
@@ -209,8 +208,7 @@ const resources = {
           Room: 'कमरा',
           Flat: 'फ्लैट',
           Hostel: 'हॉस्टल',
-          PG: 'पीजी',
-          VILLA: 'विला'
+          PG: 'पीजी'
         },
         labels: {
           from: 'से',

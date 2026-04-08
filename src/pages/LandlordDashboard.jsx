@@ -7,6 +7,7 @@ import { Button } from '../components/ui/Button'
 import { TypeBadge } from '../components/ui/Badge'
 import { formatPriceShort, cn } from '../utils/helpers'
 import toast from 'react-hot-toast'
+import { Skeleton } from '../components/ui/Skeleton'
 
 export const LandlordDashboard = () => {
   const { user, profile } = useAuth()
@@ -54,11 +55,17 @@ export const LandlordDashboard = () => {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-brand-200">
-              <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" className="w-full h-full object-cover"/>
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-brand-200 bg-gray-200">
+               {profile ? (
+                 <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" className="w-full h-full object-cover"/>
+               ) : (
+                 <Skeleton variant="circle" className="w-full h-full" />
+               )}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 font-display">Welcome, {profile?.full_name?.split(' ')[0] || 'Landlord'}!</h1>
+              <h1 className="text-2xl font-bold text-gray-900 font-display">
+                {profile ? `Welcome, ${profile?.full_name?.split(' ')[0] || 'Landlord'}!` : <Skeleton className="h-8 w-40" />}
+              </h1>
               <p className="text-gray-500">Manage your properties and track views.</p>
             </div>
           </div>
@@ -69,22 +76,22 @@ export const LandlordDashboard = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5">
+            <div className="w-14 h-14 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
               <Home size={24} />
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-gray-500 text-sm font-medium">Total Listings</p>
-              <h3 className="text-3xl font-bold text-gray-900">{totalListings}</h3>
+              {loading ? <Skeleton className="h-8 w-12 mt-1" /> : <h3 className="text-3xl font-bold text-gray-900">{totalListings}</h3>}
             </div>
           </div>
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-green-600">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5">
+            <div className="w-14 h-14 rounded-xl bg-green-50 flex items-center justify-center text-green-600">
               <Eye size={24} />
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-gray-500 text-sm font-medium">Total Profile Views</p>
-              <h3 className="text-3xl font-bold text-gray-900">{totalViews}</h3>
+              {loading ? <Skeleton className="h-8 w-12 mt-1" /> : <h3 className="text-3xl font-bold text-gray-900">{totalViews}</h3>}
             </div>
           </div>
         </div>
@@ -93,10 +100,26 @@ export const LandlordDashboard = () => {
         <h2 className="text-xl font-bold text-gray-900 mb-6 font-display">Your Listings</h2>
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map(i => <div key={i} className="skeleton h-64 rounded-2xl" />)}
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-white rounded-xl border border-gray-100 p-4 space-y-4 shadow-sm">
+                <Skeleton className="aspect-video w-full rounded-xl" />
+                <div className="space-y-3 px-1">
+                  <div className="flex justify-between">
+                    <Skeleton className="h-5 w-1/3" />
+                    <Skeleton className="h-5 w-1/4" />
+                  </div>
+                  <Skeleton className="h-4 w-3/4" />
+                  <div className="pt-2 flex gap-2">
+                    <Skeleton className="h-8 flex-1 rounded-xl" />
+                    <Skeleton className="h-8 flex-1 rounded-xl" />
+                    <Skeleton className="h-8 w-10 rounded-xl" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : properties.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
+          <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
             <div className="flex justify-center mb-4 text-gray-300">
               <Home size={64} />
             </div>
@@ -109,7 +132,7 @@ export const LandlordDashboard = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties.map(p => (
-              <div key={p.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div key={p.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="relative h-48 bg-gray-100">
                   <img src={p.images?.[0] || ''} alt={p.title} className="w-full h-full object-cover" />
                   <div className="absolute top-3 left-3"><TypeBadge type={p.type} /></div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Search, ChevronDown, User, LogOut, Home, Building, Tent, MapPin, Grid, PlusCircle, LayoutDashboard, Menu, X } from 'lucide-react'
 import { openAuthModal } from '../../store/authSlice'
@@ -8,12 +8,14 @@ import { useAuth } from '../../hooks/useAuth'
 import { useProperties } from '../../hooks/useProperties'
 import { cn, getInitials } from '../../utils/helpers'
 import { useTranslation } from 'react-i18next'
+import { Skeleton } from '../ui/Skeleton'
 
 export const Navbar = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
   const { t, i18n } = useTranslation()
-  const { user, profile, role, signOut } = useAuth()
+  const { user, profile, role, signOut, loading } = useAuth()
   const { filters, updateFilters } = useProperties()
   const { mobileMenuOpen } = useSelector(s => s.ui)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -48,7 +50,7 @@ export const Navbar = () => {
   ]
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 bg-white">
+    <nav className="relative z-40 bg-white">
       {/* Top Navbar */}
       <div className="w-full mx-auto px-4 sm:px-8">
         <div className="flex items-center justify-between h-20">
@@ -128,7 +130,9 @@ export const Navbar = () => {
               INR <ChevronDown size={14} />
             </button>
 
-            {user ? (
+            {loading ? (
+              <Skeleton className="h-10 w-28 rounded-full" />
+            ) : user ? (
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(v => !v)}
@@ -145,7 +149,7 @@ export const Navbar = () => {
                 {userMenuOpen && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setUserMenuOpen(false)} />
-                    <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 z-20 overflow-hidden">
+                    <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden">
                       <div className="py-1">
                         <button
                           onClick={() => { navigate(role === 'landlord' ? '/landlord' : '/dashboard'); setUserMenuOpen(false) }}
@@ -191,13 +195,14 @@ export const Navbar = () => {
       </div>
 
       {/* Secondary Navbar (Categories) */}
-      <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
+      {!location.pathname.startsWith('/property/') && (
+        <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
         <div className="flex items-center h-16 ml-4 sm:ml-8 gap-6 overflow-x-auto scrollbar-hide flex-1">
           <button 
             onClick={() => updateFilters({ type: '' })}
             className="flex items-center gap-2 px-6 h-full bg-gradient-to-r from-brand-pink to-brand-500 text-white font-semibold rounded-tr-3xl"
           >
-            <Grid size={18} /> {t('nav.allCategory')} <ChevronDown size={16} />
+            <Grid size={18} /> {t('nav.allCategory')}
           </button>
 
           <div className="flex items-center gap-8 px-4 font-semibold text-sm flex-1 whitespace-nowrap min-w-max">
@@ -235,7 +240,7 @@ export const Navbar = () => {
             {cityMenuOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setCityMenuOpen(false); }} />
-                <div className="absolute right-4 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 z-20 overflow-hidden py-2" onClick={(e) => e.stopPropagation()}>
+                <div className="absolute right-4 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden py-2" onClick={(e) => e.stopPropagation()}>
                   {CITIES.map(city => (
                     <button
                       key={city}
@@ -252,7 +257,8 @@ export const Navbar = () => {
               </>
             )}
           </div>
-      </div>
+        </div>
+      )}
       
        {/* Mobile Menu */}
        {mobileMenuOpen && (

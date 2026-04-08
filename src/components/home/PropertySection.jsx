@@ -7,15 +7,20 @@ import { useProperties } from '../../hooks/useProperties'
 import { setFilters } from '../../store/propertySlice'
 import { MOCK_PROPERTIES } from '../../utils/constants'
 
+import { Skeleton } from '../ui/Skeleton'
+
 const SectionSkeleton = () => (
-  <div className="flex gap-5 overflow-x-auto pb-2">
+  <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide">
     {[1,2,3,4].map(i => (
-      <div key={i} className="flex-shrink-0 w-56 rounded-2xl bg-white border border-gray-100 overflow-hidden">
-        <div className="skeleton h-42 w-full" style={{ height: '168px' }} />
-        <div className="p-3 space-y-2">
-          <div className="skeleton h-4 w-4/5 rounded" />
-          <div className="skeleton h-3 w-3/5 rounded" />
-          <div className="skeleton h-3 w-2/5 rounded" />
+      <div key={i} className="flex-shrink-0 w-64 rounded-xl bg-white border border-gray-100 overflow-hidden p-3 space-y-3">
+        <Skeleton className="h-44 w-full rounded-xl" />
+        <div className="space-y-2 px-1">
+          <Skeleton className="h-5 w-4/5" />
+          <Skeleton className="h-4 w-3/5" />
+          <div className="pt-1 flex gap-2">
+            <Skeleton className="h-3 w-1/4 rounded-full" />
+            <Skeleton className="h-3 w-1/4 rounded-full" />
+          </div>
         </div>
       </div>
     ))}
@@ -91,13 +96,17 @@ export const FeaturedSection = () => {
           View all <ChevronRight size={16} />
         </Link>
       </div>
-      <div className="scroll-row">
-        {items.map(property => (
-          <div key={property.id} className="flex-shrink-0">
-            <PropertyCard property={property} compact />
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <SectionSkeleton />
+      ) : (
+        <div className="scroll-row">
+          {items.map(property => (
+            <div key={property.id} className="flex-shrink-0">
+              <PropertyCard property={property} compact />
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

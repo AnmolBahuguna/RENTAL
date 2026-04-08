@@ -1,10 +1,12 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import { Navbar } from '../layout/Navbar'
 import { Footer } from '../layout/Footer'
 import { AuthModal } from '../auth/AuthModal'
 import { Toaster } from 'react-hot-toast'
 
 export const Layout = ({ children }) => {
+  const location = useLocation()
   return (
     <>
       <Toaster
@@ -16,7 +18,7 @@ export const Layout = ({ children }) => {
       />
       <Navbar />
       <main className="min-h-screen">{children}</main>
-      <Footer />
+      {location.pathname === '/search' && <Footer />}
       <AuthModal />
     </>
   )

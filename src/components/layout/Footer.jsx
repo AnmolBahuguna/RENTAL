@@ -30,42 +30,45 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* For Users */}
-          <div>
-            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forRenters')}</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: t('footer.links.rooms'), to: '/search' },
-                { label: t('footer.links.flats'), to: '/search' },
-                { label: t('footer.links.hostels'), to: '/search' },
-                { label: t('footer.links.pgs'), to: '/search' },
-                { label: t('footer.links.searchCity'), to: '/search' }
-              ].map(item => (
-                <li key={item.label}>
-                  <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Link Sections Container */}
+          <div className="grid grid-cols-2 gap-8 lg:col-span-2">
+            {/* For Users */}
+            <div>
+              <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forRenters')}</h4>
+              <ul className="space-y-2.5">
+                {[
+                  { label: t('footer.links.rooms'), to: '/search' },
+                  { label: t('footer.links.flats'), to: '/search' },
+                  { label: t('footer.links.hostels'), to: '/search' },
+                  { label: t('footer.links.pgs'), to: '/search' },
+                  { label: t('footer.links.searchCity'), to: '/search' }
+                ].map(item => (
+                  <li key={item.label}>
+                    <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* For Landlords */}
-          <div>
-            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forLandlords')}</h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: t('footer.links.list'), href: '#' },
-                { label: t('footer.links.manage'), href: '#' },
-                { label: t('footer.links.analytics'), href: '#' },
-                { label: t('footer.links.dashboard'), href: '#' },
-                { label: t('footer.links.pricing'), href: '#' }
-              ].map(item => (
-                <li key={item.label}>
-                  <a href={item.href} className="text-sm text-gray-400 hover:text-white transition-colors">{item.label}</a>
-                </li>
-              ))}
-            </ul>
+            {/* For Landlords */}
+            <div>
+              <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forLandlords')}</h4>
+              <ul className="space-y-2.5">
+                {[
+                  { label: t('footer.links.list'), href: '#' },
+                  { label: t('footer.links.manage'), href: '#' },
+                  { label: t('footer.links.analytics'), href: '#' },
+                  { label: t('footer.links.dashboard'), href: '#' },
+                  { label: t('footer.links.pricing'), href: '#' }
+                ].map(item => (
+                  <li key={item.label}>
+                    <a href={item.href} className="text-sm text-gray-400 hover:text-white transition-colors">{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Contact */}
@@ -86,7 +89,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-500">{t('footer.allRights')}</p>
           <div className="flex flex-wrap gap-6 justify-center sm:justify-end">
             {[

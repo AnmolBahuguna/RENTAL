@@ -59,7 +59,7 @@ export const RoleSelectionModal = () => {
             key={opt.value}
             type="button"
             onClick={() => setSelectedRole(opt.value)}
-            className={`p-4 rounded-2xl border-2 text-left transition-all flex items-center gap-4 ${
+            className={`p-4 rounded-xl border-2 text-left transition-all flex items-center gap-4 ${
               selectedRole === opt.value
                 ? 'border-brand-500 bg-brand-50 ring-2 ring-brand-500/10'
                 : 'border-gray-100 hover:border-gray-200 bg-white'
@@ -79,7 +79,7 @@ export const RoleSelectionModal = () => {
       <Button 
         variant="primary" 
         size="lg" 
-        className="w-full h-14 rounded-2xl text-base" 
+        className="w-full h-14 rounded-xl text-base" 
         loading={loading}
         onClick={handleConfirm}
         disabled={!selectedRole}

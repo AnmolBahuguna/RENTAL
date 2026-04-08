@@ -57,10 +57,10 @@ export const Hero = () => {
               id="hero-search"
               name="hero-search"
               placeholder={t('hero.searchPlaceholder')}
-              className="w-full pl-11 pr-4 py-4 rounded-2xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-100 text-gray-900 text-sm transition-all"
+              className="w-full pl-11 pr-4 py-4 rounded-xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-100 text-gray-900 text-sm transition-all"
             />
           </div>
-          <Button type="submit" variant="primary" size="lg" className="px-7 rounded-2xl shadow-md">
+          <Button type="submit" variant="primary" size="lg" className="px-7 rounded-xl shadow-md">
             {t('hero.searchBtn')}
           </Button>
         </form>

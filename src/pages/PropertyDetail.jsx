@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { openAuthModal } from '../store/authSlice'
 import { useProperties } from '../hooks/useProperties'
@@ -10,6 +10,7 @@ import { formatPrice, cn, AMENITY_ICONS } from '../utils/helpers'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
+import { Skeleton } from '../components/ui/Skeleton'
 
 export const PropertyDetail = () => {
   const { id } = useParams()
@@ -17,7 +18,7 @@ export const PropertyDetail = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const { user } = useSelector(s => s.auth)
-  const { currentProperty, fetchPropertyById, favorites, toggleFavorite } = useProperties()
+  const { currentProperty, fetchPropertyById, favorites, toggleFavorite, loading } = useProperties()
 
   const [hasUnlocked, setHasUnlocked] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
@@ -38,10 +39,31 @@ export const PropertyDetail = () => {
     if (data) setHasUnlocked(true)
   }
 
-  if (!currentProperty) {
+  if (loading || !currentProperty) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
-        <div className="skeleton w-32 h-32 rounded-full" />
+      <div className="pt-8 pb-20 bg-[#F9F8F6] min-h-screen">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <Skeleton className="h-6 w-24 mb-6" />
+          
+          {/* Image Bento Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 h-[400px] sm:h-[550px]">
+             <Skeleton className="md:col-span-2 md:row-span-2 rounded-lg sm:rounded-xl h-full" />
+             <Skeleton className="hidden md:block col-span-1 row-span-1 rounded-lg sm:rounded-xl h-full" />
+             <Skeleton className="hidden md:block col-span-1 row-span-1 rounded-lg sm:rounded-xl h-full" />
+             <Skeleton className="hidden md:block col-span-1 row-span-1 rounded-lg sm:rounded-xl h-full" />
+             <Skeleton className="hidden md:block col-span-1 row-span-1 rounded-lg sm:rounded-xl h-full" />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <Skeleton className="h-48 w-full rounded-lg sm:rounded-xl" />
+              <Skeleton className="h-64 w-full rounded-lg sm:rounded-xl" />
+            </div>
+            <div className="lg:col-span-1">
+              <Skeleton className="h-96 w-full rounded-lg sm:rounded-xl" />
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
@@ -197,7 +219,7 @@ export const PropertyDetail = () => {
   const otherImages = images.slice(1, 5) // up to 4 other images
 
   return (
-    <div className="pt-24 pb-20 bg-[#F9F8F6] min-h-screen">
+    <div className="pt-8 pb-20 bg-[#F9F8F6] min-h-screen">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 mb-6 transition-colors">
@@ -206,7 +228,7 @@ export const PropertyDetail = () => {
 
         {/* IMAGE BENTO GRID */}
         <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ${images.length >= 5 ? 'h-[400px] sm:h-[550px]' : images.length > 1 ? 'h-[400px]' : 'h-[400px]'}`}>
-          <div className={`${images.length >= 5 ? 'md:col-span-2 md:row-span-2' : 'md:col-span-4'} h-full rounded-[2rem] overflow-hidden relative group`}>
+          <div className={`${images.length >= 5 ? 'md:col-span-2 md:row-span-2' : 'md:col-span-4'} h-full rounded-lg sm:rounded-xl overflow-hidden relative group`}>
             <img src={mainImage} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 bg-gray-200" />
             <div className="absolute top-4 right-4 flex gap-2 z-10">
               <Button variant="secondary" className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm" onClick={handleShare}>
@@ -220,7 +242,7 @@ export const PropertyDetail = () => {
           
           {images.length >= 5 ? (
             otherImages.slice(0,4).map((img, i) => (
-              <div key={i} className="hidden md:block col-span-1 row-span-1 h-full rounded-[2rem] overflow-hidden relative group bg-gray-200">
+              <div key={i} className="hidden md:block col-span-1 row-span-1 h-full rounded-lg sm:rounded-xl overflow-hidden relative group bg-gray-200">
                 <img src={img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={`view-${i}`} />
                 {i === 3 && images.length > 5 && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-xl backdrop-blur-[2px]">
@@ -233,7 +255,7 @@ export const PropertyDetail = () => {
             images.length > 1 && (
              <div className="hidden md:flex flex-col gap-4 h-full md:col-span-2">
               {otherImages.map((img, i) => (
-                <div key={i} className="flex-1 rounded-[2rem] overflow-hidden relative group bg-gray-200">
+                <div key={i} className="flex-1 rounded-lg sm:rounded-xl overflow-hidden relative group bg-gray-200">
                   <img src={img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={`view-${i}`} />
                 </div>
               ))}
@@ -249,7 +271,7 @@ export const PropertyDetail = () => {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Header Card */}
-            <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <div className="flex justify-between items-start mb-4">
                  <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2 font-display">
                    {formatPrice(p.price)}
@@ -272,7 +294,7 @@ export const PropertyDetail = () => {
 
             {/* About Card */}
             {p.description && (
-              <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
                 <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
                   {p.description}
@@ -281,11 +303,11 @@ export const PropertyDetail = () => {
             )}
 
             {/* Key Details Card */}
-            <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.keyDetails')}</h2>
                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 gap-y-8 border-t border-gray-100 pt-6">
                  <div>
-                   <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t('property.types.VILLA')}</p>
+                   <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t(`property.types.${p.type}`) || t('search.properties')}</p>
                    <p className="text-gray-900 font-semibold">{t(`property.types.${p.type}`) || p.type}</p>
                  </div>
                  <div>
@@ -305,7 +327,7 @@ export const PropertyDetail = () => {
 
             {/* Amenities Card */}
             {p.amenities && p.amenities.length > 0 && (
-              <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {p.amenities.map(a => (
@@ -325,9 +347,9 @@ export const PropertyDetail = () => {
 
             {/* Nearby Landmarks Card */}
             {p.nearby_landmarks && (
-              <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
-                <div className="flex items-start gap-4 p-5 rounded-2xl bg-[#F9F8F6]">
+                <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
                   <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
                   <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                 </div>
@@ -335,7 +357,7 @@ export const PropertyDetail = () => {
             )}
 
             {/* Listing Agent Card */}
-            <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">Listing Agent</h2>
               <div className="flex items-center gap-6">
                 <img src={p.profiles?.avatar_url || p.landlord?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
@@ -359,12 +381,12 @@ export const PropertyDetail = () => {
           </div>
 
           {/* RIGHT COLUMN - SIDEBAR */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] sticky top-28 border border-gray-100/50">
+          <div className="lg:col-span-1" id="contact-section">
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] sticky top-28 border border-gray-100/50">
               <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.requestContact')}</h3>
               
               <div className="space-y-4 mb-8">
-                <div className="p-4 bg-[#F9F8F6] rounded-2xl border border-gray-100">
+                <div className="p-4 bg-[#F9F8F6] rounded-xl border border-gray-100">
                    <p className="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wider">{t('property.sections.owner')}</p>
                    <p className="font-semibold text-gray-900">{p.profiles?.full_name || p.landlord?.name}</p>
                 </div>
@@ -380,7 +402,7 @@ export const PropertyDetail = () => {
                         </a>
                       </div>
                     ) : (
-                      <div className="border border-gray-100 rounded-2xl p-6 text-center bg-[#fcfbf9]">
+                      <div className="border border-gray-100 rounded-xl p-6 text-center bg-[#fcfbf9]">
                         <div className="w-12 h-12 bg-white border border-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-gray-400">
                           <Phone size={20} />
                         </div>
@@ -389,7 +411,7 @@ export const PropertyDetail = () => {
                       </div>
                     )
                   ) : (
-                    <div className="border border-gray-100 rounded-2xl p-6 text-center bg-[#fcfbf9]">
+                    <div className="border border-gray-100 rounded-xl p-6 text-center bg-[#fcfbf9]">
                       <p className="text-sm text-gray-600 mb-4 font-medium">{t('property.sections.signinPrompt')}</p>
                       <Button variant="secondary" className="w-full rounded-full font-bold bg-white" onClick={() => dispatch(openAuthModal('login'))}>
                         {t('nav.login')}
@@ -412,6 +434,25 @@ export const PropertyDetail = () => {
 
         </div>
       </div>
+
+      {/* Mobile Jump to Contact Feature */}
+      <div className="fixed bottom-6 right-4 sm:hidden z-40">
+        <button 
+          onClick={() => {
+            const section = document.getElementById('contact-section');
+            if (section) {
+              const offset = 80;
+              const top = section.getBoundingClientRect().top + window.scrollY - offset;
+              window.scrollTo({ top, behavior: 'smooth' });
+            }
+          }}
+          className="flex flex-col items-center justify-center p-2.5 bg-gray-900 text-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-800 active:scale-95 transition-transform"
+        >
+          <ChevronDown size={18} className="mb-1" />
+          <span className="text-[10px] font-bold uppercase tracking-wider px-1">Jump to Contact</span>
+        </button>
+      </div>
+
     </div>
   )
 }
