@@ -270,7 +270,7 @@ export const PropertyDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
           {/* LEFT COLUMN - CONTENT GRID */}
-          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
             
             {/* Header Card - Full Width */}
             <div className="md:col-span-2 bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
@@ -292,7 +292,9 @@ export const PropertyDetail = () => {
               <p className="text-gray-500 text-sm">
                 {hasUnlocked || (p.landlord_id === user?.id) ? (p.exact_location || `${p.area}, ${p.city} • ${p.pincode}`) : `${p.area}, ${p.city} • ${p.pincode}`}
               </p>
-                        {/* Amenities Card - Half Width */}
+            </div>
+
+            {/* Amenities Card - Top Left */}
             <div className="md:col-span-1 h-full">
               {p.amenities && p.amenities.length > 0 && (
                 <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
@@ -314,7 +316,7 @@ export const PropertyDetail = () => {
               )}
             </div>
 
-            {/* Key Details Card - Half Width */}
+            {/* Key Details Card - Top Right */}
             <div className="md:col-span-1 h-full bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 flex flex-col">
                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.keyDetails')}</h2>
                <div className="grid grid-cols-2 gap-6 gap-y-8 border-t border-gray-100 pt-6">
@@ -337,7 +339,7 @@ export const PropertyDetail = () => {
                </div>
             </div>
 
-            {/* About Card - Half Width */}
+            {/* About Card - Middle Left */}
             <div className="md:col-span-1 h-full">
               {p.description && (
                 <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
@@ -348,11 +350,9 @@ export const PropertyDetail = () => {
                     </div>
                   ) : (
                     <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                      {/* Blurred preview */}
                       <div className="absolute inset-0 p-6 text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
                         {p.description}
                       </div>
-                      {/* Lock overlay - Premium Red Glass Refinement */}
                       <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
                         <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
                           <EyeOff size={28} className="text-brand-500" />
@@ -365,7 +365,7 @@ export const PropertyDetail = () => {
               )}
             </div>
 
-            {/* Nearby Landmarks Card - Half Width */}
+            {/* Nearby Landmarks Card - Middle Right */}
             <div className="md:col-span-1 h-full">
               {p.nearby_landmarks && (
                 <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
@@ -377,12 +377,10 @@ export const PropertyDetail = () => {
                     </div>
                   ) : (
                     <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                      {/* Blurred preview */}
                       <div className="absolute inset-0 p-6 flex items-start gap-4 select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
                         <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
                         <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                       </div>
-                      {/* Lock overlay - Premium Red Glass Refinement */}
                       <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
                         <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
                           <EyeOff size={28} className="text-brand-500" />
@@ -393,7 +391,7 @@ export const PropertyDetail = () => {
                   )}
                 </div>
               )}
-            </div>    </div>
+            </div>
 
             {/* Listing Agent Card - Full Width */}
             <div className="md:col-span-2 bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
