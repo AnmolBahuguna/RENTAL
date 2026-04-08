@@ -35,7 +35,7 @@ export const AuthModal = () => {
     const e = {}
     if (tab === 'signup' && !form.name.trim()) e.name = 'Name is required'
     if (!form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) e.email = 'Valid email required'
-    if (form.password.length < 6) e.password = 'Min 6 characters'
+    if (form.password.length < 8) e.password = 'Min 8 characters'
     setErrors(e)
     return !Object.keys(e).length
   }
@@ -152,7 +152,7 @@ export const AuthModal = () => {
         <Input
           label="Password"
           type={showPass ? 'text' : 'password'}
-          placeholder={tab === 'signup' ? 'Min 6 characters' : '••••••••'}
+          placeholder={tab === 'signup' ? 'Min 8 characters' : '••••••••'}
           leftIcon={<Lock size={16} />}
           rightIcon={
             <button type="button" onClick={() => setShowPass(v => !v)} className="cursor-pointer">

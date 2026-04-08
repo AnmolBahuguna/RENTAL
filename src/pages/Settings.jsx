@@ -61,8 +61,8 @@ export const Settings = () => {
       return
     }
 
-    if (newPassword.length < 6) {
-      setSecurityMessage({ type: 'error', text: 'Password must be at least 6 characters' })
+    if (newPassword.length < 8) {
+      setSecurityMessage({ type: 'error', text: 'Password must be at least 8 characters' })
       setSecurityLoading(false)
       return
     }
@@ -237,9 +237,9 @@ export const Settings = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={8}
                     className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all font-medium"
-                    placeholder="At least 6 characters"
+                    placeholder="At least 8 characters"
                   />
                 </div>
 
@@ -253,7 +253,7 @@ export const Settings = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={8}
                     className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all font-medium"
                     placeholder="Enter new password again"
                   />

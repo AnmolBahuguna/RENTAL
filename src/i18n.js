@@ -118,7 +118,8 @@ const resources = {
           sections: [
             { h: 'Data Collection', p: 'We collect your name, email, and phone number when you register or unlock property details.' },
             { h: 'How We Use Data', p: 'Your data is used to provide contact information for property listings and to improve our services.' },
-            { h: 'Data Security', p: 'We take industry-standard measures to protect your personal information from unauthorized access.' }
+            { h: 'Data Security', p: 'We take industry-standard measures to protect your personal information from unauthorized access.' },
+            { h: 'Data Sharing & Marketing Usage', p: 'For security and service continuity, contact details are shared mutually between landlords and tenants. Additionally, your contact information and platform usage may be securely used for future marketing purposes.' }
           ]
         },
         terms: {
@@ -127,7 +128,8 @@ const resources = {
           sections: [
             { h: 'Platform Usage', p: 'Users must provide accurate information when listing or searching for properties.' },
             { h: 'Listing Rules', p: 'Landlords are responsible for the accuracy of their property details and images.' },
-            { h: 'Limitation of Liability', p: 'GoEazy is a connector and is not responsible for disputes between landlords and tenants.' }
+            { h: 'Limitation of Liability', p: 'GoEazy is a connector and is not responsible for disputes between landlords and tenants.' },
+            { h: 'Information Sharing Agreement', p: 'By using this platform, you agree that your contact information may be mutually shared between landlords and tenants to facilitate housing arrangements, and may also be utilized by GoEazy for future promotional and marketing initiatives.' }
           ]
         },
         cookies: {
@@ -271,7 +273,8 @@ const resources = {
           sections: [
             { h: 'डेटा संग्रह', p: 'जब आप पंजीकरण करते हैं या प्रॉपर्टी विवरण अनलॉक करते हैं, तो हम आपका नाम, ईमेल और फोन नंबर एकत्र करते हैं।' },
             { h: 'डेटा का उपयोग', p: 'आपके डेटा का उपयोग प्रॉपर्टी लिस्टिंग के संपर्क विवरण प्रदान करने और हमारी सेवाओं को बेहतर बनाने के लिए किया जाता है।' },
-            { h: 'डेटा सुरक्षा', p: 'हम आपकी व्यक्तिगत जानकारी को सुरक्षित रखने के लिए उद्योग-मानक उपाय करते हैं।' }
+            { h: 'डेटा सुरक्षा', p: 'हम आपकी व्यक्तिगत जानकारी को सुरक्षित रखने के लिए उद्योग-मानक उपाय करते हैं।' },
+            { h: 'डेटा साझाकरण और मार्केटिंग उपयोग', p: 'सुरक्षा और सेवा निरंतरता के लिए, संपर्क जानकारी मकान मालिकों और किरायेदारों के बीच आपसी रूप से साझा की जाती है। इसके अतिरिक्त, भविष्य के मार्केटिंग उद्देश्यों के लिए आपकी संपर्क जानकारी का उपयोग किया जा सकता है।' }
           ]
         },
         terms: {
@@ -280,7 +283,8 @@ const resources = {
           sections: [
             { h: 'प्लेटफॉर्म का उपयोग', p: 'प्रॉपर्टी लिस्टिंग या खोजते समय उपयोगकर्ताओं को सटीक जानकारी प्रदान करनी चाहिए।' },
             { h: 'लिस्टिंग नियम', p: 'मकान मालिक अपने प्रॉपर्टी विवरण और छवियों की सटीकता के लिए स्वयं जिम्मेदार हैं।' },
-            { h: 'दायित्व की सीमा', p: 'GoEazy एक सुविधा प्रदाता है और मकान मालिकों और किरायेदारों के बीच के विवादों के लिए जिम्मेदार नहीं है।' }
+            { h: 'दायित्व की सीमा', p: 'GoEazy एक सुविधा प्रदाता है और मकान मालिकों और किरायेदारों के बीच के विवादों के लिए जिम्मेदार नहीं है।' },
+            { h: 'सूचना साझाकरण समझौता', p: 'इस प्लेटफॉर्म का उपयोग करके, आप सहमत हैं कि आवास व्यवस्था को सुविधाजनक बनाने के लिए आपकी संपर्क जानकारी मकान मालिकों और किरायेदारों के बीच साझा की जा सकती है, और भविष्य की मार्केटिंग पहलों के लिए GoEazy द्वारा इसका उपयोग किया जा सकता है।' }
           ]
         },
         cookies: {
