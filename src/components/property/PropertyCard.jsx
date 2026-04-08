@@ -26,12 +26,25 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
     toggleFavorite(property.id)
   }
 
-  // Memoize random values to avoid recalculation on each render
-  const { rating, numGuests, numBeds } = useMemo(() => ({
-    rating: property.rating || (4 + Math.random()).toFixed(1),
-    numGuests: Math.floor(Math.random() * 6) + 4,
-    numBeds: property.bedrooms || Math.floor(Math.random() * 3) + 2,
-  }), [property.id])
+  // Generate deterministic "random" values based on property ID
+  const simpleHash = (str) => {
+    let hash = 0
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i)
+      hash = hash & hash
+    }
+    return Math.abs(hash) % 100 / 100
+  }
+
+  // Memoize values with deterministic calculation
+  const { rating, numGuests, numBeds } = useMemo(() => {
+    const seed = simpleHash(property.id?.toString() || '')
+    return {
+      rating: property.rating || (4 + seed).toFixed(1),
+      numGuests: Math.floor(seed * 6) + 4,
+      numBeds: property.bedrooms || Math.floor(seed * 3) + 2,
+    }
+  }, [property.id, property.rating, property.bedrooms])
 
   const formatPrice = (p) => {
      if(p > 1000) return (p/1000).toFixed(3)

@@ -7,7 +7,7 @@ import { useProperties } from '../hooks/useProperties'
 import { PropertyCard } from '../components/property/PropertyCard'
 import { Input, Select } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
-import { setFilters, resetFilters } from '../store/propertySlice'
+import { resetFilters } from '../store/propertySlice'
 import { PROPERTY_TYPES, AMENITIES, SORT_OPTIONS } from '../utils/constants'
 import { AMENITY_ICONS } from '../utils/helpers'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -18,13 +18,6 @@ export const Search = () => {
   const [searchParams] = useSearchParams()
   const { listings, filters, loading, hasMore, fetchProperties, updateFilters } = useProperties()
 
-  // Read ?type= from URL and apply as filter
-  useEffect(() => {
-    const typeParam = searchParams.get('type')
-    if (typeParam && ['Room', 'Flat', 'Hostel', 'PG'].includes(typeParam)) {
-      updateFilters({ type: typeParam })
-    }
-  }, [searchParams])
   const [viewMode, setViewMode] = useState('grid')
   const [showFilters, setShowFilters] = useState(false)
   const [localFilters, setLocalFilters] = useState({
@@ -37,6 +30,16 @@ export const Search = () => {
     sortOrder: filters.sortOrder || 'desc'
   })
 
+  // Read ?type= from URL and apply as filter
+  useEffect(() => {
+    const typeParam = searchParams.get('type')
+    if (typeParam && ['Room', 'Flat', 'Hostel', 'PG'].includes(typeParam)) {
+      updateFilters({ type: typeParam })
+    }
+  }, [searchParams, updateFilters])
+
+  // Sync local filters with global filters when global filters change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setLocalFilters({
       city: filters.city || '', 
@@ -56,23 +59,7 @@ export const Search = () => {
 
   useEffect(() => {
     fetchProperties(true)
-  }, [filters])
-
-  const handleFilterChange = (key, value) => {
-    updateFilters({ [key]: value })
-  }
-
-  const getPlural = (t) => {
-    if (!t) return 'Properties'
-    if (t === 'Room') return 'Rooms'
-    if (t === 'PG') return 'PGs'
-    if (t === 'Flat') return 'Flats'
-    if (t === 'Hostel') return 'Hostels'
-    return t + 's'
-  }
-
-  const typeDisplay = filters.type || 'Property'
-  const typePlural = getPlural(filters.type)
+  }, [filters, fetchProperties])
 
   // Use dummy count if listings.length is 0 because the API might just have 0
   const count = listings.length > 0 ? listings.length : 649

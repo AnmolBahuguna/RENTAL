@@ -79,14 +79,14 @@ export const Hero = () => {
 
         {/* Stats */}
         <div className="flex flex-wrap justify-center gap-8 animate-fadeInUp" style={{ animationDelay: '350ms' }}>
-          {stats.map(({ icon: Icon, value, label }) => (
-            <div key={label} className="flex items-center gap-3">
+          {stats.map((stat) => (
+            <div key={stat.label} className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
-                <Icon size={18} className="text-brand-500" />
+                <stat.icon size={18} className="text-brand-500" />
               </div>
               <div className="text-left">
-                <div className="font-bold text-lg text-gray-900">{value}</div>
-                <div className="text-xs text-gray-500">{label}</div>
+                <div className="font-bold text-lg text-gray-900">{stat.value}</div>
+                <div className="text-xs text-gray-500">{stat.label}</div>
               </div>
             </div>
           ))}
