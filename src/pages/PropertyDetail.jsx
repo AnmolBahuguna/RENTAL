@@ -308,12 +308,12 @@ export const PropertyDetail = () => {
                     <div className="absolute inset-0 p-6 text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
                       {p.description}
                     </div>
-                    {/* Lock overlay - Premium Glass Refinement */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-sky-50/30 backdrop-blur-[12px]">
-                      <div className="w-14 h-14 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 shadow-sm mb-3">
-                        <EyeOff size={28} className="text-slate-400" />
+                    {/* Lock overlay - Premium Red Glass Refinement */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
+                      <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
+                        <EyeOff size={28} className="text-brand-500" />
                       </div>
-                      <p className="text-slate-500 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
                     </div>
                   </div>
                 )}
@@ -379,12 +379,12 @@ export const PropertyDetail = () => {
                       <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
                       <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                     </div>
-                    {/* Lock overlay - Premium Glass Refinement */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-sky-50/30 backdrop-blur-[12px]">
-                      <div className="w-14 h-14 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 shadow-sm mb-3">
-                        <EyeOff size={28} className="text-slate-400" />
+                    {/* Lock overlay - Premium Red Glass Refinement */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
+                      <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
+                        <EyeOff size={28} className="text-brand-500" />
                       </div>
-                      <p className="text-slate-500 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
                     </div>
                   </div>
                 )}
@@ -437,10 +437,10 @@ export const PropertyDetail = () => {
                         </a>
                       </div>
                     ) : (
-                      <div className="border border-gray-100 rounded-xl p-6 text-center bg-slate-50/30 relative overflow-hidden h-48 flex flex-col items-center justify-center shadow-sm border border-white/20">
+                      <div className="border border-brand-100/50 rounded-xl p-6 text-center bg-brand-50/10 relative overflow-hidden h-48 flex flex-col items-center justify-center shadow-sm border border-brand-600/20">
                         <div className="absolute inset-0 backdrop-blur-[15px]" />
                         <div className="relative z-10 flex flex-col items-center">
-                          <div className="w-12 h-12 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-3 border border-white/40 shadow-sm text-slate-400">
+                          <div className="w-12 h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-3 border border-brand-100 shadow-sm text-brand-500">
                             <EyeOff size={24} />
                           </div>
                           <p className="font-bold text-gray-900 mb-2 font-display text-lg">{t('property.sections.detailsLocked')}</p>
