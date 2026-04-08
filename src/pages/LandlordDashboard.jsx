@@ -54,7 +54,7 @@ export const LandlordDashboard = () => {
   const totalViews = properties.reduce((sum, p) => sum + (p.views || 0), 0)
 
   return (
-    <div className="pt-24 pb-20 bg-gray-50 min-h-screen">
+    <div className="pt-20 pb-20 bg-gray-50 min-h-screen">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
@@ -135,9 +135,9 @@ export const LandlordDashboard = () => {
             <Button onClick={() => navigate('/landlord/properties/new')}>List Your First Property</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
             {properties.map(p => (
-              <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.1)] hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] transition-shadow">
+              <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-[0_0_25px_rgba(0,0,0,0.1)] hover:shadow-[0_0_40px_rgba(0,0,0,0.15)] transition-all duration-300">
                 <div className="relative h-40 bg-gray-50 p-2">
                   <img src={p.images?.[0] || ''} alt={p.title} className="w-full h-full object-contain" />
                   <div className="absolute top-3 left-3"><TypeBadge type={p.type} /></div>
@@ -155,15 +155,15 @@ export const LandlordDashboard = () => {
                     <span className="flex items-center gap-1"><Eye size={14}/> {p.views || 0} views</span>
                   </div>
                   <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-                    <Button variant="secondary" size="sm" className="flex-1" onClick={() => navigate(`/property/${p.id}`)}>
-                      <Eye size={14} className="mr-1"/> View
+                    <Button variant="secondary" size="icon" onClick={() => navigate(`/property/${p.id}`)} title="View Property">
+                      <Eye size={18}/>
                     </Button>
-                    <Button variant="secondary" size="sm" className="flex-1 text-blue-600 hover:bg-blue-50" onClick={() => navigate(`/landlord/properties/${p.id}/edit`)}>
-                      <Edit size={14} className="mr-1"/> Edit
+                    <Button variant="secondary" size="icon" className="text-blue-600 hover:bg-blue-50" onClick={() => navigate(`/landlord/properties/${p.id}/edit`)} title="Edit Property">
+                      <Edit size={18}/>
                     </Button>
-                    <button className="p-2 rounded-xl border border-gray-200 text-[#CA3433] hover:bg-[#fff1f1] transition-colors" onClick={() => handleDelete(p.id)}>
-                      <Trash2 size={16}/>
-                    </button>
+                    <Button variant="danger" className="flex-1" onClick={() => handleDelete(p.id)} leftIcon={<Trash2 size={18}/>}>
+                      Delete Listing
+                    </Button>
                   </div>
                 </div>
               </div>
