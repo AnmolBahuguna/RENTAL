@@ -292,32 +292,24 @@ export const PropertyDetail = () => {
               <p className="text-gray-500 text-sm">
                 {hasUnlocked || (p.landlord_id === user?.id) ? (p.exact_location || `${p.area}, ${p.city} • ${p.pincode}`) : `${p.area}, ${p.city} • ${p.pincode}`}
               </p>
-            </div>
-
-            {/* About Card - Half Width */}
+                        {/* Amenities Card - Half Width */}
             <div className="md:col-span-1 h-full">
-              {p.description && (
+              {p.amenities && p.amenities.length > 0 && (
                 <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
-                  {(hasUnlocked || p.landlord_id === user?.id) ? (
-                    <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
-                      {p.description}
-                    </div>
-                  ) : (
-                    <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                      {/* Blurred preview */}
-                      <div className="absolute inset-0 p-6 text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
-                        {p.description}
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    {p.amenities.map(a => (
+                      <div key={a} className="flex gap-3 items-center">
+                         <div className="w-10 h-10 rounded-full bg-[#F9F8F6] flex items-center justify-center text-gray-600">
+                           {(() => {
+                             const Icon = AMENITY_ICONS[a];
+                             return Icon ? <Icon size={20} /> : null;
+                           })()}
+                         </div>
+                         <span className="font-semibold text-gray-700 capitalize text-[15px]">{a}</span>
                       </div>
-                      {/* Lock overlay - Premium Red Glass Refinement */}
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
-                        <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
-                          <EyeOff size={28} className="text-brand-500" />
-                        </div>
-                        <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
-                      </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -345,24 +337,30 @@ export const PropertyDetail = () => {
                </div>
             </div>
 
-            {/* Amenities Card - Half Width */}
+            {/* About Card - Half Width */}
             <div className="md:col-span-1 h-full">
-              {p.amenities && p.amenities.length > 0 && (
+              {p.description && (
                 <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    {p.amenities.map(a => (
-                      <div key={a} className="flex gap-3 items-center">
-                         <div className="w-10 h-10 rounded-full bg-[#F9F8F6] flex items-center justify-center text-gray-600">
-                           {(() => {
-                             const Icon = AMENITY_ICONS[a];
-                             return Icon ? <Icon size={20} /> : null;
-                           })()}
-                         </div>
-                         <span className="font-semibold text-gray-700 capitalize text-[15px]">{a}</span>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
+                  {(hasUnlocked || p.landlord_id === user?.id) ? (
+                    <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
+                      {p.description}
+                    </div>
+                  ) : (
+                    <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
+                      {/* Blurred preview */}
+                      <div className="absolute inset-0 p-6 text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
+                        {p.description}
                       </div>
-                    ))}
-                  </div>
+                      {/* Lock overlay - Premium Red Glass Refinement */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
+                        <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
+                          <EyeOff size={28} className="text-brand-500" />
+                        </div>
+                        <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -395,7 +393,7 @@ export const PropertyDetail = () => {
                   )}
                 </div>
               )}
-            </div>
+            </div>    </div>
 
             {/* Listing Agent Card - Full Width */}
             <div className="md:col-span-2 bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
