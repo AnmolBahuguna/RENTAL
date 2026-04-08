@@ -194,36 +194,60 @@ export const useProperties = () => {
   }
 
   const deleteProperty = async (id) => {
-    // Re-verify the current session directly from Supabase for maximum reliability
+    // 1. Get current session identity
     const { data: { user: sessionUser }, error: sessionError } = await supabase.auth.getUser()
-    
     if (sessionError || !sessionUser) {
-      console.error('Delete Property: Session verification failed', sessionError)
+      console.error('[useProperties] Session failed:', sessionError)
       throw new Error('Authentication session expired. Please log in again.')
     }
 
-    console.log(`[useProperties] Deletion attempt for property: ${id}`)
-    console.log(`[useProperties] Redux UID: ${user?.id}`)
-    console.log(`[useProperties] Session UID: ${sessionUser.id}`)
-    
-    // Explicitly use the sessionUser.id to bypass any potential Redux sync issues
-    const { error, count } = await supabase
-      .from('properties')
-      .delete({ count: 'exact' })
-      .eq('id', id)
-      .eq('landlord_id', sessionUser.id)
+    console.group(`[Diagnostic] Deletion for: ${id}`)
+    console.log('Session User ID:', sessionUser.id)
+    console.log('Redux User ID:', user?.id)
 
-    if (error) {
-      console.error('Delete Property Error:', error)
-      throw error
-    }
+    try {
+      // 2. DIAGNOSTIC: Try to find the property first via a SELECT
+      // We do this to verify if the property exists and what its landlord_id is.
+      const { data: existing, error: selectError } = await supabase
+        .from('properties')
+        .select('id, landlord_id, title')
+        .eq('id', id)
+        .maybeSingle()
 
-    if (count === 0) {
-      console.warn(`Delete failed: No property found with ID ${id} for Landlord ${sessionUser.id}`)
-      throw new Error('Property not found or you do not have permission to delete it')
+      if (selectError) {
+        console.error('Diagnostic SELECT failed:', selectError)
+      } else if (!existing) {
+        console.warn('Diagnostic result: Property DOES NOT EXIST in database with this ID.')
+      } else {
+        console.log('Diagnostic result: Property FOUND in database.')
+        console.log('Actual Landlord ID in DB:', existing.landlord_id)
+        if (existing.landlord_id !== sessionUser.id) {
+          console.error('CRITICAL: Landlord ID mismatch! You are trying to delete a property owned by someone else.')
+        }
+      }
+
+      // 3. EXECUTION: Try to delete using only the primary key 'id'
+      // RLS (Row Level Security) will automatically block this if it's the wrong user.
+      const { error: deleteError, count } = await supabase
+        .from('properties')
+        .delete({ count: 'exact' })
+        .eq('id', id)
+
+      if (deleteError) {
+        console.error('Deletion operation failed:', deleteError)
+        throw deleteError
+      }
+
+      console.log('Deletion affected row count:', count)
+      
+      if (count === 0) {
+        throw new Error('Property not found or you do not have permission to delete it')
+      }
+      
+      return true
+    } finally {
+      console.groupEnd()
     }
-    
-    return true
   }
 
   const fetchFavorites = useCallback(async () => {
