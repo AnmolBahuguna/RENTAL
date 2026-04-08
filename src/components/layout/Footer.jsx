@@ -1,48 +1,19 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Home, Mail, Phone } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Mail, Phone } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
-import { openAuthModal } from '../../store/authSlice'
 
 export const Footer = () => {
   const { t } = useTranslation()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { user } = useSelector(s => s.auth)
 
-  const handleLandlordClick = (e) => {
-    e.preventDefault()
-    if (user) {
-      navigate('/landlord')
-    } else {
-      localStorage.setItem('sb_return_to', '/landlord')
-      dispatch(openAuthModal('signup'))
-    }
-  }
 
-  // Renter links navigate directly to the correct search category
-  const renterLinks = [
-    { label: t('footer.links.rooms'), to: '/search?type=Room' },
-    { label: t('footer.links.flats'), to: '/search?type=Flat' },
-    { label: t('footer.links.hostels'), to: '/search?type=Hostel' },
-    { label: t('footer.links.pgs'), to: '/search?type=PG' },
-  ]
-
-  // Landlord links (pricing removed)
-  const landlordLinks = [
-    { label: t('footer.links.list') },
-    { label: t('footer.links.manage') },
-    { label: t('footer.links.analytics') },
-    { label: t('footer.links.dashboard') },
-  ]
 
   return (
     <footer className="bg-gray-950 text-gray-300 mt-20">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Brand */}
-          <div className="lg:col-span-1">
+          <div>
             <div className="flex items-center gap-3 mb-6 group cursor-pointer">
               <div className="w-9 h-9 rounded-lg border-2 border-brand-500 rounded-tl-xl rounded-br-xl bg-white shadow-sm flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-6 transition-transform">
                 <div className="-rotate-3 flex items-end justify-center">
@@ -59,37 +30,6 @@ export const Footer = () => {
             </p>
             <div className="flex gap-3">
               {/* Add social links here if needed */}
-            </div>
-          </div>
-
-          {/* Link Sections Container */}
-          <div className="grid grid-cols-2 gap-8 lg:col-span-2">
-            {/* For Users */}
-            <div>
-              <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forRenters')}</h4>
-              <ul className="space-y-2.5">
-                {renterLinks.map(item => (
-                  <li key={item.label}>
-                    <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors">
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* For Landlords */}
-            <div>
-              <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forLandlords')}</h4>
-              <ul className="space-y-2.5">
-                {landlordLinks.map(item => (
-                  <li key={item.label}>
-                    <button onClick={handleLandlordClick} className="text-sm text-gray-400 hover:text-white transition-colors text-left">
-                      {item.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
 
