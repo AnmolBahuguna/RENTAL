@@ -8,7 +8,7 @@ export const LegalLayout = ({ children, title, lastUpdated }) => {
   const { t } = useTranslation()
 
   return (
-    <div className="pt-32 pb-20 min-h-screen bg-white">
+    <div className="pt-12 md:pt-16 pb-20 min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <button 
           onClick={() => navigate(-1)}
@@ -27,6 +27,10 @@ export const LegalLayout = ({ children, title, lastUpdated }) => {
 
         <div className="prose prose-gray max-w-none">
           {children}
+        </div>
+        
+        <div className="mt-12 text-center">
+          <p className="text-xl font-bold italic text-gray-800">Thank you for choosing GoEazy!</p>
         </div>
       </div>
     </div>

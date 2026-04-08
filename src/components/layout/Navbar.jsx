@@ -195,7 +195,7 @@ export const Navbar = () => {
       </div>
 
       {/* Secondary Navbar (Categories) */}
-      {!location.pathname.startsWith('/property/') && (
+      {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund'].some(r => location.pathname.startsWith(r)) && (
         <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
         <div className="flex items-center h-16 ml-4 sm:ml-8 gap-6 overflow-x-auto scrollbar-hide flex-1">
           <button 
