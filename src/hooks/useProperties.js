@@ -152,12 +152,18 @@ export const useProperties = () => {
     const imageUrls = []
     for (const img of images) {
       const ext = img.name.split('.').pop()
-      const path = `properties/${user.id}/${Date.now()}.${ext}`
+      const path = `properties/${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
+      
+      console.log(`[useProperties] Uploading image: ${path}`)
       const { error: uploadError } = await supabase.storage.from('property-images').upload(path, img)
-      if (!uploadError) {
-        const { data: { publicUrl } } = supabase.storage.from('property-images').getPublicUrl(path)
-        imageUrls.push(publicUrl)
+
+      if (uploadError) {
+        console.error('[useProperties] Image upload failed:', uploadError)
+        throw new Error(`Image upload failed: ${uploadError.message}`)
       }
+      
+      const { data: { publicUrl } } = supabase.storage.from('property-images').getPublicUrl(path)
+      imageUrls.push(publicUrl)
     }
 
     const { data, error } = await supabase
@@ -174,12 +180,18 @@ export const useProperties = () => {
     if (newImages?.length) {
       for (const img of newImages) {
         const ext = img.name.split('.').pop()
-        const path = `properties/${user.id}/${Date.now()}.${ext}`
+        const path = `properties/${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
+        
+        console.log(`[useProperties] Uploading new image: ${path}`)
         const { error: uploadError } = await supabase.storage.from('property-images').upload(path, img)
-        if (!uploadError) {
-          const { data: { publicUrl } } = supabase.storage.from('property-images').getPublicUrl(path)
-          imageUrls.push(publicUrl)
+
+        if (uploadError) {
+          console.error('[useProperties] New image upload failed:', uploadError)
+          throw new Error(`Image upload failed: ${uploadError.message}`)
         }
+        
+        const { data: { publicUrl } } = supabase.storage.from('property-images').getPublicUrl(path)
+        imageUrls.push(publicUrl)
       }
     }
     const { data, error } = await supabase
