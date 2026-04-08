@@ -33,8 +33,7 @@ export const BannerSlider = () => {
                 <img 
                   src={src} 
                   alt={`GoEazy Banner ${index + 1}`} 
-                  className="w-full h-auto object-cover sm:object-fill"
-                  style={{ minHeight: '200px' }}
+                  className="w-full h-auto block"
                   loading={index === 0 ? "eager" : "lazy"}
                 />
               </div>

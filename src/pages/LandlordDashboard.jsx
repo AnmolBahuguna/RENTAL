@@ -25,9 +25,11 @@ export const LandlordDashboard = () => {
 
   const loadProperties = async () => {
     try {
+      if (user) console.log('[LandlordDashboard] Fetching properties for user:', user.id)
       const data = await getLandlordProperties()
       setProperties(data)
-    } catch {
+    } catch (err) {
+      console.error('[LandlordDashboard] Failed to load properties:', err)
       toast.error('Failed to load listings')
     } finally {
       setLoading(false)

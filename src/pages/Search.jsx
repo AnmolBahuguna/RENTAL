@@ -62,17 +62,17 @@ export const Search = () => {
   }, [filters, fetchProperties])
 
   // Use the actual totalCount from database
-  const count = totalCount
+  const count = useMemo(() => totalCount, [totalCount])
 
   const renderFilterContent = () => (
     <div className="space-y-6">
       {/* Location Selection */}
       <div>
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Location Selection</label>
+        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Location Selection</h4>
         <div className="grid grid-cols-2 gap-3">
            <div className="flex flex-col gap-1.5 focus-within:text-brand-600 transition-colors">
              <label htmlFor="filter-city" className="sr-only">City</label>
-             <div className="flex bg-gray-50 rounded-xl overflow-hidden border border-gray-200 focus-within:border-brand-500 focus-within:bg-white transition-colors pr-2">
+             <div className="flex bg-gray-50 rounded-xl overflow-hidden border border-gray-200 focus-within:border-brand-50-focus transition-colors pr-2">
                <input 
                  type="text" 
                  id="filter-city"
@@ -80,13 +80,13 @@ export const Search = () => {
                  placeholder="City (e.g. Mumbai)" 
                  className="w-full bg-transparent border-none text-sm py-2.5 px-3 focus:ring-0 outline-none" 
                  value={localFilters.city} 
-                 onChange={e => setLocalFilters({...localFilters, city: e.target.value})} 
+                 onChange={e => setLocalFilters(prev => ({...prev, city: e.target.value}))} 
                />
              </div>
            </div>
            <div className="flex flex-col gap-1.5 focus-within:text-brand-600 transition-colors">
              <label htmlFor="filter-area" className="sr-only">Area</label>
-             <div className="flex bg-gray-50 rounded-xl overflow-hidden border border-gray-200 focus-within:border-brand-500 focus-within:bg-white transition-colors pr-2">
+             <div className="flex bg-gray-50 rounded-xl overflow-hidden border border-gray-200 focus-within:border-brand-50-focus transition-colors pr-2">
                <input 
                  type="text" 
                  id="filter-area"
@@ -94,7 +94,7 @@ export const Search = () => {
                  placeholder="Area" 
                  className="w-full bg-transparent border-none text-sm py-2.5 px-3 focus:ring-0 outline-none" 
                  value={localFilters.area} 
-                 onChange={e => setLocalFilters({...localFilters, area: e.target.value})} 
+                 onChange={e => setLocalFilters(prev => ({...prev, area: e.target.value}))} 
                />
              </div>
            </div>
@@ -104,14 +104,14 @@ export const Search = () => {
       {/* Sort & Price Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Sort By</label>
+          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Sort By</h4>
           <div className="grid grid-cols-2 gap-2">
             {SORT_OPTIONS.map(opt => (
               <button
                 key={opt.value}
                 onClick={() => {
                   const [by, ord] = opt.value.split(':');
-                  setLocalFilters({ ...localFilters, sortBy: by, sortOrder: ord });
+                  setLocalFilters(prev => ({ ...prev, sortBy: by, sortOrder: ord }));
                 }}
                 className={`px-3 py-2 rounded-xl text-[11px] font-semibold transition-all border ${localFilters.sortBy + ':' + localFilters.sortOrder === opt.value ? 'bg-brand-50 text-brand-600 border-brand-200 shadow-sm' : 'border-gray-100 text-gray-600 hover:bg-gray-50'}`}
               >
@@ -123,7 +123,7 @@ export const Search = () => {
 
         <div>
            <div className="flex justify-between items-center mb-2">
-             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Price Max</label>
+             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Price Max</h4>
              <span className="text-sm font-bold text-brand-600">₹{localFilters.priceMax >= 100000 ? '1L+' : localFilters.priceMax.toLocaleString()}</span>
            </div>
            <div className="pt-4 pb-2">
@@ -133,7 +133,7 @@ export const Search = () => {
                max="100000" 
                step="1000"
                value={localFilters.priceMax} 
-               onChange={e => setLocalFilters({...localFilters, priceMax: Number(e.target.value)})}
+               onChange={e => setLocalFilters(prev => ({...prev, priceMax: Number(e.target.value)}))}
                className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#CA3433]"
              />
               <div className="flex justify-between mt-2 text-[10px] font-bold text-gray-400">
@@ -146,12 +146,12 @@ export const Search = () => {
 
       {/* Property Type */}
       <div>
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Property Type</label>
+        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Property Type</h4>
         <div className="flex flex-wrap gap-2">
           {['Room', 'Flat', 'Hostel', 'PG'].map(type => (
             <button
               key={type}
-              onClick={() => setLocalFilters({ ...localFilters, type })}
+              onClick={() => setLocalFilters(prev => ({ ...prev, type }))}
               className={`px-5 py-2 rounded-xl text-[13px] font-semibold transition-all border ${localFilters.type === type ? 'bg-[#fdf2f2] text-[#CA3433] border-[#fbe1e1] shadow-sm' : 'border-gray-100 text-gray-600 hover:bg-gray-50'}`}
             >
               {t(`property.types.${type}`)}
@@ -166,6 +166,9 @@ export const Search = () => {
       </div>
     </div>
   )
+
+  // Memoize Filter UI to prevent unnecessary re-calculation during typing
+  const filterContent = useMemo(() => renderFilterContent(), [localFilters, t, dispatch, showFilters])
 
   return (
     <div className="pt-8 pb-12 min-h-screen bg-gray-50/50">
@@ -202,7 +205,7 @@ export const Search = () => {
                   <>
                     <div className="fixed inset-0 bg-black/5 backdrop-blur-[1px] z-10" onClick={() => setShowFilters(false)}></div>
                     <div className="absolute right-0 top-full mt-3 w-[calc(100vw-2rem)] xs:w-[340px] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 p-5 z-20 cursor-default animate-in fade-in zoom-in-95 duration-200">
-                      {renderFilterContent()}
+                      {filterContent}
                     </div>
                   </>
                 )}
@@ -233,7 +236,7 @@ export const Search = () => {
                  <>
                    <div className="fixed inset-0 z-10" onClick={() => setShowFilters(false)}></div>
                    <div className="absolute right-0 top-full mt-3 w-[460px] bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-gray-100 p-6 z-20 cursor-default overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                     {renderFilterContent()}
+                     {filterContent}
                    </div>
                  </>
                )}
@@ -263,7 +266,10 @@ export const Search = () => {
           </div>
         ) : listings.length > 0 ? (
           <>
-            <div className={`grid gap-3 sm:gap-6 xl:gap-8 ${viewMode === 'grid' ? 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5' : 'grid-cols-1'}`}>
+            <div className={cn(
+               "grid gap-3 sm:gap-6 xl:gap-8",
+               viewMode === 'grid' ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5" : "grid-cols-1"
+            )}>
               {listings.map(p => <PropertyCard key={p.id} property={p} layout={viewMode} />)}
             </div>
             {hasMore && (

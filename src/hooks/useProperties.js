@@ -194,14 +194,24 @@ export const useProperties = () => {
   }
 
   const deleteProperty = async (id) => {
-    if (!user?.id) throw new Error('You must be logged in to delete a property')
+    // Re-verify the current session directly from Supabase for maximum reliability
+    const { data: { user: sessionUser }, error: sessionError } = await supabase.auth.getUser()
     
-    // Use { count: 'exact' } to verify the row was actually found and deleted
+    if (sessionError || !sessionUser) {
+      console.error('Delete Property: Session verification failed', sessionError)
+      throw new Error('Authentication session expired. Please log in again.')
+    }
+
+    console.log(`[useProperties] Deletion attempt for property: ${id}`)
+    console.log(`[useProperties] Redux UID: ${user?.id}`)
+    console.log(`[useProperties] Session UID: ${sessionUser.id}`)
+    
+    // Explicitly use the sessionUser.id to bypass any potential Redux sync issues
     const { error, count } = await supabase
       .from('properties')
       .delete({ count: 'exact' })
       .eq('id', id)
-      .eq('landlord_id', user.id)
+      .eq('landlord_id', sessionUser.id)
 
     if (error) {
       console.error('Delete Property Error:', error)
@@ -209,7 +219,7 @@ export const useProperties = () => {
     }
 
     if (count === 0) {
-      console.warn(`Delete failed: No property found with ID ${id} for Landlord ${user.id}`)
+      console.warn(`Delete failed: No property found with ID ${id} for Landlord ${sessionUser.id}`)
       throw new Error('Property not found or you do not have permission to delete it')
     }
     
@@ -255,10 +265,16 @@ export const useProperties = () => {
   }, [user])
 
   const getLandlordProperties = async () => {
+    // Get session ID directly for reliability
+    const { data: { user: sessionUser } } = await supabase.auth.getUser()
+    const activeId = sessionUser?.id || user?.id
+
+    if (!activeId) throw new Error('You must be logged in to view your properties')
+
     const { data, error } = await supabase
       .from('properties')
       .select('*')
-      .eq('landlord_id', user.id)
+      .eq('landlord_id', activeId)
       .order('created_at', { ascending: false })
     if (error) throw error
     return data || []
