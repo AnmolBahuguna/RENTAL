@@ -303,17 +303,17 @@ export const PropertyDetail = () => {
                     {p.description}
                   </div>
                 ) : (
-                  <div className="relative">
+                  <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
                     {/* Blurred preview */}
-                    <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
+                    <div className="absolute inset-0 p-6 text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
                       {p.description}
                     </div>
-                    {/* Lock overlay - Light Glass Refinement */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/40 backdrop-blur-[12px] rounded-lg border border-white/20 min-h-[150px]">
-                      <div className="w-12 h-12 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center border border-white/40 shadow-sm mb-2">
-                        <EyeOff size={24} className="text-slate-400" />
+                    {/* Lock overlay - Premium Glass Refinement */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-sky-50/30 backdrop-blur-[12px]">
+                      <div className="w-14 h-14 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 shadow-sm mb-3">
+                        <EyeOff size={28} className="text-slate-400" />
                       </div>
-                      <p className="text-slate-500 font-bold tracking-wider text-[11px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      <p className="text-slate-500 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
                     </div>
                   </div>
                 )}
@@ -373,18 +373,18 @@ export const PropertyDetail = () => {
                     <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                   </div>
                 ) : (
-                  <div className="relative">
+                  <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
                     {/* Blurred preview */}
-                    <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6] select-none" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
+                    <div className="absolute inset-0 p-6 flex items-start gap-4 select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
                       <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
                       <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                     </div>
-                    {/* Lock overlay - Light Glass Refinement */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/40 backdrop-blur-[12px] rounded-xl border border-white/20 min-h-[150px]">
-                      <div className="w-12 h-12 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center border border-white/40 shadow-sm mb-2">
-                        <EyeOff size={24} className="text-slate-400" />
+                    {/* Lock overlay - Premium Glass Refinement */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-sky-50/30 backdrop-blur-[12px]">
+                      <div className="w-14 h-14 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 shadow-sm mb-3">
+                        <EyeOff size={28} className="text-slate-400" />
                       </div>
-                      <p className="text-slate-500 font-bold tracking-wider text-[11px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      <p className="text-slate-500 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
                     </div>
                   </div>
                 )}
