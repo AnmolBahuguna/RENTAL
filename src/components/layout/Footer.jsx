@@ -91,38 +91,6 @@ export const Footer = () => {
                 ))}
               </ul>
             </div>
-            </ul>
-=======
-          {/* Link Sections Container */}
-          <div className="grid grid-cols-2 gap-8 lg:col-span-2">
-            {/* For Users */}
-            <div>
-              <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forRenters')}</h4>
-              <ul className="space-y-2.5">
-                {renterLinks.map(item => (
-                  <li key={item.label}>
-                    <Link to={item.to} className="text-sm text-gray-400 hover:text-white transition-colors">
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* For Landlords */}
-            <div>
-              <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.forLandlords')}</h4>
-              <ul className="space-y-2.5">
-                {landlordLinks.map(item => (
-                  <li key={item.label}>
-                    <button onClick={handleLandlordClick} className="text-sm text-gray-400 hover:text-white transition-colors text-left">
-                      {item.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
->>>>>>> Stashed changes
           </div>
 
           {/* Contact */}
