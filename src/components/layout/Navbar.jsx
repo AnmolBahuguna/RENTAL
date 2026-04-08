@@ -52,7 +52,7 @@ export const Navbar = () => {
   return (
     <nav className="relative z-40 bg-white">
       {/* Top Navbar */}
-      <div className="w-full mx-auto px-4 sm:px-8">
+      <div className="w-full mx-auto px-4 sm:px-10 md:px-16 lg:px-20">
         <div className="flex items-center justify-between h-20">
           
           {/* Logo & EN */}
@@ -197,7 +197,7 @@ export const Navbar = () => {
       {/* Secondary Navbar (Categories) */}
       {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund', '/about'].some(r => location.pathname.startsWith(r)) && (
         <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
-        <div className="flex items-center h-16 ml-4 sm:ml-8 gap-6 overflow-x-auto scrollbar-hide flex-1">
+        <div className="flex items-center h-16 px-4 sm:px-10 md:px-16 lg:px-20 gap-6 overflow-x-auto scrollbar-hide flex-1">
           <button 
             onClick={() => updateFilters({ type: '' })}
             className="flex items-center gap-2 px-6 h-full bg-gradient-to-r from-brand-pink to-brand-500 text-white font-semibold rounded-tr-3xl"

@@ -222,7 +222,7 @@ export const PropertyDetail = () => {
 
   return (
     <div className="pt-8 pb-20 bg-[#F9F8F6] min-h-screen">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-10 md:px-16 lg:px-20">
         
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft size={16} /> {t('property.labels.back')}
