@@ -367,35 +367,15 @@ export const PropertyDetail = () => {
               )}
             </div>
 
-            {/* Listing Agent Card - Full Width */}
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">Listing Agent</h2>
-              <div className="flex items-center gap-6">
-                <img src={p.profiles?.avatar_url || p.landlord?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">{p.profiles?.full_name || p.landlord?.name} <CheckCircle2 size={16} className="text-green-500" /></h3>
-                  <div className="flex flex-col sm:flex-row gap-1 sm:gap-4 text-sm text-gray-500 mt-1">
-                    {(hasUnlocked || p.landlord_id === user?.id) ? (
-                      <>
-                        <a href={`mailto:${p.contact_email || p.profiles?.email}`} className="hover:text-gray-900">{p.contact_email || p.profiles?.email || 'owner@example.com'}</a>
-                        <span className="hidden sm:inline">•</span>
-                        <a href={`tel:${p.contact_phone || p.profiles?.phone}`} className="hover:text-gray-900">{p.contact_phone || p.profiles?.phone || 'Not provided'}</a>
-                      </>
-                    ) : (
-                      <span>{t('property.sections.contactLocked')}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+
 
           </div>
 
           {/* RIGHT COLUMN - SLIDER & SIDEBAR */}
-          <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6 lg:sticky lg:top-28">
+          <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6">
             {/* IMAGE SLIDER */}
             <div className="w-full">
-              <div className="relative w-full aspect-square bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group">
+              <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group border border-gray-200/50">
                 <Swiper
                   modules={[Autoplay, Pagination, Navigation]}
                   spaceBetween={0}
@@ -423,12 +403,12 @@ export const PropertyDetail = () => {
                 
                 {/* Overlay Actions */}
                 <div className="absolute top-4 right-4 flex gap-2 z-10">
-                  <Button variant="secondary" className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm" onClick={handleShare}>
-                    <Share2 size={16} />
-                  </Button>
-                  <Button variant="secondary" className={`bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center transition-colors shadow-sm ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-900 hover:bg-white'}`} onClick={handleFav}>
-                    <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
-                  </Button>
+                  <button className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm cursor-pointer" onClick={handleShare}>
+                    <Share2 size={18} />
+                  </button>
+                  <button className={`bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white transition-colors shadow-sm cursor-pointer ${isFav ? 'text-red-500' : 'text-gray-900'}`} onClick={handleFav}>
+                    <Heart size={18} fill={isFav ? 'currentColor' : 'none'} />
+                  </button>
                 </div>
               </div>
             </div>
@@ -484,6 +464,27 @@ export const PropertyDetail = () => {
                   {unlocking ? t('property.sections.processing') : t('property.sections.unlockBtn')}
                 </button>
               )}
+            </div>
+
+            {/* Listing Agent Card */}
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">Listing Agent</h2>
+              <div className="flex items-center gap-6">
+                <img src={p.profiles?.avatar_url || p.landlord?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">{p.profiles?.full_name || p.landlord?.name} <CheckCircle2 size={16} className="text-green-500" /></h3>
+                  <div className="flex flex-col text-sm text-gray-500 mt-1 gap-1">
+                    {(hasUnlocked || p.landlord_id === user?.id) ? (
+                      <>
+                        <a href={`mailto:${p.contact_email || p.profiles?.email}`} className="hover:text-gray-900 truncate">{p.contact_email || p.profiles?.email || 'owner@example.com'}</a>
+                        <a href={`tel:${p.contact_phone || p.profiles?.phone}`} className="hover:text-gray-900">{p.contact_phone || p.profiles?.phone || 'Not provided'}</a>
+                      </>
+                    ) : (
+                      <span>{t('property.sections.contactLocked')}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
