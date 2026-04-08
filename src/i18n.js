@@ -82,7 +82,10 @@ const resources = {
           signinPrompt: 'Please sign in to unlock owner contact details.',
           callNow: 'Call Now',
           sendEmail: 'Send Email',
-          contactLocked: 'Contact details locked. Unlock to view.'
+          contactLocked: 'Contact details locked. Unlock to view.',
+          descLocked: 'Full description locked',
+          payToUnlockAll: 'Pay ₹9 to unlock all details',
+          landmarksLocked: 'Nearby landmarks locked'
         }
       },
       footer: {
@@ -247,7 +250,10 @@ const resources = {
           signinPrompt: 'मालिक के संपर्क विवरण अनलॉक करने के लिए कृपया साइन इन करें।',
           callNow: 'अभी कॉल करें',
           sendEmail: 'ईमेल भेजें',
-          contactLocked: 'संपर्क विवरण लॉक हैं। देखने के लिए अनलॉक करें।'
+          contactLocked: 'संपर्क विवरण लॉक हैं। देखने के लिए अनलॉक करें।',
+          descLocked: 'संपूर्ण विवरण लॉक है',
+          payToUnlockAll: 'सभी विवरण अनलॉक करने के लिए ₹9 भुगतान करें',
+          landmarksLocked: 'नज़दीकी लैंडमार्क लॉक हैं'
         }
       },
       footer: {

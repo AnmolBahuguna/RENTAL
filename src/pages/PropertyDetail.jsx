@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown } from 'lucide-react'
+import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { openAuthModal } from '../store/authSlice'
 import { useProperties } from '../hooks/useProperties'
@@ -298,9 +298,35 @@ export const PropertyDetail = () => {
             {p.description && (
               <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
-                <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
-                  {p.description}
-                </div>
+                {(hasUnlocked || p.landlord_id === user?.id) ? (
+                  <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
+                    {p.description}
+                  </div>
+                ) : (
+                  <div className="relative">
+                    {/* Blurred preview */}
+                    <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
+                      {p.description}
+                    </div>
+                    {/* Lock overlay */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-[2px] rounded-lg">
+                      <div className="flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-2xl px-6 py-4 shadow-md">
+                        <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center">
+                          <Lock size={18} className="text-white" />
+                        </div>
+                        <p className="text-sm font-bold text-gray-900 text-center">{t('property.sections.descLocked')}</p>
+                        <p className="text-xs text-gray-500 text-center">{t('property.sections.payToUnlockAll')}</p>
+                        <button
+                          onClick={handleUnlock}
+                          disabled={unlocking}
+                          className="mt-1 px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-full hover:bg-black transition-all disabled:opacity-70"
+                        >
+                          {unlocking ? t('property.sections.processing') : t('property.sections.unlockBtn')}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -351,10 +377,37 @@ export const PropertyDetail = () => {
             {p.nearby_landmarks && (
               <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
-                <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
-                  <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
-                  <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
-                </div>
+                {(hasUnlocked || p.landlord_id === user?.id) ? (
+                  <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
+                    <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
+                    <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    {/* Blurred preview */}
+                    <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6] select-none" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
+                      <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
+                      <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
+                    </div>
+                    {/* Lock overlay */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-[2px] rounded-xl">
+                      <div className="flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-2xl px-6 py-4 shadow-md">
+                        <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center">
+                          <Lock size={18} className="text-white" />
+                        </div>
+                        <p className="text-sm font-bold text-gray-900 text-center">{t('property.sections.landmarksLocked')}</p>
+                        <p className="text-xs text-gray-500 text-center">{t('property.sections.payToUnlockAll')}</p>
+                        <button
+                          onClick={handleUnlock}
+                          disabled={unlocking}
+                          className="mt-1 px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-full hover:bg-black transition-all disabled:opacity-70"
+                        >
+                          {unlocking ? t('property.sections.processing') : t('property.sections.unlockBtn')}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
