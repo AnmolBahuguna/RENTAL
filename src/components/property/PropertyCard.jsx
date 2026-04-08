@@ -95,7 +95,7 @@ const PropertyCardComponent = ({ property, layout = 'grid' }) => {
       onClick={() => navigate(`/property/${property.id}`)}
     >
       {/* Image Container */}
-      <div className="relative w-full aspect-[4/3] sm:aspect-[4/3] bg-gray-50 isolate rounded-b-md overflow-hidden">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[4/3] bg-gray-50 isolate rounded-b-[10px] overflow-hidden">
         {!imgLoaded && !imgError && (
           <div className="skeleton absolute inset-0 z-0" />
         )}
@@ -130,17 +130,17 @@ const PropertyCardComponent = ({ property, layout = 'grid' }) => {
         </button>
       </div>
 
-      {/* Content - Added consistent padding */}
-      <div className="p-4 flex-1 flex flex-col min-w-0">
-        <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1 shadow-sm sm:mb-2">
+      {/* Content - Minor height reduction */}
+      <div className="px-3 py-2.5 sm:px-4 sm:py-3 flex-1 flex flex-col min-w-0">
+        <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1 shadow-sm sm:mb-1.5">
           {t(`property.types.${property.type}`) || t('search.properties')}
         </p>
         
-        <h3 className="font-bold text-gray-900 text-sm sm:text-lg leading-snug line-clamp-1 mb-1 sm:mb-2">
+        <h3 className="font-bold text-gray-900 text-sm sm:text-lg leading-snug line-clamp-1 mb-1 sm:mb-1.5">
           {property.title}
         </h3>
         
-        <p className="text-[11px] sm:text-sm text-gray-500 mb-4 sm:mb-6">
+        <p className="text-[11px] sm:text-sm text-gray-500 mb-2.5 sm:mb-3">
            {numGuests} {t('property.labels.guests')} · {numBeds} {t('property.labels.beds')}
         </p>
  

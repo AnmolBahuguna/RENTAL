@@ -12,8 +12,7 @@ CREATE POLICY "Landlords can delete own property" ON public.properties
 FOR DELETE USING (auth.uid() = landlord_id);
 
 -- 2. Fix Storage Policies (Image Upload & View)
--- Ensure RLS is enabled on storage.objects
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- (RLS is usually enabled by default on storage.objects in Supabase)
 
 -- Allow anyone to see images in the property-images bucket
 DROP POLICY IF EXISTS "Public property images viewable by everyone" ON storage.objects;

@@ -232,6 +232,45 @@ export const PropertyDetail = () => {
   const mainImage = images[0] || PLACEHOLDER_IMAGE
   const otherImages = images.slice(1, 5) // up to 4 other images
 
+  const renderSlider = () => (
+    <div className="relative w-full aspect-square md:aspect-[4/3] bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group border border-gray-200/50">
+      <Swiper
+        modules={[Autoplay, Pagination, Navigation]}
+        spaceBetween={0}
+        slidesPerView={1}
+        navigation
+        pagination={{ clickable: true, dynamicBullets: true }}
+        autoplay={{ delay: 4000, disableOnInteraction: false }}
+        className="w-full h-full property-detail-slider"
+      >
+        {images.map((img, i) => (
+          <SwiperSlide key={i}>
+            <div 
+              className="w-full h-full cursor-pointer flex items-center justify-center bg-gray-100"
+              onClick={() => openGallery(i)}
+            >
+              <img 
+                src={img} 
+                alt={`${p.title} - View ${i + 1}`} 
+                className="w-full h-full object-contain" 
+              />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+      
+      {/* Overlay Actions */}
+      <div className="absolute top-4 right-4 flex gap-2 z-10">
+        <button className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm cursor-pointer" onClick={handleShare}>
+          <Share2 size={18} />
+        </button>
+        <button className={`bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white transition-colors shadow-sm cursor-pointer ${isFav ? 'text-red-500' : 'text-gray-900'}`} onClick={handleFav}>
+          <Heart size={18} fill={isFav ? 'currentColor' : 'none'} />
+        </button>
+      </div>
+    </div>
+  )
+
   return (
     <div className="pt-8 pb-20 bg-[#F9F8F6] min-h-screen">
       <div className="w-full px-4 sm:px-10 md:px-16 lg:px-20">
@@ -240,8 +279,13 @@ export const PropertyDetail = () => {
           <ArrowLeft size={16} /> {t('property.labels.back')}
         </button>
 
+        {/* MOBILE SLIDER - Top of page */}
+        <div className="block lg:hidden w-full mb-6">
+          {renderSlider()}
+        </div>
+
         {/* MAIN CONTENT COLUMNS */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start lg:mt-6">
           
           {/* LEFT COLUMN - CONTENT GRID */}
           <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
@@ -373,44 +417,9 @@ export const PropertyDetail = () => {
 
           {/* RIGHT COLUMN - SLIDER & SIDEBAR */}
           <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6">
-            {/* IMAGE SLIDER */}
-            <div className="w-full">
-              <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group border border-gray-200/50">
-                <Swiper
-                  modules={[Autoplay, Pagination, Navigation]}
-                  spaceBetween={0}
-                  slidesPerView={1}
-                  navigation
-                  pagination={{ clickable: true, dynamicBullets: true }}
-                  autoplay={{ delay: 4000, disableOnInteraction: false }}
-                  className="w-full h-full property-detail-slider"
-                >
-                  {images.map((img, i) => (
-                    <SwiperSlide key={i}>
-                      <div 
-                        className="w-full h-full cursor-pointer flex items-center justify-center bg-gray-100"
-                        onClick={() => openGallery(i)}
-                      >
-                        <img 
-                          src={img} 
-                          alt={`${p.title} - View ${i + 1}`} 
-                          className="w-full h-full object-contain" 
-                        />
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-                
-                {/* Overlay Actions */}
-                <div className="absolute top-4 right-4 flex gap-2 z-10">
-                  <button className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm cursor-pointer" onClick={handleShare}>
-                    <Share2 size={18} />
-                  </button>
-                  <button className={`bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white transition-colors shadow-sm cursor-pointer ${isFav ? 'text-red-500' : 'text-gray-900'}`} onClick={handleFav}>
-                    <Heart size={18} fill={isFav ? 'currentColor' : 'none'} />
-                  </button>
-                </div>
-              </div>
+            {/* DESKTOP SLIDER */}
+            <div className="hidden lg:block w-full">
+              {renderSlider()}
             </div>
 
             {/* CONTACT SIDEBAR */}

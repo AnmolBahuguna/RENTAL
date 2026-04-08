@@ -119,3 +119,24 @@ body {
 .property-detail-slider .swiper-button-prev {
   z-index: 10;
 }
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  content: '' !important;
+}
+
+.property-detail-slider .swiper-button-next,
+.fullscreen-gallery-slider .swiper-button-next {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='3' stroke='%23111827'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' /%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 18px !important;
+}
+
+.property-detail-slider .swiper-button-prev,
+.fullscreen-gallery-slider .swiper-button-prev {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='3' stroke='%23111827'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' /%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 18px !important;
+}
