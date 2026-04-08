@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock, EyeOff } from 'lucide-react'
+import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock, EyeOff, X } from 'lucide-react'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay, Pagination, Navigation } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import 'swiper/css/navigation'
 import { useSelector, useDispatch } from 'react-redux'
 import { openAuthModal } from '../store/authSlice'
 import { useProperties } from '../hooks/useProperties'
@@ -22,6 +27,13 @@ export const PropertyDetail = () => {
 
   const [hasUnlocked, setHasUnlocked] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [initialSlideIndex, setInitialSlideIndex] = useState(0)
+
+  const openGallery = (index) => {
+    setInitialSlideIndex(index)
+    setIsGalleryOpen(true)
+  }
 
   useEffect(() => {
     fetchPropertyById(id)
@@ -228,10 +240,35 @@ export const PropertyDetail = () => {
           <ArrowLeft size={16} /> {t('property.labels.back')}
         </button>
 
-        {/* IMAGE BENTO GRID */}
-        <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ${images.length >= 5 ? 'h-[400px] sm:h-[550px]' : images.length > 1 ? 'h-[400px]' : 'h-[400px]'}`}>
-          <div className={`${images.length >= 5 ? 'md:col-span-2 md:row-span-2' : 'md:col-span-4'} h-full rounded-lg sm:rounded-xl overflow-hidden relative group`}>
-            <img src={mainImage} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 bg-gray-200" />
+        {/* IMAGE SLIDER (Replaced Bento Grid) */}
+        <div className="w-full max-w-[800px] mx-auto mb-8">
+          <div className="relative w-full aspect-square bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group">
+            <Swiper
+              modules={[Autoplay, Pagination, Navigation]}
+              spaceBetween={0}
+              slidesPerView={1}
+              navigation
+              pagination={{ clickable: true, dynamicBullets: true }}
+              autoplay={{ delay: 4000, disableOnInteraction: false }}
+              className="w-full h-full property-detail-slider"
+            >
+              {images.map((img, i) => (
+                <SwiperSlide key={i}>
+                  <div 
+                    className="w-full h-full cursor-pointer flex items-center justify-center bg-gray-100"
+                    onClick={() => openGallery(i)}
+                  >
+                    <img 
+                      src={img} 
+                      alt={`${p.title} - View ${i + 1}`} 
+                      className="w-full h-full object-contain" 
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+            
+            {/* Overlay Actions */}
             <div className="absolute top-4 right-4 flex gap-2 z-10">
               <Button variant="secondary" className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm" onClick={handleShare}>
                 <Share2 size={16} />
@@ -241,29 +278,6 @@ export const PropertyDetail = () => {
               </Button>
             </div>
           </div>
-          
-          {images.length >= 5 ? (
-            otherImages.slice(0,4).map((img, i) => (
-              <div key={i} className="hidden md:block col-span-1 row-span-1 h-full rounded-lg sm:rounded-xl overflow-hidden relative group bg-gray-200">
-                <img src={img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={`view-${i}`} />
-                {i === 3 && images.length > 5 && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-xl backdrop-blur-[2px]">
-                    +{images.length - 5}
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            images.length > 1 && (
-             <div className="hidden md:flex flex-col gap-4 h-full md:col-span-2">
-              {otherImages.map((img, i) => (
-                <div key={i} className="flex-1 rounded-lg sm:rounded-xl overflow-hidden relative group bg-gray-200">
-                  <img src={img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={`view-${i}`} />
-                </div>
-              ))}
-             </div>
-            )
-          )}
         </div>
 
         {/* MAIN CONTENT COLUMNS */}
@@ -492,6 +506,46 @@ export const PropertyDetail = () => {
           <span className="text-[10px] font-bold uppercase tracking-wider px-1">Jump to Contact</span>
         </button>
       </div>
+
+      {/* Fullscreen Image Gallery Modal */}
+      {isGalleryOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md">
+          {/* Close Button */}
+          <button 
+            onClick={() => setIsGalleryOpen(false)}
+            className="absolute top-6 right-6 z-50 w-12 h-12 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-all duration-200"
+          >
+            <X size={24} />
+          </button>
+          
+          <div className="w-full h-full sm:h-[90%] max-w-6xl mx-auto flex items-center justify-center">
+            <Swiper
+              modules={[Navigation, Pagination]}
+              initialSlide={initialSlideIndex}
+              spaceBetween={20}
+              slidesPerView={1}
+              navigation
+              pagination={{ type: 'fraction', el: '.gallery-pagination' }}
+              className="w-full h-full fullscreen-gallery-slider"
+            >
+              {images.map((img, i) => (
+                <SwiperSlide key={i}>
+                  <div className="w-full h-full flex items-center justify-center p-4 sm:p-12">
+                    <img 
+                      src={img} 
+                      alt={`Gallery view ${i + 1}`} 
+                      className="max-w-full max-h-full object-contain rounded-lg shadow-2xl" 
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+              
+              {/* Custom Fraction Pagination at bottom */}
+              <div className="gallery-pagination absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-white bg-black/50 px-4 py-1.5 rounded-full font-semibold tracking-widest text-sm backdrop-blur-md"></div>
+            </Swiper>
+          </div>
+        </div>
+      )}
 
     </div>
   )

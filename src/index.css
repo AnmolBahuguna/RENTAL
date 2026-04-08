@@ -74,7 +74,48 @@ body {
   background: radial-gradient(ellipse 80% 60% at 50% 0%, #dbeeff 0%, #f8fafc 60%, #fff 100%);
 }
 
-/* Swiper overrides */
-.swiper-pagination-bullet { background: #CA3433 !important; }
-.swiper-button-next,
-.swiper-button-prev { color: #CA3433 !important; }
+/* Swiper overrides for premium aesthetic */
+.swiper-pagination-bullet-active { background: #CA3433 !important; }
+
+/* Custom Navigation Buttons (Glassmorphic) */
+.property-detail-slider .swiper-button-next,
+.property-detail-slider .swiper-button-prev,
+.fullscreen-gallery-slider .swiper-button-next,
+.fullscreen-gallery-slider .swiper-button-prev {
+  color: #111827 !important;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.property-detail-slider .swiper-button-next.swiper-button-disabled,
+.property-detail-slider .swiper-button-prev.swiper-button-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.property-detail-slider .swiper-button-next:not(.swiper-button-disabled):hover,
+.property-detail-slider .swiper-button-prev:not(.swiper-button-disabled):hover,
+.fullscreen-gallery-slider .swiper-button-next:not(.swiper-button-disabled):hover,
+.fullscreen-gallery-slider .swiper-button-prev:not(.swiper-button-disabled):hover {
+  background-color: #ffffff;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 18px !important;
+  font-weight: 900;
+}
+
+/* Fix z-index so arrows are above image but under modals */
+.property-detail-slider .swiper-button-next,
+.property-detail-slider .swiper-button-prev {
+  z-index: 10;
+}
