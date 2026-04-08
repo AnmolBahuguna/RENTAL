@@ -7,6 +7,11 @@ import { Toaster } from 'react-hot-toast'
 
 export const Layout = ({ children }) => {
   const location = useLocation()
+  
+  // Define routes where Navbar should be hidden
+  const hideNavbarRoutes = ['/dashboard', '/settings', '/landlord'];
+  const shouldHideNavbar = hideNavbarRoutes.some(route => location.pathname === route || location.pathname.startsWith(route + '/'));
+
   return (
     <>
       <Toaster
@@ -16,7 +21,7 @@ export const Layout = ({ children }) => {
           success: { iconTheme: { primary: '#0c80ee', secondary: '#fff' } },
         }}
       />
-      <Navbar />
+      {!shouldHideNavbar && <Navbar />}
       <main className="min-h-screen">{children}</main>
       {location.pathname === '/search' && <Footer />}
       <AuthModal />

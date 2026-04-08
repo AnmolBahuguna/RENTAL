@@ -32,8 +32,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files)
-    if (files.length + previewUrls.length > 6) {
-      toast.error('Maximum 6 images allowed')
+    if (files.length + previewUrls.length > 4) {
+      toast.error('Maximum 4 images allowed')
       return
     }
     setImages(prev => [...prev, ...files])
@@ -67,8 +67,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
       toast.error('Please fill all required fields')
       return
     }
-    if (!isEdit && images.length === 0) {
-      toast.error('At least one image is required')
+    if (previewUrls.length !== 4) {
+      toast.error('Exactly 4 images are required')
       return
     }
 
@@ -212,7 +212,7 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Photos (Max 6)</h3>
+        <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Photos (Exactly 4)</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {previewUrls.map((url, i) => (
             <div key={i} className="relative aspect-video rounded-xl overflow-hidden group">
@@ -226,7 +226,7 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
               </button>
             </div>
           ))}
-          {previewUrls.length < 6 && (
+          {previewUrls.length < 4 && (
             <label className="aspect-video rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-brand-400 hover:bg-brand-50 transition-colors text-gray-500">
               <ImageIcon size={24} className="mb-2" />
               <span className="text-sm font-semibold">Add Photo</span>
