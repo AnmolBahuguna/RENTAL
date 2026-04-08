@@ -308,12 +308,12 @@ export const PropertyDetail = () => {
                     <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
                       {p.description}
                     </div>
-                    {/* Lock overlay - Black Glass Blur */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[8px] rounded-lg border border-white/10 group-hover:bg-black/50 transition-colors">
-                      <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-2xl mb-3">
-                        <EyeOff size={32} className="text-white/90" />
+                    {/* Lock overlay - Light Glass Refinement */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/40 backdrop-blur-[12px] rounded-lg border border-white/20 min-h-[150px]">
+                      <div className="w-12 h-12 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center border border-white/40 shadow-sm mb-2">
+                        <EyeOff size={24} className="text-slate-400" />
                       </div>
-                      <p className="text-white/90 font-bold tracking-wide text-sm uppercase">{t('property.sections.detailsLocked')}</p>
+                      <p className="text-slate-500 font-bold tracking-wider text-[11px] uppercase">{t('property.sections.detailsLocked')}</p>
                     </div>
                   </div>
                 )}
@@ -379,12 +379,12 @@ export const PropertyDetail = () => {
                       <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
                       <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                     </div>
-                    {/* Lock overlay - Black Glass Blur */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[8px] rounded-xl border border-white/10 group-hover:bg-black/50 transition-colors">
-                      <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-2xl mb-3">
-                        <EyeOff size={32} className="text-white/90" />
+                    {/* Lock overlay - Light Glass Refinement */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/40 backdrop-blur-[12px] rounded-xl border border-white/20 min-h-[150px]">
+                      <div className="w-12 h-12 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center border border-white/40 shadow-sm mb-2">
+                        <EyeOff size={24} className="text-slate-400" />
                       </div>
-                      <p className="text-white/90 font-bold tracking-wide text-sm uppercase">{t('property.sections.detailsLocked')}</p>
+                      <p className="text-slate-500 font-bold tracking-wider text-[11px] uppercase">{t('property.sections.detailsLocked')}</p>
                     </div>
                   </div>
                 )}
@@ -437,14 +437,14 @@ export const PropertyDetail = () => {
                         </a>
                       </div>
                     ) : (
-                      <div className="border border-gray-100 rounded-xl p-6 text-center bg-gray-900 relative overflow-hidden h-48 flex flex-col items-center justify-center shadow-xl">
-                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20" />
+                      <div className="border border-gray-100 rounded-xl p-6 text-center bg-slate-50/30 relative overflow-hidden h-48 flex flex-col items-center justify-center shadow-sm border border-white/20">
+                        <div className="absolute inset-0 backdrop-blur-[15px]" />
                         <div className="relative z-10 flex flex-col items-center">
-                          <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-4 border border-white/20 shadow-lg text-white">
-                            <EyeOff size={28} />
+                          <div className="w-12 h-12 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-3 border border-white/40 shadow-sm text-slate-400">
+                            <EyeOff size={24} />
                           </div>
-                          <p className="font-bold text-white mb-2 font-display text-lg">{t('property.sections.detailsLocked')}</p>
-                          <p className="text-[13px] text-gray-400 leading-relaxed max-w-xs mx-auto px-4">{t('property.sections.lockDesc')}</p>
+                          <p className="font-bold text-gray-900 mb-2 font-display text-lg">{t('property.sections.detailsLocked')}</p>
+                          <p className="text-[13px] text-gray-500 leading-relaxed max-w-xs mx-auto px-4">{t('property.sections.lockDesc')}</p>
                         </div>
                       </div>
                     )
