@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 import { Filter, Grid, List as ListIcon, ChevronDown } from 'lucide-react'
@@ -9,7 +9,7 @@ import { Input, Select } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 import { resetFilters } from '../store/propertySlice'
 import { PROPERTY_TYPES, AMENITIES, SORT_OPTIONS } from '../utils/constants'
-import { AMENITY_ICONS } from '../utils/helpers'
+import { AMENITY_ICONS, cn } from '../utils/helpers'
 import { Skeleton } from '../components/ui/Skeleton'
 
 export const Search = () => {
