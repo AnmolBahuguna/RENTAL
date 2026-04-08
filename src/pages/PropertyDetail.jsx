@@ -179,7 +179,7 @@ export const PropertyDetail = () => {
           email: user?.email || '',
           contact: user?.user_metadata?.phone || '9999999999'
         },
-        theme: { color: '#FF3366' },
+        theme: { color: '#CA3433' },
         modal: {
           ondismiss: function() {
             setUnlocking(false)

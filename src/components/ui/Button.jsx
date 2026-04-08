@@ -2,12 +2,12 @@ import React from 'react'
 import { cn } from '../../utils/helpers'
 
 const variants = {
-  primary:   'bg-brand-500 hover:bg-brand-600 text-white shadow-sm hover:shadow-md',
+  primary:   'bg-[#CA3433] hover:bg-[#ac2d2c] text-white shadow-sm hover:shadow-md transition-all duration-300',
   secondary: 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 shadow-sm',
   ghost:     'bg-transparent hover:bg-gray-100 text-gray-700',
   danger:    'bg-red-500 hover:bg-red-600 text-white',
   accent:    'bg-accent-500 hover:bg-accent-600 text-white shadow-sm hover:shadow-md',
-  outline:   'border-2 border-brand-500 text-brand-600 hover:bg-brand-50',
+  outline:   'border-2 border-[#CA3433] text-[#CA3433] hover:bg-[#fff5f5]',
 }
 
 const sizes = {

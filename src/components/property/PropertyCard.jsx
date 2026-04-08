@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Bookmark, Star, Home } from 'lucide-react'
@@ -7,7 +7,7 @@ import { useProperties } from '../../hooks/useProperties'
 import { cn } from '../../utils/helpers'
 import { useTranslation } from 'react-i18next'
 
-export const PropertyCard = ({ property, layout = 'grid' }) => {
+const PropertyCardComponent = ({ property, layout = 'grid' }) => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const dispatch = useDispatch()
@@ -47,8 +47,10 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
   }, [property.id, property.rating, property.bedrooms])
 
   const formatPrice = (p) => {
-     if(p > 1000) return (p/1000).toFixed(3)
-     return p
+    if (!p) return '0'
+    const num = Number(p)
+    if (num >= 1000) return (num / 1000).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 })
+    return num.toLocaleString()
   }
 
   if (layout === 'list') {
@@ -157,3 +159,5 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
     </div>
   )
 }
+
+export const PropertyCard = memo(PropertyCardComponent)

@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useId } from 'react'
 import { cn } from '../../utils/helpers'
 
 export const Input = forwardRef(({
@@ -10,10 +10,13 @@ export const Input = forwardRef(({
   wrapperClassName = '',
   ...props
 }, ref) => {
+  const generatedId = useId()
+  const id = props.id || generatedId
+
   return (
     <div className={cn('flex flex-col gap-1.5', wrapperClassName)}>
       {label && (
-        <label className="text-sm font-semibold text-gray-700">{label}</label>
+        <label htmlFor={id} className="text-sm font-semibold text-gray-700">{label}</label>
       )}
       <div className="relative">
         {leftIcon && (
@@ -23,15 +26,16 @@ export const Input = forwardRef(({
         )}
         <input
           ref={ref}
+          id={id}
           className={cn(
             'w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-900',
             'placeholder:text-gray-400 outline-none',
             'transition-all duration-200',
-            'border-gray-200 focus:border-brand-400 focus:ring-3 focus:ring-brand-100',
+            'border-gray-200 focus:border-[#CA3433] focus:ring-4 focus:ring-[#CA3433]/10',
             'disabled:bg-gray-50 disabled:cursor-not-allowed',
             leftIcon && 'pl-10',
             rightIcon && 'pr-10',
-            error && 'border-red-400 focus:border-red-400 focus:ring-red-100',
+            error && 'border-[#CA3433] focus:border-[#CA3433] focus:ring-[#CA3433]/10',
             className
           )}
           {...props}
@@ -42,17 +46,22 @@ export const Input = forwardRef(({
           </div>
         )}
       </div>
-      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
+      {error && <p className="text-xs text-[#CA3433] font-medium">{error}</p>}
     </div>
   )
 })
 Input.displayName = 'Input'
 
-export const Textarea = forwardRef(({ label, error, className = '', ...props }, ref) => (
-  <div className="flex flex-col gap-1.5">
-    {label && <label className="text-sm font-semibold text-gray-700">{label}</label>}
-    <textarea
-      ref={ref}
+export const Textarea = forwardRef(({ label, error, className = '', ...props }, ref) => {
+  const generatedId = useId()
+  const id = props.id || generatedId
+  
+  return (
+    <div className="flex flex-col gap-1.5">
+      {label && <label htmlFor={id} className="text-sm font-semibold text-gray-700">{label}</label>}
+      <textarea
+        ref={ref}
+        id={id}
       className={cn(
         'w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-900',
         'placeholder:text-gray-400 outline-none resize-none',
@@ -65,14 +74,19 @@ export const Textarea = forwardRef(({ label, error, className = '', ...props }, 
     />
     {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
   </div>
-))
+)})
 Textarea.displayName = 'Textarea'
 
-export const Select = forwardRef(({ label, error, children, className = '', ...props }, ref) => (
-  <div className="flex flex-col gap-1.5">
-    {label && <label className="text-sm font-semibold text-gray-700">{label}</label>}
-    <select
-      ref={ref}
+export const Select = forwardRef(({ label, error, children, className = '', ...props }, ref) => {
+  const generatedId = useId()
+  const id = props.id || generatedId
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      {label && <label htmlFor={id} className="text-sm font-semibold text-gray-700">{label}</label>}
+      <select
+        ref={ref}
+        id={id}
       className={cn(
         'w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-900',
         'outline-none appearance-none cursor-pointer',
@@ -87,5 +101,5 @@ export const Select = forwardRef(({ label, error, children, className = '', ...p
     </select>
     {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
   </div>
-))
+)})
 Select.displayName = 'Select'

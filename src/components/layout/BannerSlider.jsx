@@ -16,8 +16,8 @@ export const BannerSlider = () => {
   const banners = desktopBanners;
 
   return (
-    <div className="w-full bg-slate-50 px-4 sm:px-10 lg:px-20 py-3 sm:py-4">
-      <div className="w-full mx-auto overflow-hidden rounded-md sm:rounded-lg shadow-sm border border-gray-100">
+    <div className="w-full bg-slate-50 px-2 sm:px-4 py-2 sm:py-3">
+      <div className="w-full overflow-hidden rounded-xl sm:rounded-2xl shadow-sm">
         <Swiper
           modules={[Autoplay, Pagination]}
           spaceBetween={0}
@@ -33,7 +33,8 @@ export const BannerSlider = () => {
                 <img 
                   src={src} 
                   alt={`GoEazy Banner ${index + 1}`} 
-                  className="w-full h-auto object-contain"
+                  className="w-full h-auto object-cover sm:object-fill"
+                  style={{ minHeight: '200px' }}
                   loading={index === 0 ? "eager" : "lazy"}
                 />
               </div>

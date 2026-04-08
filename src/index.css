@@ -75,6 +75,6 @@ body {
 }
 
 /* Swiper overrides */
-.swiper-pagination-bullet { background: #de2020 !important; }
+.swiper-pagination-bullet { background: #CA3433 !important; }
 .swiper-button-next,
-.swiper-button-prev { color: #de2020 !important; }
+.swiper-button-prev { color: #CA3433 !important; }

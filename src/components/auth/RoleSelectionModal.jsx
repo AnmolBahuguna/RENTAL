@@ -7,8 +7,8 @@ import toast from 'react-hot-toast'
 import { Home, GraduationCap } from 'lucide-react'
 
 const ROLE_OPTIONS = [
-  { value: 'user',     label: 'Student / Professional', icon: <GraduationCap size={28} className="text-brand-500" /> },
-  { value: 'landlord', label: 'Landlord / Owner',        icon: <Home size={28} className="text-brand-500" /> },
+  { value: 'user',     label: 'Student / Professional' },
+  { value: 'landlord', label: 'Landlord / Owner'        },
 ]
 
 export const RoleSelectionModal = () => {
@@ -60,14 +60,11 @@ export const RoleSelectionModal = () => {
             onClick={() => setSelectedRole(opt.value)}
             className={`p-4 rounded-xl border-2 text-left transition-all flex items-center gap-4 ${
               selectedRole === opt.value
-                ? 'border-brand-500 bg-brand-50 ring-2 ring-brand-500/10'
+                ? 'border-[#CA3433] bg-[#fff5f5] ring-2 ring-[#CA3433]/10'
                 : 'border-gray-100 hover:border-gray-200 bg-white'
             }`}
           >
-            <div className="text-3xl bg-white w-14 h-14 rounded-xl shadow-sm flex items-center justify-center border border-gray-50 group-hover:scale-110 transition-transform">
-              {opt.icon}
-            </div>
-            <div className="flex-1">
+            <div className="flex-1 text-center py-2">
               <p className="font-bold text-gray-900">{opt.label}</p>
             </div>
           </button>
@@ -77,7 +74,7 @@ export const RoleSelectionModal = () => {
       <Button 
         variant="primary" 
         size="lg" 
-        className="w-full h-14 rounded-xl text-base" 
+        className="w-full h-14 rounded-xl text-base bg-[#CA3433] hover:bg-[#ac2d2c] shadow-lg shadow-[#CA3433]/20" 
         loading={loading}
         onClick={handleConfirm}
         disabled={!selectedRole}

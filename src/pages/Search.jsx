@@ -16,8 +16,8 @@ export const Search = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const [searchParams] = useSearchParams()
-  const { listings, filters, loading, hasMore, fetchProperties, updateFilters } = useProperties()
-
+  const { listings, filters, loading, hasMore, fetchProperties, updateFilters, totalCount } = useProperties()
+  
   const [viewMode, setViewMode] = useState('grid')
   const [showFilters, setShowFilters] = useState(false)
   const [localFilters, setLocalFilters] = useState({
@@ -61,8 +61,8 @@ export const Search = () => {
     fetchProperties(true)
   }, [filters, fetchProperties])
 
-  // Use dummy count if listings.length is 0 because the API might just have 0
-  const count = listings.length > 0 ? listings.length : 649
+  // Use the actual totalCount from database
+  const count = totalCount
 
   const renderFilterContent = () => (
     <div className="space-y-6">
@@ -70,11 +70,33 @@ export const Search = () => {
       <div>
         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Location Selection</label>
         <div className="grid grid-cols-2 gap-3">
-           <div className="flex bg-gray-50 rounded-xl overflow-hidden border border-gray-200 focus-within:border-brand-500 focus-within:bg-white transition-colors pr-2">
-             <input type="text" placeholder="City (e.g. Mumbai)" className="w-full bg-transparent border-none text-sm py-2.5 px-3 focus:ring-0 outline-none" value={localFilters.city} onChange={e => setLocalFilters({...localFilters, city: e.target.value})} />
+           <div className="flex flex-col gap-1.5 focus-within:text-brand-600 transition-colors">
+             <label htmlFor="filter-city" className="sr-only">City</label>
+             <div className="flex bg-gray-50 rounded-xl overflow-hidden border border-gray-200 focus-within:border-brand-500 focus-within:bg-white transition-colors pr-2">
+               <input 
+                 type="text" 
+                 id="filter-city"
+                 name="city"
+                 placeholder="City (e.g. Mumbai)" 
+                 className="w-full bg-transparent border-none text-sm py-2.5 px-3 focus:ring-0 outline-none" 
+                 value={localFilters.city} 
+                 onChange={e => setLocalFilters({...localFilters, city: e.target.value})} 
+               />
+             </div>
            </div>
-           <div className="flex bg-gray-50 rounded-xl overflow-hidden border border-gray-200 focus-within:border-brand-500 focus-within:bg-white transition-colors pr-2">
-             <input type="text" placeholder="Area" className="w-full bg-transparent border-none text-sm py-2.5 px-3 focus:ring-0 outline-none" value={localFilters.area} onChange={e => setLocalFilters({...localFilters, area: e.target.value})} />
+           <div className="flex flex-col gap-1.5 focus-within:text-brand-600 transition-colors">
+             <label htmlFor="filter-area" className="sr-only">Area</label>
+             <div className="flex bg-gray-50 rounded-xl overflow-hidden border border-gray-200 focus-within:border-brand-500 focus-within:bg-white transition-colors pr-2">
+               <input 
+                 type="text" 
+                 id="filter-area"
+                 name="area"
+                 placeholder="Area" 
+                 className="w-full bg-transparent border-none text-sm py-2.5 px-3 focus:ring-0 outline-none" 
+                 value={localFilters.area} 
+                 onChange={e => setLocalFilters({...localFilters, area: e.target.value})} 
+               />
+             </div>
            </div>
         </div>
       </div>
@@ -112,7 +134,7 @@ export const Search = () => {
                step="1000"
                value={localFilters.priceMax} 
                onChange={e => setLocalFilters({...localFilters, priceMax: Number(e.target.value)})}
-               className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-500"
+               className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#CA3433]"
              />
               <div className="flex justify-between mt-2 text-[10px] font-bold text-gray-400">
                 <span>₹0</span>
@@ -130,7 +152,7 @@ export const Search = () => {
             <button
               key={type}
               onClick={() => setLocalFilters({ ...localFilters, type })}
-              className={`px-5 py-2 rounded-xl text-[13px] font-semibold transition-all border ${localFilters.type === type ? 'bg-brand-50 text-brand-600 border-brand-100 shadow-sm' : 'border-gray-100 text-gray-600 hover:bg-gray-50'}`}
+              className={`px-5 py-2 rounded-xl text-[13px] font-semibold transition-all border ${localFilters.type === type ? 'bg-[#fdf2f2] text-[#CA3433] border-[#fbe1e1] shadow-sm' : 'border-gray-100 text-gray-600 hover:bg-gray-50'}`}
             >
               {t(`property.types.${type}`)}
             </button>
@@ -147,7 +169,7 @@ export const Search = () => {
 
   return (
     <div className="pt-8 pb-12 min-h-screen bg-gray-50/50">
-      <div className="w-full px-4 sm:px-10 md:px-16 lg:px-20">
+      <div className="w-full px-2 sm:px-4">
         
         {/* Header Area */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">

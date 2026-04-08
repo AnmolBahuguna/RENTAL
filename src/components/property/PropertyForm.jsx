@@ -96,6 +96,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
       <div className="space-y-4">
         <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Basic Details</h3>
         <Input
+          id="property-title"
+          name="title"
           label="Property Title *"
           placeholder="e.g. Modern 1BHK in Bandra"
           value={form.title}
@@ -104,6 +106,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
+            id="property-price"
+            name="price"
             label="Monthly Rent (₹) *"
             type="number"
             placeholder="e.g. 15000"
@@ -112,6 +116,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
             required
           />
           <Select
+            id="property-type"
+            name="type"
             label="Property Type *"
             value={form.type}
             onChange={e => setForm({ ...form, type: e.target.value })}
@@ -120,6 +126,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
           </Select>
         </div>
         <Textarea
+          id="property-description"
+          name="description"
           label="Description"
           placeholder="Tell renters about your property..."
           rows={4}
@@ -132,6 +140,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
         <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Location</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Select
+            id="property-city"
+            name="city"
             label="City *"
             value={form.city}
             onChange={e => setForm({ ...form, city: e.target.value })}
@@ -143,6 +153,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
             ))}
           </Select>
           <Input
+            id="property-area"
+            name="area"
             label="Area/Locality *"
             placeholder="e.g. Hinjewadi"
             value={form.area}
@@ -150,6 +162,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
             required
           />
           <Input
+            id="property-pincode"
+            name="pincode"
             label="Pincode"
             placeholder="e.g. 411057"
             value={form.pincode}
@@ -157,6 +171,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
           />
         </div>
         <Input
+          id="property-landmarks"
+          name="nearby_landmarks"
           label="Nearby Landmarks"
           placeholder="e.g. 2km from Metro Station, Next to Mall"
           value={form.nearby_landmarks}
@@ -167,6 +183,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
       <div className="space-y-4">
         <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Premium Contact Details <span className="text-sm text-brand-500 font-normal ml-2">(Locked for non-subscribers)</span></h3>
         <Input
+          id="property-address"
+          name="exact_location"
           label="Exact Property Address"
           placeholder="e.g. Flat 402, Building B, XYZ Apartments..."
           value={form.exact_location}
@@ -174,12 +192,16 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
+            id="property-phone"
+            name="contact_phone"
             label="Owner Contact Phone"
             placeholder="e.g. +91 9876543210"
             value={form.contact_phone}
             onChange={e => setForm({ ...form, contact_phone: e.target.value })}
           />
           <Input
+            id="property-email"
+            name="contact_email"
             label="Owner Contact Email"
             type="email"
             placeholder="e.g. owner@example.com"
@@ -230,7 +252,7 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
             <label className="aspect-video rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-brand-400 hover:bg-brand-50 transition-colors text-gray-500">
               <ImageIcon size={24} className="mb-2" />
               <span className="text-sm font-semibold">Add Photo</span>
-              <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageChange} />
+              <input id="property-images" name="images" type="file" multiple accept="image/*" className="hidden" onChange={handleImageChange} />
             </label>
           )}
         </div>
@@ -238,8 +260,10 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
 
       <div className="space-y-4">
         <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Status</h3>
-        <label className="flex items-center gap-3 cursor-pointer">
+        <label htmlFor="property-availability" className="flex items-center gap-3 cursor-pointer">
           <input
+            id="property-availability"
+            name="availability"
             type="checkbox"
             className="w-5 h-5 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
             checked={form.availability}

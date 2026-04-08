@@ -13,11 +13,11 @@ export const NearbyServices = () => {
       <div className="max-w-2xl mx-auto px-4 text-center">
         {/* Animated Icon Container */}
         <div className="relative w-32 h-32 mx-auto mb-10">
-          <div className="absolute inset-0 bg-brand-50 rounded-full animate-ping opacity-20"></div>
-          <div className="relative w-full h-full bg-white border-2 border-brand-100 rounded-full flex items-center justify-center shadow-sm">
-             <Construction size={48} className="text-brand-500" />
+          <div className="absolute inset-0 bg-[#fff5f5] rounded-full animate-ping opacity-20"></div>
+          <div className="relative w-full h-full bg-white border-2 border-[#ffe3e3] rounded-full flex items-center justify-center shadow-sm">
+             <Construction size={48} className="text-[#CA3433]" />
           </div>
-          <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-brand-500 rounded-2xl flex items-center justify-center text-white shadow-lg rotate-12">
+          <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-[#CA3433] rounded-2xl flex items-center justify-center text-white shadow-lg rotate-12">
             <MapPin size={24} />
           </div>
         </div>
@@ -38,7 +38,7 @@ export const NearbyServices = () => {
           <Button 
             onClick={() => navigate('/search')}
             variant="primary" 
-            className="w-full sm:w-auto px-10 py-4 rounded-full font-bold shadow-lg shadow-brand-500/20"
+            className="w-full sm:w-auto px-10 py-4 rounded-full font-bold shadow-lg shadow-[#CA3433]/20 bg-[#CA3433] hover:bg-[#ac2d2c]"
           >
             {t('nearbyPage.back')}
           </Button>
@@ -52,9 +52,9 @@ export const NearbyServices = () => {
       </div>
 
       {/* Aesthetic Decorations */}
-      <div className="absolute top-1/4 left-10 w-2 h-2 bg-brand-200 rounded-full animate-pulse"></div>
-      <div className="absolute top-1/2 right-20 w-3 h-3 bg-brand-100 rounded-full animate-pulse delay-700"></div>
-      <div className="absolute bottom-1/4 left-1/4 w-4 h-4 bg-brand-50 rounded-full animate-pulse delay-300"></div>
+      <div className="absolute top-1/4 left-10 w-2 h-2 bg-[#ffc9c9] rounded-full animate-pulse"></div>
+      <div className="absolute top-1/2 right-20 w-3 h-3 bg-[#ffe3e3] rounded-full animate-pulse delay-700"></div>
+      <div className="absolute bottom-1/4 left-1/4 w-4 h-4 bg-[#fff5f5] rounded-full animate-pulse delay-300"></div>
     </div>
   )
 }

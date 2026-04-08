@@ -115,7 +115,7 @@ export const Settings = () => {
           {/* Profile Section */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="px-6 py-5 border-b border-gray-100 flex items-center gap-3 bg-gray-50/50">
-              <div className="w-10 h-10 rounded-xl bg-brand-50 flex flex-center text-brand-600 justify-center items-center">
+              <div className="w-10 h-10 rounded-xl bg-[#fff5f5] flex flex-center text-[#CA3433] justify-center items-center">
                 <User size={20} />
               </div>
               <div>
@@ -157,7 +157,7 @@ export const Settings = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all font-medium"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#CA3433]/20 focus:border-[#CA3433] transition-all font-medium"
                     placeholder="E.g. John Doe"
                   />
                 </div>
@@ -171,7 +171,7 @@ export const Settings = () => {
                     autoComplete="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all font-medium"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#CA3433]/20 focus:border-[#CA3433] transition-all font-medium"
                     placeholder="+91 XXXXX XXXXX"
                   />
                 </div>
@@ -181,7 +181,7 @@ export const Settings = () => {
                 <button 
                   type="submit" 
                   disabled={profileLoading}
-                  className="bg-brand-600 hover:bg-brand-700 disabled:bg-brand-400 text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all active:scale-95 shadow-sm shadow-brand-500/20"
+                  className="bg-[#CA3433] hover:bg-[#ac2d2c] disabled:bg-[#ffc9c9] text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all active:scale-95 shadow-sm shadow-[#CA3433]/20"
                 >
                   {profileLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={18} />}
                   Save Profile
@@ -193,7 +193,7 @@ export const Settings = () => {
           {/* Security Section */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="px-6 py-5 border-b border-gray-100 flex items-center gap-3 bg-gray-50/50">
-              <div className="w-10 h-10 rounded-xl bg-orange-50 flex flex-center text-orange-600 justify-center items-center">
+              <div className="w-10 h-10 rounded-xl bg-[#fff5f5] flex flex-center text-[#CA3433] justify-center items-center">
                 <Lock size={20} />
               </div>
               <div>

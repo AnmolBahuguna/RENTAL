@@ -89,7 +89,7 @@ export const UserDashboard = () => {
         {/* Saved Properties */}
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#fdf2f2] text-[#CA3433] flex items-center justify-center">
               <Heart size={20} fill="currentColor" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 font-display">Saved Properties</h2>
@@ -101,7 +101,7 @@ export const UserDashboard = () => {
           ) : favProps.length === 0 ? (
             <div className="bg-white p-8 rounded-xl border border-gray-100 text-center">
               <p className="text-gray-500">You haven't saved any properties yet.</p>
-              <Link to="/search" className="text-brand-600 font-semibold hover:underline mt-2 inline-block">Explore listings</Link>
+              <Link to="/search" className="text-[#CA3433] font-semibold hover:underline mt-2 inline-block">Explore listings</Link>
             </div>
           ) : (
             <div className="scroll-row">
@@ -117,7 +117,7 @@ export const UserDashboard = () => {
         {/* Recently Viewed */}
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#fdf2f2] text-[#CA3433] flex items-center justify-center">
               <Clock size={20} />
             </div>
             <h2 className="text-xl font-bold text-gray-900 font-display">Recently Viewed</h2>

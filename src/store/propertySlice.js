@@ -22,6 +22,7 @@ const propertySlice = createSlice({
     loading: false,
     hasMore: true,
     page: 0,
+    totalCount: 0,
   },
   reducers: {
     setListings: (state, action) => {
@@ -69,12 +70,13 @@ const propertySlice = createSlice({
     setLoading: (state, action) => { state.loading = action.payload },
     setHasMore: (state, action) => { state.hasMore = action.payload },
     setPage: (state, action) => { state.page = action.payload },
+    setTotalCount: (state, action) => { state.totalCount = action.payload },
   },
 })
 
 export const {
   setListings, appendListings, setFeatured, setCurrentProperty,
   setFavorites, toggleFavorite, setRecentlyViewed, addRecentlyViewed,
-  setFilters, resetFilters, setLoading, setHasMore, setPage,
+  setFilters, resetFilters, setLoading, setHasMore, setPage, setTotalCount,
 } = propertySlice.actions
 export default propertySlice.reducer

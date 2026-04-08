@@ -1,28 +1,29 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Phone } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 export const Footer = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
 
 
   return (
-    <footer className="bg-gray-950 text-gray-300 mt-20">
-      <div className="w-full mx-auto px-4 sm:px-10 md:px-16 lg:px-20 py-16">
+    <footer className="bg-gray-950 text-gray-300 mt-12">
+      <div className="w-full mx-auto px-4 sm:px-10 md:px-16 lg:px-20 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-3 mb-6 group cursor-pointer">
-              <div className="w-9 h-9 rounded-lg border-2 border-brand-500 rounded-tl-xl rounded-br-xl bg-white shadow-sm flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-6 transition-transform">
-                <div className="-rotate-3 flex items-end justify-center">
-                  <span className="text-brand-500 text-[20px] font-black leading-none">G</span>
-                  <span className="text-brand-600 text-[14px] font-black leading-none rotate-12 -ml-0.5 mb-0.5">E</span>
+            <div className="flex items-center gap-3 mb-6 group cursor-pointer" onClick={() => navigate('/')}>
+              <div className="w-10 h-10 rounded-xl bg-[#CA3433] shadow-md flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-0 transition-all duration-300">
+                <div className="-rotate-3 flex items-center justify-center translate-y-0.5">
+                  <span className="text-white text-[22px] font-black leading-none">G</span>
+                  <span className="text-white/80 text-[12px] font-black leading-none -ml-0.5 mb-2">e</span>
                 </div>
               </div>
-              <span className="font-display font-bold text-2xl text-white tracking-tight">
-                GoEazy
+              <span className="font-display font-black text-2xl text-white tracking-tight leading-none pt-1">
+                Go<span className="text-[#CA3433]">Eazy</span>
               </span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
@@ -38,15 +39,11 @@ export const Footer = () => {
             <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.contact')}</h4>
             <div className="space-y-3">
               <a href="mailto:supportgoeazy@gmail.com" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
-                <Mail size={15} className="text-brand-400" /> supportgoeazy@gmail.com
+                <Mail size={15} className="text-[#CA3433]" /> supportgoeazy@gmail.com
               </a>
               <a href="tel:8979452055" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
-                <Phone size={15} className="text-brand-400" /> +91 89794 52055
+                <Phone size={15} className="text-[#CA3433]" /> +91 89794 52055
               </a>
-            </div>
-            <div className="mt-6 p-4 bg-gray-800/50 rounded-xl border border-gray-700/50">
-              <p className="text-xs text-gray-400 mb-1">{t('footer.availableIndia')}</p>
-              <p className="text-sm font-semibold text-white">{t('footer.cities')}</p>
             </div>
           </div>
         </div>

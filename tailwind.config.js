@@ -12,17 +12,17 @@ export default {
       },
       colors: {
         brand: {
-          50: '#fdf3f3',
-          100: '#fbe4e4',
-          200: '#f6c5c5',
-          300: '#ef9a9a',
-          400: '#e66060',
-          500: '#FF3366', // Primary pink
-          600: '#E62E5C',
-          700: '#a51010',
-          800: '#881010',
-          900: '#711313',
-          pink: '#FF4D8C',
+          50: '#fff5f5',
+          100: '#ffe3e3',
+          200: '#ffc9c9',
+          300: '#ffa2a2',
+          400: '#ff6b6b',
+          500: '#CA3433', // Persian Red
+          600: '#ac2d2c',
+          700: '#8b2423',
+          800: '#6c1c1b',
+          900: '#521514',
+          pink: '#E63946', // Red accent
           purple: '#6B46C1', 
           dark: '#0B0F19', 
           lime: '#CCFF00',

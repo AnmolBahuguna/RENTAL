@@ -26,7 +26,7 @@ export const LegalLayout = ({ children, title, lastUpdated }) => {
         </div>
 
         <div className="relative max-w-3xl mx-auto [&_h2]:!text-2xl [&_h2]:sm:!text-3xl [&_h2]:!font-extrabold [&_h2]:!text-gray-900 [&_h2]:!mb-6 [&_h2]:!mt-12 [&_h2]:!not-italic [&_h2]:!font-display [&_p]:!text-[21px] [&_p]:sm:!text-[23px] [&_p]:!italic [&_p]:!font-medium [&_p]:!leading-[1.8] [&_p]:sm:!leading-[1.9] [&_p]:!tracking-wide [&_p]:!text-gray-600">
-          <div className="absolute -top-8 -left-8 text-brand-200 text-6xl hidden sm:block opacity-50 font-serif">"</div>
+          <div className="absolute -top-8 -left-8 text-[#ffc9c9] text-6xl hidden sm:block opacity-50 font-serif">"</div>
           {children}
         </div>
         
@@ -34,7 +34,7 @@ export const LegalLayout = ({ children, title, lastUpdated }) => {
           <p className="font-display text-2xl md:text-3xl font-extrabold italic text-gray-800 tracking-tight leading-relaxed">
             "Thank you for choosing GoEazy!"
           </p>
-          <div className="w-12 h-1.5 bg-brand-500 rounded-full mx-auto mt-8 mb-6"></div>
+          <div className="w-12 h-1.5 bg-[#CA3433] rounded-full mx-auto mt-8 mb-6"></div>
         </div>
       </div>
     </div>

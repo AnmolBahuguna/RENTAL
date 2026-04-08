@@ -17,12 +17,26 @@ export const Navbar = () => {
   const location = useLocation()
   const { t, i18n } = useTranslation()
   const { user, profile, role, signOut, loading } = useAuth()
-  const { filters, updateFilters } = useProperties()
+  const { filters, updateFilters, resetFilters } = useProperties()
   const { mobileMenuOpen } = useSelector(s => s.ui)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [cityMenuOpen, setCityMenuOpen] = useState(false)
   const [langMenuOpen, setLangMenuOpen] = useState(false)
   const [selectedCity, setSelectedCity] = useState('Dehradun')
+  const [searchQuery, setSearchQuery] = useState(filters.query || '')
+  
+  // Debounce effect for search
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery !== (filters.query || '')) {
+        updateFilters({ query: searchQuery })
+        if (!location.pathname.startsWith('/search') && searchQuery.length > 0) {
+          navigate('/search')
+        }
+      }
+    }, 400) // 400ms debounce
+    return () => clearTimeout(timer)
+  }, [searchQuery, updateFilters, navigate, location.pathname, filters.query])
 
   const languages = [
     { code: 'en', label: 'English', short: 'EN' },
@@ -44,15 +58,8 @@ export const Navbar = () => {
   }
 
   const handleLiveSearch = (e) => {
-    const value = e.target.value
-    updateFilters({ query: value })
-    
-    // Redirect to search page if not already there
-    if (!location.pathname.startsWith('/search')) {
-      navigate('/search')
-    }
-    
-    if (mobileMenuOpen && value.length > 3) dispatch(closeMobileMenu())
+    setSearchQuery(e.target.value)
+    if (mobileMenuOpen && e.target.value.length > 3) dispatch(closeMobileMenu())
   }
 
   const categoryTabs = [
@@ -65,29 +72,29 @@ export const Navbar = () => {
   return (
     <nav className="relative z-40 bg-white">
       {/* Top Navbar */}
-      <div className="w-full mx-auto px-4 sm:px-10 md:px-16 lg:px-20">
+      <div className="w-full px-2 sm:px-4">
         <div className="flex items-center justify-between h-20">
           
           {/* Logo & EN */}
           <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-lg border-2 border-brand-500 rounded-tl-xl rounded-br-xl bg-white shadow-sm flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-6 transition-transform">
-                <div className="-rotate-3 flex items-end justify-center">
-                  <span className="text-brand-500 text-[20px] font-black leading-none">G</span>
-                  <span className="text-brand-600 text-[14px] font-black leading-none rotate-12 -ml-0.5 mb-0.5">E</span>
+            <Link to="/" className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#CA3433] shadow-md flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-0 transition-all duration-300">
+                <div className="-rotate-3 flex items-center justify-center translate-y-0.5">
+                  <span className="text-white text-[22px] font-black leading-none">G</span>
+                  <span className="text-white/80 text-[12px] font-black leading-none -ml-0.5 mb-2">e</span>
                 </div>
               </div>
-              <span className="font-display font-bold text-2xl text-gray-900 tracking-tight">
-                GoEazy
+              <span className="font-display font-black text-2xl text-gray-900 tracking-tight leading-none pt-1">
+                Go<span className="text-[#CA3433]">Eazy</span>
               </span>
             </Link>
             
             <div className="relative">
               <button 
                 onClick={() => setLangMenuOpen(!langMenuOpen)}
-                className="hidden md:flex items-center gap-1.5 text-sm font-bold text-gray-700 hover:text-brand-500 transition-colors uppercase"
+                className="hidden md:flex items-center gap-1.5 text-sm font-bold text-gray-700 hover:text-[#CA3433] transition-colors uppercase"
               >
-                {currentLang.short} <ChevronDown size={14} className={`transition-transform duration-200 ${langMenuOpen ? 'rotate-180 text-brand-500' : ''}`} />
+                {currentLang.short} <ChevronDown size={14} className={`transition-transform duration-200 ${langMenuOpen ? 'rotate-180 text-[#CA3433]' : ''}`} />
               </button>
 
               {langMenuOpen && (
@@ -98,7 +105,7 @@ export const Navbar = () => {
                       <button
                         key={l.code}
                         onClick={() => changeLanguage(l.code)}
-                        className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors ${currentLang.code === l.code ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors ${currentLang.code === l.code ? 'bg-[#fff5f5] text-[#CA3433]' : 'text-gray-700 hover:bg-gray-50'}`}
                       >
                         {l.label} ({l.short})
                       </button>
@@ -119,7 +126,7 @@ export const Navbar = () => {
                 type="text"
                 id="desktop-search"
                 name="desktop-search"
-                value={filters.query || ''}
+                value={searchQuery}
                 placeholder={t('hero.searchPlaceholder')}
                 onChange={handleLiveSearch}
                 className="w-full bg-gray-50 border border-transparent focus:border-[#CA3433] focus:ring-2 focus:ring-[#CA3433]/10 rounded-full py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none transition-all"
@@ -151,7 +158,7 @@ export const Navbar = () => {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(v => !v)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#0B0F19] text-white text-sm font-semibold hover:bg-[#FF3366] transition-all duration-300 transform hover:scale-105"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#0B0F19] text-white text-sm font-semibold hover:bg-[#CA3433] transition-all duration-300 transform hover:scale-105"
                 >
                   {profile?.avatar_url ? (
                     <img src={profile.avatar_url} alt="Avatar" className="w-5 h-5 rounded-full object-cover" />
@@ -192,7 +199,7 @@ export const Navbar = () => {
             ) : (
               <button 
                 onClick={() => dispatch(openAuthModal('login'))}
-                className="px-6 py-2.5 rounded-full bg-[#0B0F19] text-white text-sm font-semibold hover:bg-[#FF3366] transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-xl shadow-black/20"
+                className="px-6 py-2.5 rounded-full bg-[#0B0F19] text-white text-sm font-semibold hover:bg-[#CA3433] transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-xl shadow-black/20"
               >
                 {t('nav.login')}
               </button>
@@ -213,10 +220,13 @@ export const Navbar = () => {
       {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund', '/about', '/nearby'].some(r => location.pathname.startsWith(r)) && (
         <>
           <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
-            <div className="flex items-center h-16 px-4 sm:px-10 md:px-16 lg:px-20 gap-6 overflow-x-auto scrollbar-hide flex-1">
+            <div className="flex items-center h-16 px-0 gap-6 overflow-x-auto scrollbar-hide flex-1">
               <button 
-                onClick={() => updateFilters({ type: '' })}
-                className="flex items-center gap-2 px-6 h-full bg-gradient-to-r from-brand-pink to-brand-500 text-white font-semibold rounded-tr-3xl"
+                onClick={() => {
+                  resetFilters()
+                  navigate('/search')
+                }}
+                className="flex items-center gap-2 px-6 h-full bg-gradient-to-r from-[#E63946] to-[#CA3433] text-white font-semibold rounded-tr-3xl"
               >
                 <Grid size={18} /> {t('nav.allCategory')}
               </button>
@@ -264,7 +274,7 @@ export const Navbar = () => {
                             setSelectedCity(city)
                             setCityMenuOpen(false)
                           }}
-                          className={`w-full text-left px-5 py-2.5 text-sm font-semibold transition-colors ${selectedCity === city ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
+                          className={`w-full text-left px-5 py-2.5 text-sm font-semibold transition-colors ${selectedCity === city ? 'bg-[#fff5f5] text-[#CA3433]' : 'text-gray-700 hover:bg-gray-50'}`}
                         >
                           {city}
                         </button>
@@ -285,7 +295,7 @@ export const Navbar = () => {
                 type="text"
                 id="mobile-search-outside"
                 name="mobile-search-outside"
-                value={filters.query || ''}
+                value={searchQuery}
                 placeholder={t('hero.searchPlaceholder')}
                 onChange={handleLiveSearch}
                 className="w-full bg-gray-50 border border-[#CA3433] rounded-full py-2.5 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#CA3433]/20 shadow-sm transition-all"
@@ -333,7 +343,7 @@ export const Navbar = () => {
             ) : (
               <button 
                 onClick={() => { dispatch(openAuthModal('login')); dispatch(closeMobileMenu()); }}
-                className="w-full py-3 rounded-full bg-[#0B0F19] text-white text-sm font-semibold hover:bg-[#FF3366] transition-all active:scale-95"
+                className="w-full py-3 rounded-full bg-[#0B0F19] text-white text-sm font-semibold hover:bg-[#CA3433] transition-all active:scale-95"
               >
                 {t('nav.login')}
               </button>

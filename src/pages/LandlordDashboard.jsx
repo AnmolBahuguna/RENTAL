@@ -36,12 +36,15 @@ export const LandlordDashboard = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this listing?')) return
+    
+    const toastId = toast.loading('Deleting property...')
     try {
       await deleteProperty(id)
-      setProperties(properties.filter(p => p.id !== id))
-      toast.success('Property deleted')
-    } catch {
-      toast.error('Failed to delete property')
+      setProperties(prev => prev.filter(p => p.id !== id))
+      toast.success('Property deleted permanently', { id: toastId })
+    } catch (err) {
+      console.error('Delete failed:', err)
+      toast.error(err.message || 'Failed to delete property', { id: toastId })
     }
   }
 
@@ -55,7 +58,7 @@ export const LandlordDashboard = () => {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-brand-200 bg-gray-200">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#ffc9c9] bg-gray-200">
                {profile ? (
                  <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" className="w-full h-full object-cover"/>
                ) : (
@@ -77,7 +80,7 @@ export const LandlordDashboard = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5">
-            <div className="w-14 h-14 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
+            <div className="w-14 h-14 rounded-xl bg-[#fff5f5] flex items-center justify-center text-[#CA3433]">
               <Home size={24} />
             </div>
             <div className="flex-1">
@@ -136,14 +139,14 @@ export const LandlordDashboard = () => {
                 <div className="relative h-48 bg-gray-100">
                   <img src={p.images?.[0] || ''} alt={p.title} className="w-full h-full object-cover" />
                   <div className="absolute top-3 left-3"><TypeBadge type={p.type} /></div>
-                  <div className={cn('absolute top-3 right-3 px-2 py-1 text-xs font-bold rounded-full', p.availability ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700')}>
+                  <div className={cn('absolute top-3 right-3 px-2 py-1 text-xs font-bold rounded-full', p.availability ? 'bg-green-100 text-green-700' : 'bg-[#fff1f1] text-[#CA3433]')}>
                     {p.availability ? 'Available' : 'Rented'}
                   </div>
                 </div>
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-bold text-gray-900 truncate pr-2">{p.title}</h3>
-                    <span className="font-bold text-brand-600">{formatPriceShort(p.price)}</span>
+                    <span className="font-bold text-[#CA3433]">{formatPriceShort(p.price)}</span>
                   </div>
                   <p className="text-sm text-gray-500 mb-4 truncate">{p.area}, {p.city}</p>
                   <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
@@ -156,7 +159,7 @@ export const LandlordDashboard = () => {
                     <Button variant="secondary" size="sm" className="flex-1 text-blue-600 hover:bg-blue-50" onClick={() => navigate(`/landlord/properties/${p.id}/edit`)}>
                       <Edit size={14} className="mr-1"/> Edit
                     </Button>
-                    <button className="p-2 rounded-xl border border-gray-200 text-red-500 hover:bg-red-50 transition-colors" onClick={() => handleDelete(p.id)}>
+                    <button className="p-2 rounded-xl border border-gray-200 text-[#CA3433] hover:bg-[#fff1f1] transition-colors" onClick={() => handleDelete(p.id)}>
                       <Trash2 size={16}/>
                     </button>
                   </div>

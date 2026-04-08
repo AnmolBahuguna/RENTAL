@@ -10,8 +10,8 @@ import { useAuth } from '../../hooks/useAuth'
 import toast from 'react-hot-toast'
 
 const ROLE_OPTIONS = [
-  { value: 'user',     label: 'Student / Professional', icon: <GraduationCap size={20} className="text-brand-500" /> },
-  { value: 'landlord', label: 'Landlord / Owner',        icon: <Home size={20} className="text-brand-500" /> },
+  { value: 'user',     label: 'Student / Professional' },
+  { value: 'landlord', label: 'Landlord / Owner'        },
 ]
 
 export const AuthModal = () => {
@@ -133,6 +133,8 @@ export const AuthModal = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {tab === 'signup' && (
           <Input
+            id="signup-name"
+            name="name"
             label="Full Name"
             placeholder="Priya Sharma"
             leftIcon={<User size={16} />}
@@ -144,6 +146,8 @@ export const AuthModal = () => {
         )}
 
         <Input
+          id={`${tab}-email`}
+          name="email"
           label="Email"
           type="email"
           placeholder="you@example.com"
@@ -155,6 +159,8 @@ export const AuthModal = () => {
         />
 
         <Input
+          id={`${tab}-password`}
+          name="password"
           label="Password"
           type={showPass ? 'text' : 'password'}
           placeholder={tab === 'signup' ? 'Min 8 characters' : '••••••••'}
@@ -182,11 +188,10 @@ export const AuthModal = () => {
                   onClick={() => setSelectedRole(opt.value)}
                   className={`p-3 rounded-lg border-2 text-left transition-all ${
                     selectedRole === opt.value
-                      ? 'border-brand-500 bg-brand-50'
+                      ? 'border-[#CA3433] bg-[#fff5f5]'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <div className="text-xl mb-1">{opt.icon}</div>
                   <p className="text-sm font-semibold text-gray-900">{opt.label}</p>
                 </button>
               ))}
@@ -194,22 +199,11 @@ export const AuthModal = () => {
           </div>
         )}
 
-        <Button type="submit" variant="primary" size="lg" className="w-full" loading={loading}>
+        <Button type="submit" variant="primary" size="lg" className="w-full shadow-lg shadow-[#CA3433]/20" loading={loading}>
           {tab === 'login' ? 'Sign In' : 'Create Account'}
         </Button>
       </form>
 
-      {tab === 'login' && (
-        <p className="text-center text-sm text-gray-500 mt-4">
-          Don't have an account?{" "}
-          <button
-            className="text-brand-500 font-semibold hover:underline"
-            onClick={() => { setTab('signup'); setErrors({}) }}
-          >
-            Sign Up
-          </button>
-        </p>
-      )}
     </Modal>
   )
 }

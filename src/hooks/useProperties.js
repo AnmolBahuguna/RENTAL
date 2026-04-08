@@ -6,14 +6,14 @@ import {
   setListings, appendListings, setFeatured, setCurrentProperty,
   setFavorites, toggleFavorite as toggleFav,
   setRecentlyViewed, addRecentlyViewed,
-  setLoading, setHasMore, setPage, setFilters,
+  setLoading, setHasMore, setPage, setFilters, setTotalCount,
 } from '../store/propertySlice'
 
 const PAGE_SIZE = 12
 
 export const useProperties = () => {
   const dispatch = useDispatch()
-  const { listings, featured, currentProperty, favorites, recentlyViewed, filters, loading, hasMore, page } = useSelector(s => s.property)
+  const { listings, featured, currentProperty, favorites, recentlyViewed, filters, loading, hasMore, page, totalCount } = useSelector(s => s.property)
   const { user } = useSelector(s => s.auth)
 
   const fetchProperties = useCallback(async (reset = false) => {
@@ -21,7 +21,7 @@ export const useProperties = () => {
     try {
       let query = supabase
         .from('properties')
-        .select('*, profiles!properties_landlord_id_fkey(full_name, avatar_url, phone)')
+        .select('*, profiles!properties_landlord_id_fkey(full_name, avatar_url, phone)', { count: 'exact' })
         .eq('availability', true)
 
       if (filters.type) query = query.eq('type', filters.type)
@@ -47,12 +47,14 @@ export const useProperties = () => {
         query = query.or(`title.ilike.${q},city.ilike.${q},area.ilike.${q},description.ilike.${q}`)
       }
 
-      const { data, error } = await query
+      const { data, error, count: dbCount } = await query
         .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
         .range(reset ? 0 : page * PAGE_SIZE, (reset ? 0 : page * PAGE_SIZE) + PAGE_SIZE - 1)
 
       if (error) throw error
 
+      if (dbCount !== null) dispatch(setTotalCount(dbCount))
+      
       if (reset) dispatch(setListings(data || []))
       else dispatch(appendListings(data || []))
       
@@ -192,12 +194,26 @@ export const useProperties = () => {
   }
 
   const deleteProperty = async (id) => {
-    const { error } = await supabase
+    if (!user?.id) throw new Error('You must be logged in to delete a property')
+    
+    // Use { count: 'exact' } to verify the row was actually found and deleted
+    const { error, count } = await supabase
       .from('properties')
-      .delete()
+      .delete({ count: 'exact' })
       .eq('id', id)
       .eq('landlord_id', user.id)
-    if (error) throw error
+
+    if (error) {
+      console.error('Delete Property Error:', error)
+      throw error
+    }
+
+    if (count === 0) {
+      console.warn(`Delete failed: No property found with ID ${id} for Landlord ${user.id}`)
+      throw new Error('Property not found or you do not have permission to delete it')
+    }
+    
+    return true
   }
 
   const fetchFavorites = useCallback(async () => {
@@ -250,10 +266,11 @@ export const useProperties = () => {
 
   return {
     listings, featured, currentProperty, favorites, recentlyViewed, filters,
-    loading, hasMore, page,
+    loading, hasMore, page, totalCount,
     fetchProperties, fetchFeatured, fetchByType, fetchPropertyById,
     createProperty, updateProperty, deleteProperty,
     fetchFavorites, toggleFavorite, fetchRecentlyViewed, getLandlordProperties,
     updateFilters: useCallback((f) => dispatch(setFilters(f)), [dispatch]),
+    resetFilters: useCallback(() => dispatch(resetFilters()), [dispatch]),
   }
 }
