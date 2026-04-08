@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock } from 'lucide-react'
+import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock, EyeOff } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { openAuthModal } from '../store/authSlice'
 import { useProperties } from '../hooks/useProperties'
@@ -309,17 +309,19 @@ export const PropertyDetail = () => {
                       {p.description}
                     </div>
                     {/* Lock overlay */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-[2px] rounded-lg">
-                      <div className="flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-2xl px-6 py-4 shadow-md">
-                        <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center">
-                          <Lock size={18} className="text-white" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 backdrop-blur-[4px] rounded-lg border border-white/20 shadow-inner">
+                      <div className="flex flex-col items-center gap-3 bg-white/90 backdrop-blur-md border border-gray-100 rounded-3xl px-8 py-6 shadow-2xl">
+                        <div className="w-14 h-14 bg-gray-900 rounded-full flex items-center justify-center shadow-lg">
+                          <EyeOff size={24} className="text-white" />
                         </div>
-                        <p className="text-sm font-bold text-gray-900 text-center">{t('property.sections.descLocked')}</p>
-                        <p className="text-xs text-gray-500 text-center">{t('property.sections.payToUnlockAll')}</p>
+                        <div className="text-center">
+                          <p className="text-lg font-bold text-gray-900 tracking-tight">{t('property.sections.descLocked')}</p>
+                          <p className="text-xs text-gray-500 font-medium mt-1">{t('property.sections.payToUnlockAll')}</p>
+                        </div>
                         <button
                           onClick={handleUnlock}
                           disabled={unlocking}
-                          className="mt-1 px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-full hover:bg-black transition-all disabled:opacity-70"
+                          className="mt-2 px-8 py-3 bg-brand-500 text-white text-sm font-bold rounded-full hover:bg-brand-600 active:scale-95 transition-all shadow-md disabled:opacity-70 disabled:active:scale-100"
                         >
                           {unlocking ? t('property.sections.processing') : t('property.sections.unlockBtn')}
                         </button>
@@ -390,17 +392,19 @@ export const PropertyDetail = () => {
                       <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
                     </div>
                     {/* Lock overlay */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-[2px] rounded-xl">
-                      <div className="flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-2xl px-6 py-4 shadow-md">
-                        <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center">
-                          <Lock size={18} className="text-white" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 backdrop-blur-[4px] rounded-xl border border-white/20 shadow-inner">
+                      <div className="flex flex-col items-center gap-3 bg-white/90 backdrop-blur-md border border-gray-100 rounded-3xl px-8 py-6 shadow-2xl">
+                        <div className="w-14 h-14 bg-gray-900 rounded-full flex items-center justify-center shadow-lg">
+                          <EyeOff size={24} className="text-white" />
                         </div>
-                        <p className="text-sm font-bold text-gray-900 text-center">{t('property.sections.landmarksLocked')}</p>
-                        <p className="text-xs text-gray-500 text-center">{t('property.sections.payToUnlockAll')}</p>
+                        <div className="text-center">
+                          <p className="text-lg font-bold text-gray-900 tracking-tight">{t('property.sections.landmarksLocked')}</p>
+                          <p className="text-xs text-gray-500 font-medium mt-1">{t('property.sections.payToUnlockAll')}</p>
+                        </div>
                         <button
                           onClick={handleUnlock}
                           disabled={unlocking}
-                          className="mt-1 px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-full hover:bg-black transition-all disabled:opacity-70"
+                          className="mt-2 px-8 py-3 bg-brand-500 text-white text-sm font-bold rounded-full hover:bg-brand-600 active:scale-95 transition-all shadow-md disabled:opacity-70 disabled:active:scale-100"
                         >
                           {unlocking ? t('property.sections.processing') : t('property.sections.unlockBtn')}
                         </button>
@@ -457,12 +461,15 @@ export const PropertyDetail = () => {
                         </a>
                       </div>
                     ) : (
-                      <div className="border border-gray-100 rounded-xl p-6 text-center bg-[#fcfbf9]">
-                        <div className="w-12 h-12 bg-white border border-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-gray-400">
-                          <Phone size={20} />
+                      <div className="border border-gray-100 rounded-xl p-6 text-center bg-[#fcfbf9] relative overflow-hidden h-44 flex flex-col items-center justify-center">
+                        <div className="absolute inset-0 backdrop-blur-[5px]" />
+                        <div className="relative z-10 flex flex-col items-center">
+                          <div className="w-12 h-12 bg-white border border-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-gray-900">
+                            <EyeOff size={22} />
+                          </div>
+                          <p className="font-bold text-gray-900 mb-2 font-display">{t('property.sections.detailsLocked')}</p>
+                          <p className="text-[13px] text-gray-500 leading-relaxed max-w-xs mx-auto">{t('property.sections.lockDesc')}</p>
                         </div>
-                        <p className="font-bold text-gray-900 mb-2 font-display">{t('property.sections.detailsLocked')}</p>
-                        <p className="text-[13px] text-gray-500 leading-relaxed max-w-xs mx-auto">{t('property.sections.lockDesc')}</p>
                       </div>
                     )
                   ) : (
