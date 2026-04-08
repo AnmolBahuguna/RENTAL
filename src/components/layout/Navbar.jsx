@@ -118,7 +118,7 @@ export const Navbar = () => {
               <Link to="/search" className="px-3 py-1 bg-brand-lime text-gray-900 rounded-md font-semibold hover:bg-lime-400 transition-colors">{t('nav.home')}</Link>
               <button onClick={() => user ? navigate('/landlord') : dispatch(openAuthModal('login'))} className="hover:text-gray-900 transition-colors">{t('nav.list')}</button>
               <Link to="/nearby" className="hover:text-gray-900 transition-colors py-2">{t('nav.nearby')}</Link>
-              <button className="hover:text-gray-900 transition-colors">{t('nav.contact')}</button>
+              <Link to="/about" className="hover:text-gray-900 transition-colors py-2">{t('nav.about')}</Link>
             </div>
             
             <div className="w-px h-6 bg-gray-200"></div>
@@ -195,7 +195,7 @@ export const Navbar = () => {
       </div>
 
       {/* Secondary Navbar (Categories) */}
-      {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund'].some(r => location.pathname.startsWith(r)) && (
+      {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund', '/about'].some(r => location.pathname.startsWith(r)) && (
         <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
         <div className="flex items-center h-16 ml-4 sm:ml-8 gap-6 overflow-x-auto scrollbar-hide flex-1">
           <button 
@@ -280,7 +280,7 @@ export const Navbar = () => {
             <Link to="/search" onClick={() => dispatch(closeMobileMenu())} className="block font-semibold text-gray-700 py-2">{t('nav.home')}</Link>
             <button onClick={() => { dispatch(closeMobileMenu()); user ? navigate('/landlord') : dispatch(openAuthModal('login')) }} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.list')}</button>
             <Link to="/nearby" onClick={() => dispatch(closeMobileMenu())} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.nearby')}</Link>
-            <button className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.contact')}</button>
+            <Link to="/about" onClick={() => dispatch(closeMobileMenu())} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.about')}</Link>
             
             <div className="w-full h-px bg-gray-100 my-4" />
             

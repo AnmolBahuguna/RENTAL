@@ -9,7 +9,7 @@ const resources = {
         home: 'Home',
         list: 'List',
         nearby: 'Nearby',
-        contact: 'Contact us',
+        about: 'About Us',
         allCategory: 'ALL CATEGORY',
         login: 'Login',
         dashboard: 'Dashboard',
@@ -155,6 +155,16 @@ const resources = {
         comingSoon: 'Coming Soon',
         desc: "We're curating a verified list of laundry, tiffin services, and essential utilities to make your stay even easier.",
         back: 'Back to Explore'
+      },
+      aboutPage: {
+        title: 'The Story of GoEazy',
+        subtitle: 'Born out of the frustration of endless property hunting.',
+        section1Heading: 'How We Started',
+        section1Text: "It all started during our early college days. We vividly remember the struggle—wandering from street to street, knocking on random doors just hoping to find a decent, affordable room in a good location. Instead of focusing on our new college life, we were wasting weeks going door-to-door and dealing with unresponsive brokers.",
+        section2Heading: 'Our Promise',
+        section2Text: "We realized there had to be a better way, and that's how GoEazy was born. We built the exact platform we desperately needed back then. Today, we personally verify every listing and connect you directly with genuine owners, so no other student or professional has to go through that exhausting door-to-door hunt ever again.",
+        thankYouNote: '"Thank you for trusting GoEazy. We are constantly working to bring you better homes, better experiences, and complete peace of mind."',
+        back: 'Back to Search'
       }
     }
   },
@@ -164,7 +174,7 @@ const resources = {
         home: 'होम',
         list: 'लिस्ट करें',
         nearby: 'नज़दीकी',
-        contact: 'संपर्क करें',
+        about: 'हमारे बारे में',
         allCategory: 'सभी श्रेणियां',
         login: 'लॉगिन',
         dashboard: 'डैशबोर्ड',
@@ -310,6 +320,16 @@ const resources = {
         comingSoon: 'जल्द आ रहा है',
         desc: 'हम लॉन्ड्री, टिफिन सर्विस और अन्य आवश्यक सेवाओं की एक सत्यापित सूची तैयार कर रहे हैं ताकि आपका रहना और भी आसान हो सके।',
         back: 'होम पर वापस जाएं'
+      },
+      aboutPage: {
+        title: 'GoEazy की कहानी',
+        subtitle: 'प्रॉपर्टी खोजने की अंतहीन निराशा से जन्मा एक विचार।',
+        section1Heading: 'हमारी शुरुआत',
+        section1Text: "यह सब हमारे कॉलेज के शुरुआती दिनों में शुरू हुआ। हमें वो संघर्ष आज भी याद है—एक गली से दूसरी गली भटकना, हर दरवाजे पर दस्तक देना, सिर्फ इसलिए कि एक अच्छी लोकेशन पर किफायती कमरा मिल सके। अपने नए कॉलेज जीवन पर ध्यान केंद्रित करने के बजाय, हम हफ्तों तक दर-दर भटकने और जवाब न देने वाले ब्रोकर्स से जूझते रहे।",
+        section2Heading: 'हमारा वादा',
+        section2Text: 'हमें एहसास हुआ कि इसका एक बेहतर तरीका होना चाहिए, और यहीं से GoEazy का जन्म हुआ। हमने वह प्लेटफ़ॉर्म बनाया जिसकी हमें उस समय सबसे ज्यादा ज़रूरत थी। आज, हम खुद हर प्रॉपर्टी की जांच करते हैं और आपको सीधे असली मालिकों से जोड़ते हैं, ताकि किसी और छात्र या पेशेवर को कभी भी दर-दर न भटकना पड़े।',
+        thankYouNote: '"GoEazy पर भरोसा करने के लिए आपका धन्यवाद। हम आपके लिए बेहतर घर, शानदार अनुभव और मन की पूर्ण शांति लाने के लिए लगातार काम कर रहे हैं।"',
+        back: 'खोज पर वापस जाएं'
       }
     }
   }

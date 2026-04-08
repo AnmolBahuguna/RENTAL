@@ -16,6 +16,7 @@ import TermsOfService from './pages/legal/TermsOfService'
 import CookiePolicy from './pages/legal/CookiePolicy'
 import RefundPolicy from './pages/legal/RefundPolicy'
 import { NearbyServices } from './pages/NearbyServices'
+import { About } from './pages/About'
 import { useAuth } from './hooks/useAuth'
 import { RoleSelectionModal } from './components/auth/RoleSelectionModal'
 import ScrollToTop from './components/common/ScrollToTop'
@@ -53,6 +54,7 @@ function App() {
           <Route path="/cookies" element={<CookiePolicy />} />
           <Route path="/refund" element={<RefundPolicy />} />
           <Route path="/nearby" element={<NearbyServices />} />
+          <Route path="/about" element={<About />} />
           
           {/* User Routes */}
           <Route path="/dashboard" element={
