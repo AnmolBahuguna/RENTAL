@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Bookmark, Star, Home } from 'lucide-react'
@@ -26,10 +26,12 @@ export const PropertyCard = ({ property, layout = 'grid' }) => {
     toggleFavorite(property.id)
   }
 
-  // Generate a random high rating if none exists
-  const rating = property.rating || (4 + Math.random()).toFixed(1)
-  const numGuests = Math.floor(Math.random() * 6) + 4
-  const numBeds = property.bedrooms || Math.floor(Math.random() * 3) + 2
+  // Memoize random values to avoid recalculation on each render
+  const { rating, numGuests, numBeds } = useMemo(() => ({
+    rating: property.rating || (4 + Math.random()).toFixed(1),
+    numGuests: Math.floor(Math.random() * 6) + 4,
+    numBeds: property.bedrooms || Math.floor(Math.random() * 3) + 2,
+  }), [property.id])
 
   const formatPrice = (p) => {
      if(p > 1000) return (p/1000).toFixed(3)

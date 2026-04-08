@@ -6,7 +6,7 @@ import { openAuthModal } from '../store/authSlice'
 import { useProperties } from '../hooks/useProperties'
 import { TypeBadge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
-import { formatPrice, cn, AMENITY_ICONS } from '../utils/helpers'
+import { formatPrice, AMENITY_ICONS } from '../utils/helpers'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -204,7 +204,9 @@ export const PropertyDetail = () => {
         try {
           const body = await err.context.json()
           if (body.error) errorMsg = body.error
-        } catch (e) { /* fallback to original message */ }
+        } catch {
+          // fallback to original message
+        }
       }
       
       toast.error('Could not initiate payment: ' + errorMsg)

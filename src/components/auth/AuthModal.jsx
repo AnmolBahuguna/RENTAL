@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Mail, Lock, User, Eye, EyeOff, Home, GraduationCap } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
-import { closeAuthModal, openAuthModal } from '../../store/authSlice'
+import { closeAuthModal } from '../../store/authSlice'
 import { useAuth } from '../../hooks/useAuth'
-import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 
 const ROLE_OPTIONS = [

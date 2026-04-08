@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { Layout } from './components/layout/Layout'
 import { Home } from './pages/Home'
 import { Search } from './pages/Search'

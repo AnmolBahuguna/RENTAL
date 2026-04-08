@@ -6,7 +6,7 @@ import { openAuthModal } from '../../store/authSlice'
 import { toggleMobileMenu, closeMobileMenu } from '../../store/uiSlice'
 import { useAuth } from '../../hooks/useAuth'
 import { useProperties } from '../../hooks/useProperties'
-import { cn, getInitials } from '../../utils/helpers'
+import { cn } from '../../utils/helpers'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../ui/Skeleton'
 

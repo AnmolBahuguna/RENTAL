@@ -35,11 +35,14 @@ export const PropertySection = ({ title, type, icon, viewAllPath }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setLoading(true)
-    fetchByType(type)
-      .then(data => setItems(data?.length ? data : MOCK_PROPERTIES.filter(p => p.type === type)))
-      .finally(() => setLoading(false))
-  }, [type])
+    const loadData = async () => {
+      const data = await fetchByType(type)
+      setItems(data?.length ? data : MOCK_PROPERTIES.filter(p => p.type === type))
+      setLoading(false)
+    }
+    
+    loadData()
+  }, [type, fetchByType])
 
   if (!loading && items.length === 0) return null
 
