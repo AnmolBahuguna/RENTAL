@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useSearchParams } from 'react-router-dom'
 import { Filter, Grid, List as ListIcon, ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useProperties } from '../hooks/useProperties'
@@ -13,7 +14,16 @@ import { AMENITY_ICONS } from '../utils/helpers'
 export const Search = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const [searchParams] = useSearchParams()
   const { listings, filters, loading, hasMore, fetchProperties, updateFilters } = useProperties()
+
+  // Read ?type= from URL and apply as filter
+  useEffect(() => {
+    const typeParam = searchParams.get('type')
+    if (typeParam && ['Room', 'Flat', 'Hostel', 'PG'].includes(typeParam)) {
+      updateFilters({ type: typeParam })
+    }
+  }, [searchParams])
   const [viewMode, setViewMode] = useState('grid')
   const [showFilters, setShowFilters] = useState(false)
   const [localFilters, setLocalFilters] = useState({

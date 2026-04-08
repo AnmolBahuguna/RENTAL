@@ -11,8 +11,8 @@ import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 
 const ROLE_OPTIONS = [
-  { value: 'user',     label: 'Student / Professional', icon: <GraduationCap size={20} className="text-brand-500" />, desc: 'Browse & save properties' },
-  { value: 'landlord', label: 'Landlord / Owner',        icon: <Home size={20} className="text-brand-500" />, desc: 'List & manage properties' },
+  { value: 'user',     label: 'Student / Professional', icon: <GraduationCap size={20} className="text-brand-500" /> },
+  { value: 'landlord', label: 'Landlord / Owner',        icon: <Home size={20} className="text-brand-500" /> },
 ]
 
 export const AuthModal = () => {
@@ -49,6 +49,12 @@ export const AuthModal = () => {
         await signIn({ email: form.email, password: form.password })
         toast.success('Welcome back!')
         dispatch(closeAuthModal())
+        
+        const returnTo = localStorage.getItem('sb_return_to')
+        if (returnTo) {
+          navigate(returnTo)
+          localStorage.removeItem('sb_return_to')
+        }
       } else {
         await signUp({ email: form.email, password: form.password, name: form.name, role: selectedRole })
         toast.success('Account created! Check your email to confirm.')
@@ -175,7 +181,6 @@ export const AuthModal = () => {
                 >
                   <div className="text-xl mb-1">{opt.icon}</div>
                   <p className="text-sm font-semibold text-gray-900">{opt.label}</p>
-                  <p className="text-xs text-gray-500">{opt.desc}</p>
                 </button>
               ))}
             </div>
