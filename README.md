@@ -89,7 +89,7 @@ User experience is the core of GoEazy. We've implemented several "Premium-Only" 
 
 ## 🏎️ Smart Optimizations
 
-- **Self-Cleaning Storage**: "Recently Viewed" data is automatically pruned from the database after 72 hours, maintaining high performance and reducing storage overhead.
+- **Server-Side Storage Governance**: Implemented an automated pruning mechanism for "Recently Viewed" data. Records are strictly maintained on a 72-hour rolling window via PostgreSQL intervals, ensuring zero database bloat and maintaining high-performance query execution for the User Dashboard.
 - **Intelligent Debouncing**: Drastically reduced API overhead by optimizing search persistence.
 - **Zero Layout Shift (ZLS)**: Custom-engineered skeleton shimmers ensure the UI feels loaded even before the data arrives.
 - **SEO & Search Visibility**: Built-in JSON-LD schemas and high-resolution favicon systems for top-tier Google Search presentation.
