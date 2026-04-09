@@ -6,6 +6,7 @@ import { Home } from './pages/Home'
 import { Search } from './pages/Search'
 import { PropertyDetail } from './pages/PropertyDetail'
 import { UserDashboard } from './pages/UserDashboard'
+import { SavedProperties } from './pages/SavedProperties'
 import { LandlordDashboard } from './pages/LandlordDashboard'
 import { PropertyNew } from './pages/PropertyNew'
 import { PropertyEdit } from './pages/PropertyEdit'
@@ -60,6 +61,12 @@ function App() {
           <Route path="/dashboard" element={
             <ProtectedRoute allowedRoles={['user', null]}>
               <UserDashboard />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard/saved" element={
+            <ProtectedRoute allowedRoles={['user', null]}>
+              <SavedProperties />
             </ProtectedRoute>
           } />
           

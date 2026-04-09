@@ -219,7 +219,9 @@ export const Navbar = () => {
       {/* Secondary Navbar (Categories) */}
       {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund', '/about', '/nearby'].some(r => location.pathname.startsWith(r)) && (
         <>
-          <div className="w-full border-t border-b border-gray-100 bg-white flex relative">
+          <BannerSlider />
+
+          <div className="w-full border-t border-b border-gray-100 bg-white flex relative mt-2">
             <div className="flex items-center h-16 px-0 gap-6 overflow-x-auto scrollbar-hide flex-1">
               <button 
                 onClick={() => {
@@ -285,9 +287,46 @@ export const Navbar = () => {
               </div>
           </div>
           
-          {/* Mobile Search Bar (Out of menu, above banner) */}
-          <div className="md:hidden px-4 py-3 bg-white relative border-b border-gray-100 transition-all">
-            <div className="relative w-full">
+          {/* Mobile Search Bar (Out of menu, below banner/categories) */}
+          <div className="md:hidden px-4 py-2 bg-white relative border-b border-gray-100 transition-all flex items-center gap-2 mt-1">
+            
+            {/* Mobile City Selection */}
+            <div className="relative shrink-0">
+              <button 
+                onClick={() => setCityMenuOpen(!cityMenuOpen)}
+                className="flex items-center gap-1.5 p-1 bg-gray-50 rounded-full border border-gray-200"
+              >
+                <div className="w-8 h-8 rounded-full overflow-hidden border border-white shadow-sm">
+                  <img src="/1.webp" alt="City" className="w-full h-full object-cover" />
+                </div>
+                <ChevronDown size={14} className={`text-gray-400 mr-1 transition-transform duration-200 ${cityMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {cityMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-[60]" onClick={() => setCityMenuOpen(false)} />
+                  <div className="absolute left-0 top-full mt-2 w-40 bg-white rounded-xl shadow-2xl border border-gray-100 z-[70] overflow-hidden py-1 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="px-3 py-2 border-b border-gray-50 mb-1">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('search.filters')}</span>
+                    </div>
+                    {CITIES.map(city => (
+                      <button
+                        key={city}
+                        onClick={() => {
+                          setSelectedCity(city)
+                          setCityMenuOpen(false)
+                        }}
+                        className={`w-full text-left px-4 py-2 text-xs font-bold transition-colors ${selectedCity === city ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
+                      >
+                        {city}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="relative flex-1">
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                 <Search size={18} className="text-gray-400" />
               </div>
@@ -302,8 +341,6 @@ export const Navbar = () => {
               />
             </div>
           </div>
-
-          <BannerSlider />
         </>
       )}
       

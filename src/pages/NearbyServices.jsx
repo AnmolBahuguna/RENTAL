@@ -9,7 +9,7 @@ export const NearbyServices = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="pt-32 pb-20 min-h-screen bg-white flex flex-col items-center justify-center">
+    <div className="pt-8 pb-20 min-h-screen bg-white flex flex-col items-center justify-center">
       <div className="max-w-2xl mx-auto px-4 text-center">
         {/* Animated Icon Container */}
         <div className="relative w-32 h-32 mx-auto mb-10">

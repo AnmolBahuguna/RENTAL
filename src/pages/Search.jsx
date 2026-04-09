@@ -171,7 +171,7 @@ export const Search = () => {
   const filterContent = useMemo(() => renderFilterContent(), [localFilters, t, dispatch, showFilters])
 
   return (
-    <div className="pt-8 pb-12 min-h-screen bg-gray-50/50">
+    <div className="pt-4 pb-12 min-h-screen bg-gray-50/50">
       <div className="w-full px-2 sm:px-4">
         
         {/* Header Area */}
@@ -191,24 +191,41 @@ export const Search = () => {
                 </p>
               </div>
 
-              {/* Mobile Filter Button */}
-              <div className="md:hidden relative z-30">
-                <button 
-                  onClick={() => setShowFilters(!showFilters)} 
-                  className={`flex items-center justify-center p-2.5 bg-white border rounded-xl transition-all shadow-sm ${showFilters ? 'border-brand-500 text-brand-600 ring-2 ring-brand-50' : 'border-gray-200 text-gray-700 hover:border-gray-300'}`}
-                  aria-label="Toggle Filters"
-                >
-                  <Filter size={20} />
-                </button>
-                
-                {showFilters && (
-                  <>
-                    <div className="fixed inset-0 bg-black/5 backdrop-blur-[1px] z-10" onClick={() => setShowFilters(false)}></div>
-                    <div className="absolute right-0 top-full mt-3 w-[calc(100vw-2rem)] xs:w-[340px] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 p-5 z-20 cursor-default animate-in fade-in zoom-in-95 duration-200">
-                      {filterContent}
-                    </div>
-                  </>
-                )}
+              {/* Mobile Actions (View Toggles + Filter) */}
+              <div className="md:hidden flex items-center gap-3 relative z-30">
+                <div className="flex items-center gap-2 pr-2 border-r border-gray-200 mr-1">
+                  <button 
+                    onClick={() => setViewMode('grid')} 
+                    className={`p-2 transition-all rounded-lg ${viewMode === 'grid' ? 'bg-brand-50 text-brand-600 ring-1 ring-brand-100' : 'text-gray-400'}`}
+                  >
+                    <Grid size={18} />
+                  </button>
+                  <button 
+                    onClick={() => setViewMode('list')} 
+                    className={`p-2 transition-all rounded-lg ${viewMode === 'list' ? 'bg-brand-50 text-brand-600 ring-1 ring-brand-100' : 'text-gray-400'}`}
+                  >
+                    <ListIcon size={18} className="rotate-90" />
+                  </button>
+                </div>
+
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowFilters(!showFilters)} 
+                    className={`flex items-center justify-center p-2.5 bg-white border rounded-xl transition-all shadow-sm ${showFilters ? 'border-brand-500 text-brand-600 ring-2 ring-brand-50' : 'border-gray-200 text-gray-700 hover:border-gray-300'}`}
+                    aria-label="Toggle Filters"
+                  >
+                    <Filter size={20} />
+                  </button>
+                  
+                  {showFilters && (
+                    <>
+                      <div className="fixed inset-0 bg-black/5 backdrop-blur-[1px] z-10" onClick={() => setShowFilters(false)}></div>
+                      <div className="absolute right-0 top-full mt-3 w-[calc(100vw-2rem)] xs:w-[340px] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 p-5 z-20 cursor-default animate-in fade-in zoom-in-95 duration-200">
+                        {filterContent}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>

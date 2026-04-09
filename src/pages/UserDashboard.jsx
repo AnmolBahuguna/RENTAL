@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Heart, Clock, User as UserIcon } from 'lucide-react'
+import { Heart, Clock, User as UserIcon, ChevronLeft } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useProperties } from '../hooks/useProperties'
 import { PropertyCard } from '../components/property/PropertyCard'
@@ -88,23 +88,37 @@ export const UserDashboard = () => {
 
         {/* Saved Properties */}
         <div className="mb-12">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-[#fdf2f2] text-[#CA3433] flex items-center justify-center">
-              <Heart size={20} fill="currentColor" />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#fdf2f2] text-[#CA3433] flex items-center justify-center">
+                <Heart size={20} fill="currentColor" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-gray-900 font-display leading-none">Saved Properties</h2>
+                {!loading && <span className="text-xs font-bold text-gray-400 mt-1 block uppercase tracking-wider">{favProps.length} Items</span>}
+              </div>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 font-display">Saved Properties</h2>
-            {!loading && <span className="text-sm font-medium text-gray-400">({favProps.length})</span>}
+            
+            {favProps.length > 0 && (
+              <Link 
+                to="/dashboard/saved" 
+                className="text-sm font-extrabold text-[#CA3433] hover:underline flex items-center gap-1 group"
+              >
+                View all
+                <ChevronLeft size={16} className="rotate-180 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            )}
           </div>
 
           {loading ? (
             <LoadingRow />
           ) : favProps.length === 0 ? (
-            <div className="bg-white p-8 rounded-xl border border-gray-100 text-center">
-              <p className="text-gray-500">You haven't saved any properties yet.</p>
-              <Link to="/search" className="text-[#CA3433] font-semibold hover:underline mt-2 inline-block">Explore listings</Link>
+            <div className="bg-white p-10 rounded-3xl border border-gray-100 text-center shadow-sm">
+              <p className="text-gray-500 font-medium mb-4">You haven't saved any properties yet.</p>
+              <Link to="/search" className="bg-[#fdf2f2] text-[#CA3433] px-6 py-2.5 rounded-xl font-bold hover:bg-[#fbe1e1] transition-colors inline-block">Explore listings</Link>
             </div>
           ) : (
-            <div className="scroll-row">
+            <div className="scroll-row px-1 -mx-1">
               {favProps.map(p => (
                 <div key={p.id} className="flex-shrink-0">
                   <PropertyCard property={p} compact />
@@ -116,21 +130,21 @@ export const UserDashboard = () => {
 
         {/* Recently Viewed */}
         <div className="mb-12">
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-[#fdf2f2] text-[#CA3433] flex items-center justify-center">
               <Clock size={20} />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 font-display">Recently Viewed</h2>
+            <h2 className="text-xl font-black text-gray-900 font-display leading-none">Recently Viewed</h2>
           </div>
 
           {loading ? (
             <LoadingRow />
           ) : recentProps.length === 0 ? (
-            <div className="bg-white p-8 rounded-xl border border-gray-100 text-center">
-              <p className="text-gray-500">No recently viewed properties.</p>
+            <div className="bg-white p-10 rounded-3xl border border-gray-100 text-center shadow-sm">
+              <p className="text-gray-500 font-medium">No recently viewed properties.</p>
             </div>
           ) : (
-            <div className="scroll-row">
+            <div className="scroll-row px-1 -mx-1">
               {recentProps.map(p => (
                 <div key={p.id} className="flex-shrink-0">
                   <PropertyCard property={p} compact />
