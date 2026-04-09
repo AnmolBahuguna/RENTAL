@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock, EyeOff, X } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -29,6 +29,12 @@ export const PropertyDetail = () => {
   const [unlocking, setUnlocking] = useState(false)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [initialSlideIndex, setInitialSlideIndex] = useState(0)
+  
+  // State for custom navigation elements (ensures reliable init)
+  const [prevEl, setPrevEl] = useState(null)
+  const [nextEl, setNextEl] = useState(null)
+  const [galleryPrevEl, setGalleryPrevEl] = useState(null)
+  const [galleryNextEl, setGalleryNextEl] = useState(null)
 
   const openGallery = (index) => {
     setInitialSlideIndex(index)
@@ -235,12 +241,13 @@ export const PropertyDetail = () => {
   const renderSlider = () => (
     <div className="relative w-full aspect-square md:aspect-[4/3] bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group border border-gray-200/50">
       <Swiper
+        key={p.id}
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={0}
         slidesPerView={1}
         navigation={{
-          nextEl: '.swiper-button-next-custom',
-          prevEl: '.swiper-button-prev-custom',
+          prevEl: prevEl,
+          nextEl: nextEl,
         }}
         pagination={{ clickable: true, dynamicBullets: true }}
         autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -263,10 +270,10 @@ export const PropertyDetail = () => {
       </Swiper>
 
       {/* Custom Navigation Icons */}
-      <button className="swiper-button-prev-custom absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white">
+      <button ref={setPrevEl} className="absolute left-1 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white">
         <img src="/swipe-left.svg" alt="Previous" className="w-12 h-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
       </button>
-      <button className="swiper-button-next-custom absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white">
+      <button ref={setNextEl} className="absolute right-1 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white">
         <img src="/swipe-right.svg" alt="Next" className="w-12 h-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
       </button>
       
@@ -542,13 +549,14 @@ export const PropertyDetail = () => {
           
           <div className="w-full h-full sm:h-[90%] max-w-6xl mx-auto flex items-center justify-center">
             <Swiper
+              key={`gallery-${p.id}`}
               modules={[Navigation, Pagination]}
               initialSlide={initialSlideIndex}
               spaceBetween={20}
               slidesPerView={1}
               navigation={{
-                nextEl: '.gallery-next',
-                prevEl: '.gallery-prev',
+                prevEl: galleryPrevEl,
+                nextEl: galleryNextEl,
               }}
               pagination={{ type: 'fraction', el: '.gallery-pagination' }}
               className="w-full h-full"
@@ -566,10 +574,10 @@ export const PropertyDetail = () => {
               ))}
               
               {/* Custom Navigation Icons for Gallery */}
-              <button className="gallery-prev absolute left-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer">
+              <button ref={setGalleryPrevEl} className="absolute left-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer">
                 <img src="/swipe-left.svg" alt="Previous" className="w-8 h-8 brightness-0 invert" />
               </button>
-              <button className="gallery-next absolute right-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer">
+              <button ref={setGalleryNextEl} className="absolute right-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer">
                 <img src="/swipe-right.svg" alt="Next" className="w-8 h-8 brightness-0 invert" />
               </button>
               
