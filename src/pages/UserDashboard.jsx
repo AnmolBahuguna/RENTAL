@@ -150,7 +150,12 @@ export const UserDashboard = () => {
             <div className="w-10 h-10 rounded-xl bg-[#fdf2f2] text-[#CA3433] flex items-center justify-center">
               <Clock size={20} />
             </div>
-            <h2 className="text-xl font-black text-gray-900 font-display leading-none">Recently Viewed</h2>
+            <div>
+              <h2 className="text-xl font-black text-gray-900 font-display leading-none">Recently Viewed</h2>
+              <p className="text-[10px] text-gray-400 mt-1 font-medium bg-gray-50 px-2 py-0.5 rounded-md inline-block">
+                Auto-clears after 72 hours
+              </p>
+            </div>
           </div>
 
           {loading ? (

@@ -268,15 +268,29 @@ export const useProperties = () => {
   const fetchRecentlyViewed = useCallback(async () => {
     if (!user) return
     try {
+      const seventyTwoHoursAgo = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString()
+      
+      // 1. Storage Optimization: Delete records older than 72 hours
+      await supabase
+        .from('recently_viewed')
+        .delete()
+        .eq('user_id', user.id)
+        .lt('viewed_at', seventyTwoHoursAgo)
+
+      // 2. Functional Fetch: Get only last 20 items from last 72h
       const { data } = await supabase
         .from('recently_viewed')
         .select('property_id')
         .eq('user_id', user.id)
+        .gte('viewed_at', seventyTwoHoursAgo)
         .order('viewed_at', { ascending: false })
         .limit(20)
+        
       dispatch(setRecentlyViewed(data?.map(r => r.property_id) || []))
-    } catch { /* silent */ }
-  }, [user])
+    } catch (err) {
+      console.error('[fetchRecentlyViewed] Error:', err)
+    }
+  }, [user, dispatch])
 
   const getLandlordProperties = async () => {
     // Get session ID directly for reliability
