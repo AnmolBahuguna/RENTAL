@@ -17,7 +17,7 @@ export const BannerSlider = () => {
 
   return (
     <div className="w-full bg-slate-50 px-2 sm:px-4 py-2 sm:py-3">
-      <div className="w-full overflow-hidden rounded-xl sm:rounded-2xl shadow-sm">
+      <div className="w-full overflow-hidden rounded-lg sm:rounded-xl shadow-sm">
         <Swiper
           modules={[Autoplay, Pagination]}
           spaceBetween={0}

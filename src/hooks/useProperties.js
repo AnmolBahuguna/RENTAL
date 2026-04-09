@@ -134,12 +134,15 @@ export const useProperties = () => {
         .maybeSingle()
       if (error) throw error
       dispatch(setCurrentProperty(data))
-      // Increment view count
-      await supabase.rpc('increment_views', { property_id: id })
       // Track recently viewed
-      if (user) {
+      const isMock = MOCK_PROPERTIES.some(p => String(p.id) === String(id))
+      console.log(`[fetchPropertyById] Tracking ${id}. Mock: ${isMock}`)
+
+      if (user && !isMock) {
         dispatch(addRecentlyViewed(id))
         await supabase.from('recently_viewed').upsert({ user_id: user.id, property_id: id, viewed_at: new Date().toISOString() })
+      } else if (isMock) {
+        dispatch(addRecentlyViewed(id))
       }
     } catch {
       const mock = MOCK_PROPERTIES.find(p => String(p.id) === String(id))
@@ -277,14 +280,25 @@ export const useProperties = () => {
   const toggleFavorite = async (propertyId) => {
     if (!user) return
     const isFav = favorites.includes(propertyId)
+    const isMock = MOCK_PROPERTIES.some(p => String(p.id) === String(propertyId))
+    
     dispatch(toggleFav(propertyId))
+    
+    if (isMock) {
+      console.log('[toggleFavorite] Mock property handled in-memory.')
+      return
+    }
+
     try {
       if (isFav) {
         await supabase.from('favorites').delete().eq('user_id', user.id).eq('property_id', propertyId)
       } else {
         await supabase.from('favorites').insert({ user_id: user.id, property_id: propertyId })
       }
-    } catch { dispatch(toggleFav(propertyId)) /* revert */ }
+    } catch (err) { 
+      console.error('[toggleFavorite] Sync failed:', err)
+      dispatch(toggleFav(propertyId)) /* revert */ 
+    }
   }
 
   const fetchRecentlyViewed = useCallback(async () => {

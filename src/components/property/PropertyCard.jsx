@@ -161,7 +161,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
           onClick={handleFav}
           className={cn(
             'absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center z-10',
-            'transition-all duration-200 shadow-sm opacity-0 group-hover:opacity-100',
+            'transition-all duration-200 shadow-sm transition-opacity',
             isFav ? 'bg-brand-500 text-white' : 'bg-white/90 backdrop-blur-sm text-gray-600'
           )}
         >
@@ -193,7 +193,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
             <span className="text-[8px] font-bold text-gray-400 uppercase leading-none">{t('property.labels.from')}</span>
             <span className="font-black text-gray-900 text-base leading-tight">₹{formatPrice(property.price)}</span>
           </p>
-          <button className="text-gray-400 hover:text-brand-600 transition-colors">
+          <button className="text-[#CA3433] hover:text-brand-800 transition-colors">
             <Eye size={18} />
           </button>
         </div>

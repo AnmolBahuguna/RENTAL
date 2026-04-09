@@ -19,8 +19,10 @@ import RefundPolicy from './pages/legal/RefundPolicy'
 import { NearbyServices } from './pages/NearbyServices'
 import { About } from './pages/About'
 import { useAuth } from './hooks/useAuth'
+import { useProperties } from './hooks/useProperties'
 import { RoleSelectionModal } from './components/auth/RoleSelectionModal'
 import ScrollToTop from './components/common/ScrollToTop'
+import { useEffect } from 'react'
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, role, loading } = useAuth()
@@ -36,8 +38,17 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 }
 
 function App() {
-  // Initialize auth hook to listen to session
-  useAuth()
+  const { user } = useAuth()
+  const { fetchFavorites, fetchRecentlyViewed } = useProperties()
+
+  // Initialize data on login/refresh
+  useEffect(() => {
+    if (user) {
+      console.log('[App] Synchronizing user data...')
+      fetchFavorites()
+      fetchRecentlyViewed()
+    }
+  }, [user, fetchFavorites, fetchRecentlyViewed])
   
   return (
     <BrowserRouter>

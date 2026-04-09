@@ -17,11 +17,18 @@ export const SavedProperties = () => {
 
   useEffect(() => {
     if (user) {
-      fetchFavorites().then(() => loadProperties())
+      loadProperties()
     }
-  }, [user, favorites.length])
+  }, [user, favorites]) // React to changes in favorites list
 
   const loadProperties = async () => {
+    if (!user) return
+    
+    // Only set loading if we don't have any data yet
+    if (favProps.length === 0) {
+      setLoading(true)
+    }
+
     try {
       if (favorites.length > 0) {
         const { data, error } = await supabase
@@ -30,7 +37,11 @@ export const SavedProperties = () => {
           .in('id', favorites)
         
         if (error) throw error
-        if (data) setFavProps(data)
+        if (data) {
+          // preserve order based on favorites array
+          const ordered = favorites.map(id => data.find(p => p.id === id)).filter(Boolean)
+          setFavProps(ordered)
+        }
       } else {
         setFavProps([])
       }
