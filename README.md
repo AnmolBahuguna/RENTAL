@@ -1,16 +1,43 @@
-# React + Vite
+# GoEazy | Housing Search for Uttarakhand Students & Professionals
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GoEazy is a premium, high-performance real estate platform tailored for the unique housing needs of students and professionals in Uttarakhand. Built with a focus on speed, aesthetics, and a "low-friction" user experience.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Features
 
-## React Compiler
+### 🔍 Smart Search & Discovery
+- **Live Search**: Debounced real-time filtering by property title, city, and area.
+- **Brand Navigation**: Custom-built image sliders with brand-consistent, HD swipe icons.
+- **Multi-View Layout**: Switch between **Grid** and **List** views instantly to browse according to your preference.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🏠 Landlord Dashboard 2.0
+- **Management Suite**: Clean, optimized dashboard for tracking listings and profile views.
+- **Dual Layout Control**: Dedicated management views (Grid/List) optimized for desktop and laptop screens.
+- **Fast Listings**: Efficient property listing flow with HD image support and instant availability toggles.
 
-## Expanding the ESLint configuration
+### 🌍 Localization
+- Full support for **English** and **Hindi** to cater to the local demographic.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🚀 Tech Stack
+
+- **Frontend**: React 19 + Vite 8
+- **State**: Redux Toolkit
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Styling**: TailwindCSS + Framer Motion
+- **Icons**: Lucide + Custom Brand SVGs
+
+---
+
+## 📈 Recent Updates (v1.2)
+- ✅ **Failsafe Slider Visibility**: Reliability fix for navigation icons.
+- ✅ **Optimized Dashboard**: Responsive 4-column grid for large screens.
+- ✅ **Branding & SEO**: Integrated high-resolution Favicons and Apple Touch icons for Google Search.
+- ✅ **UI Cleanup**: Removed redundant circular backgrounds from navigation buttons for a floating icon look.
+
+---
+
+## ⚖️ License
+© 2026 GoEazy Platform. All rights reserved.
