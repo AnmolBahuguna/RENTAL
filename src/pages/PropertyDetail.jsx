@@ -238,10 +238,13 @@ export const PropertyDetail = () => {
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={0}
         slidesPerView={1}
-        navigation
+        navigation={{
+          nextEl: '.swiper-button-next-custom',
+          prevEl: '.swiper-button-prev-custom',
+        }}
         pagination={{ clickable: true, dynamicBullets: true }}
         autoplay={{ delay: 4000, disableOnInteraction: false }}
-        className="w-full h-full property-detail-slider"
+        className="w-full h-full"
       >
         {images.map((img, i) => (
           <SwiperSlide key={i}>
@@ -258,6 +261,14 @@ export const PropertyDetail = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* Custom Navigation Icons */}
+      <button className="swiper-button-prev-custom absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white">
+        <img src="/swipe-left.svg" alt="Previous" className="w-12 h-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
+      </button>
+      <button className="swiper-button-next-custom absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white">
+        <img src="/swipe-right.svg" alt="Next" className="w-12 h-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
+      </button>
       
       {/* Overlay Actions */}
       <div className="absolute top-4 right-4 flex gap-2 z-10">
@@ -535,9 +546,12 @@ export const PropertyDetail = () => {
               initialSlide={initialSlideIndex}
               spaceBetween={20}
               slidesPerView={1}
-              navigation
+              navigation={{
+                nextEl: '.gallery-next',
+                prevEl: '.gallery-prev',
+              }}
               pagination={{ type: 'fraction', el: '.gallery-pagination' }}
-              className="w-full h-full fullscreen-gallery-slider"
+              className="w-full h-full"
             >
               {images.map((img, i) => (
                 <SwiperSlide key={i}>
@@ -550,6 +564,14 @@ export const PropertyDetail = () => {
                   </div>
                 </SwiperSlide>
               ))}
+              
+              {/* Custom Navigation Icons for Gallery */}
+              <button className="gallery-prev absolute left-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer">
+                <img src="/swipe-left.svg" alt="Previous" className="w-8 h-8 brightness-0 invert" />
+              </button>
+              <button className="gallery-next absolute right-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer">
+                <img src="/swipe-right.svg" alt="Next" className="w-8 h-8 brightness-0 invert" />
+              </button>
               
               {/* Custom Fraction Pagination at bottom */}
               <div className="gallery-pagination absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-white bg-black/50 px-4 py-1.5 rounded-full font-semibold tracking-widest text-sm backdrop-blur-md"></div>

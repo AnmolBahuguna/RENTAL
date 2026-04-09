@@ -1,4 +1,4 @@
-// GoEazy App - Vercel Build Refresh (Reverted listing payment feature)
+// GoEazy App - Vercel Build Refresh
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
@@ -18,41 +18,16 @@ import CookiePolicy from './pages/legal/CookiePolicy'
 import RefundPolicy from './pages/legal/RefundPolicy'
 import { NearbyServices } from './pages/NearbyServices'
 import { About } from './pages/About'
-import { useAuth } from './hooks/useAuth'
-import { useProperties } from './hooks/useProperties'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { AppInitializer } from './components/common/AppInitializer'
 import { RoleSelectionModal } from './components/auth/RoleSelectionModal'
 import ScrollToTop from './components/common/ScrollToTop'
-import { useEffect } from 'react'
-
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user, role, loading } = useAuth()
-  
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="skeleton w-12 h-12 rounded-full" /></div>
-  }
-  
-  if (!user) return <Navigate to="/" />
-  if (allowedRoles && !allowedRoles.includes(role)) return <Navigate to="/" />
-  
-  return children
-}
 
 function App() {
-  const { user } = useAuth()
-  const { fetchFavorites, fetchRecentlyViewed } = useProperties()
-
-  // Initialize data on login/refresh
-  useEffect(() => {
-    if (user) {
-      console.log('[App] Synchronizing user data...')
-      fetchFavorites()
-      fetchRecentlyViewed()
-    }
-  }, [user, fetchFavorites, fetchRecentlyViewed])
-  
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <AppInitializer />
       <RoleSelectionModal />
       <Layout>
         <Routes>

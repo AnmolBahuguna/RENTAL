@@ -82,7 +82,7 @@ export const UserDashboard = () => {
   )
 
   return (
-    <div className="pt-24 pb-20 bg-gray-50 min-h-screen">
+    <div className="pt-4 pb-20 bg-gray-50 min-h-screen">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
@@ -135,7 +135,7 @@ export const UserDashboard = () => {
             </div>
           ) : (
             <div className="scroll-row px-1 -mx-1">
-              {favProps.map(p => (
+              {favProps.slice(0, 3).map(p => (
                 <div key={p.id} className="flex-shrink-0">
                   <PropertyCard property={p} compact />
                 </div>

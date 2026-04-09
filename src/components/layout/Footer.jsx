@@ -16,10 +16,10 @@ export const Footer = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-6 group cursor-pointer" onClick={() => navigate('/')}>
-              <div className="w-10 h-10 rounded-xl bg-[#CA3433] shadow-md flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-0 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-white border-2 border-[#CA3433] shadow-md flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-0 transition-all duration-300 overflow-hidden">
                 <div className="-rotate-3 flex items-center justify-center translate-y-0.5">
-                  <span className="text-white text-[22px] font-black leading-none">G</span>
-                  <span className="text-white/80 text-[12px] font-black leading-none -ml-0.5 mb-2">e</span>
+                  <span className="text-[#CA3433] text-[22px] font-black leading-none">G</span>
+                  <span className="text-[#CA3433] text-[15px] font-black leading-none -ml-0.5 mb-2">E</span>
                 </div>
               </div>
               <span className="font-display font-black text-2xl text-white tracking-tight leading-none pt-1">

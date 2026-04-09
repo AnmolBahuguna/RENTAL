@@ -73,47 +73,48 @@ export const Navbar = () => {
     <nav className="relative z-40 bg-white">
       {/* Top Navbar */}
       <div className="w-full px-2 sm:px-4">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 relative">
           
-          {/* Logo & EN */}
-          <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#CA3433] shadow-md flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-0 transition-all duration-300">
+          {/* Logo Section (Centered on mobile) */}
+          <div className="absolute left-1/2 md:static -translate-x-1/2 md:translate-x-0 whitespace-nowrap z-20">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-xl bg-white border-2 border-[#CA3433] shadow-md flex items-center justify-center font-bold font-display rotate-3 group-hover:rotate-0 transition-all duration-300 overflow-hidden">
                 <div className="-rotate-3 flex items-center justify-center translate-y-0.5">
-                  <span className="text-white text-[22px] font-black leading-none">G</span>
-                  <span className="text-white/80 text-[12px] font-black leading-none -ml-0.5 mb-2">e</span>
+                  <span className="text-[#CA3433] text-[22px] font-black leading-none">G</span>
+                  <span className="text-[#CA3433] text-[15px] font-black leading-none -ml-0.5 mb-2">E</span>
                 </div>
               </div>
-              <span className="font-display font-black text-2xl text-gray-900 tracking-tight leading-none pt-1">
+              <span className="font-display font-black text-[22px] sm:text-2xl text-gray-900 tracking-tight leading-none pt-1">
                 Go<span className="text-[#CA3433]">Eazy</span>
               </span>
             </Link>
+          </div>
             
-            <div className="relative">
-              <button 
-                onClick={() => setLangMenuOpen(!langMenuOpen)}
-                className="hidden md:flex items-center gap-1.5 text-sm font-bold text-gray-700 hover:text-[#CA3433] transition-colors uppercase"
-              >
-                {currentLang.short} <ChevronDown size={14} className={`transition-transform duration-200 ${langMenuOpen ? 'rotate-180 text-[#CA3433]' : ''}`} />
-              </button>
+          {/* Language Picker (Left side) */}
+          <div className="relative z-30">
+            <button 
+              onClick={() => setLangMenuOpen(!langMenuOpen)}
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-700 hover:text-[#CA3433] transition-colors uppercase px-1 py-2"
+            >
+              {currentLang.short} <ChevronDown size={14} className={`transition-transform duration-200 ${langMenuOpen ? 'rotate-180 text-[#CA3433]' : ''}`} />
+            </button>
 
-              {langMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-10" onClick={() => setLangMenuOpen(false)} />
-                  <div className="absolute left-0 top-full mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden py-1">
-                    {languages.map(l => (
-                      <button
-                        key={l.code}
-                        onClick={() => changeLanguage(l.code)}
-                        className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors ${currentLang.code === l.code ? 'bg-[#fff5f5] text-[#CA3433]' : 'text-gray-700 hover:bg-gray-50'}`}
-                      >
-                        {l.label} ({l.short})
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+            {langMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setLangMenuOpen(false)} />
+                <div className="absolute left-0 top-full mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden py-1">
+                  {languages.map(l => (
+                    <button
+                      key={l.code}
+                      onClick={() => changeLanguage(l.code)}
+                      className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${currentLang.code === l.code ? 'bg-[#fff5f5] text-[#CA3433]' : 'text-gray-700 hover:bg-gray-50'}`}
+                    >
+                      {l.label} ({l.short})
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Search Bar */}
@@ -221,8 +222,11 @@ export const Navbar = () => {
         <>
           <BannerSlider />
 
-          <div className="w-full border-t border-b border-gray-100 bg-white flex relative mt-2">
-            <div className="flex items-center h-16 px-0 gap-6 overflow-x-auto scrollbar-hide flex-1">
+          <div className="w-full border-t border-b border-gray-100 bg-white flex relative mt-2 overflow-hidden">
+            {/* Scroll Indicator Gradient */}
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none md:hidden" />
+            
+            <div className="flex items-center h-16 px-0 gap-6 overflow-x-auto scrollbar-hide flex-1 scroll-smooth">
               <button 
                 onClick={() => {
                   resetFilters()
@@ -233,7 +237,7 @@ export const Navbar = () => {
                 <Grid size={18} /> {t('nav.allCategory')}
               </button>
 
-              <div className="flex items-center gap-8 px-4 font-semibold text-sm flex-1 whitespace-nowrap min-w-max">
+              <div className="flex items-center gap-8 px-4 font-bold text-sm flex-1 whitespace-nowrap min-w-max">
                 {categoryTabs.map(tab => (
                   <button 
                     key={tab.name}
@@ -242,11 +246,14 @@ export const Navbar = () => {
                       navigate(`/search?type=${tab.value}`)
                     }}
                     className={cn(
-                      "flex items-center gap-2 h-16 border-b-2 transition-all px-2",
-                      filters.type === tab.value ? "border-brand-purple text-brand-purple bg-purple-50/50" : "border-transparent text-gray-500 hover:text-gray-900"
+                      "flex items-center gap-2 h-16 border-b-[3px] transition-all px-2 group/tab",
+                      filters.type === tab.value ? "border-[#CA3433] text-[#CA3433] bg-[#fff5f5]" : "border-transparent text-gray-500 hover:text-gray-900"
                     )}
                   >
-                    {tab.icon} {tab.name}
+                    <span className="group-hover/tab:scale-110 transition-transform duration-200">
+                      {tab.icon}
+                    </span>
+                    {tab.name}
                   </button>
                 ))}
               </div>
