@@ -4,6 +4,24 @@
 
 ---
 
+## 🚀 The Mission: Solving the Student Housing Crisis
+
+In student hubs like Uttarakhand, finding a PG or Room is often a nightmare of hidden brokers and unverified listings. **GoEazy** was built to destroy these barriers:
+- **Broker-Free Transparency**: Direct landlord-to-student pipeline.
+- **Micro-Payment Economy**: Pay only for what you need (verified contacts or listing placement).
+- **Quality Benchmarking**: High-definition UI that reflects the quality of living standards we aim to provide.
+
+---
+
+## 🏆 Production-Grade & Scalable
+
+While built for a hackathon, GoEazy is engineered to handle real-world traffic:
+- **Cloud-Native**: Fully serverless architecture using Supabase (Edge Functions + PostgreSQL).
+- **Edge Deployment**: Latency-optimized global delivery for images and assets.
+- **Industrial RLS**: Row Level Security policies that can scale to millions of users without security leaks.
+
+---
+
 ## ✨ The Experience
 
 ### 🔍 Intelligence-Driven Search
