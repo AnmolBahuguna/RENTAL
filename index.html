@@ -17,6 +17,8 @@
     <script>
       (function() {
         const ignoreStrings = [
+          '[vite]',
+          '[Violation]',
           'non-passive event listener',
           'accelerometer is not allowed',
           'devicemotion events are blocked',
@@ -28,7 +30,14 @@
           'Mixed Content',
           'local network request',
           'request-id',
-          'accelerometer'
+          'accelerometer',
+          'sardine',
+          'biometric',
+          'preloaded using link preload but not used',
+          'serviceworker',
+          'ERR_CONNECTION_REFUSED',
+          'localhost:37857',
+          'localhost:7070',
         ];
         const originalWarn = console.warn;
         const originalError = console.error;
@@ -52,6 +61,32 @@
           if (shouldIgnore(args)) return;
           originalLog.apply(console, args);
         };
+
+        // Global Security & Anti-Copy Protection
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        document.addEventListener('keydown', function(e) {
+          // Block F12 (DevTools)
+          if (e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+          }
+          // Block Ctrl+Shift+I (Inspect), Ctrl+Shift+J (Console), Ctrl+Shift+C (Inspect Element)
+          if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+          }
+          // Block Ctrl+U (View Source)
+          if (e.ctrlKey && e.keyCode === 85) {
+            e.preventDefault();
+            return false;
+          }
+          // Block Ctrl+S (Save Page)
+          if (e.ctrlKey && e.keyCode === 83) {
+            e.preventDefault();
+            return false;
+          }
+        });
       })();
     </script>
   </head>
