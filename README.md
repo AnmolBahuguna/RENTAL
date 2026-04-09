@@ -38,6 +38,24 @@
 
 ---
 
+## 🛡️ Security & Architecture
+
+### Backend Gating (Supabase + Edge Functions)
+- **Zero-Trust Database**: Powered by **PostgreSQL Row Level Security (RLS)**. No user can read, modify, or delete another user's property data, even if they have the ID.
+- **Payment-Gated API**: Property creation is **not allowed directly** via the client. It is strictly gated behind a secure Supabase Edge Function that verifies the **Razorpay HMAC Signature** and payment status before touching the database.
+- **ES256 JWT Validation**: Using high-entropy Eliptic Curve signatures for user session validation, ensuring sessions cannot be spoofed.
+
+### Content Protection Engine
+- **Anti-Scraping Layer**: Global selection disabling and context-menu blocking to prevent automated or manual content theft.
+- **Developer Shield**: Active monitoring and blocking of `F12`, `Ctrl+Shift+I/J/C`, and `Ctrl+U` to keep the underlying structure secure from casual inspection.
+- **No-Drag Implementation**: Images are locked from browser native drag-and-drop to prevent easy local saving.
+
+### Payment Integrity
+- **HMAC Verification**: Every transaction is cross-verified on the server using `SHA-256` HMAC signatures provided by Razorpay.
+- **Amount Cross-Check**: The backend verifies the exact payment amount (₹199.00) against the Razorpay API to prevent "Zero-Payment" payload tampering.
+
+---
+
 ## 🏎️ Smart Optimizations
 
 - **Intelligent Debouncing**: Drastically reduced API overhead by optimizing search persistence.
