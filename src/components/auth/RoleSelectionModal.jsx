@@ -7,8 +7,9 @@ import toast from 'react-hot-toast'
 import { Home, GraduationCap } from 'lucide-react'
 
 const ROLE_OPTIONS = [
-  { value: 'user',     label: 'Student / Professional' },
-  { value: 'landlord', label: 'Landlord / Owner'        },
+  { value: 'user',             label: 'Student / Professional' },
+  { value: 'landlord',         label: 'Landlord / Owner'        },
+  { value: 'service_provider', label: 'Service Provider 🍱'    },
 ]
 
 export const RoleSelectionModal = () => {
@@ -34,6 +35,8 @@ export const RoleSelectionModal = () => {
       const returnTo = localStorage.getItem('sb_return_to')
       if (selectedRole === 'landlord') {
         navigate('/landlord')
+      } else if (selectedRole === 'service_provider') {
+        navigate('/service-provider')
       } else if (returnTo) {
         navigate(returnTo)
         localStorage.removeItem('sb_return_to')

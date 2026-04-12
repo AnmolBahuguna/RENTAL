@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, User, Eye, EyeOff, Home, GraduationCap } from 'lucide-react'
+import { Mail, Lock, User, Eye, EyeOff, Home, GraduationCap, Utensils } from 'lucide-react'
 import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
@@ -10,8 +10,9 @@ import { useAuth } from '../../hooks/useAuth'
 import toast from 'react-hot-toast'
 
 const ROLE_OPTIONS = [
-  { value: 'user',     label: 'Student / Professional' },
-  { value: 'landlord', label: 'Landlord / Owner'        },
+  { value: 'user',             label: 'Student / Professional', icon: <GraduationCap size={20} className="text-brand-500" /> },
+  { value: 'landlord',         label: 'Landlord / Owner',        icon: <Home size={20} className="text-brand-500" /> },
+  { value: 'service_provider', label: 'Service Provider 🍱',    icon: <Utensils size={20} className="text-brand-500" /> },
 ]
 
 export const AuthModal = () => {
@@ -61,6 +62,8 @@ export const AuthModal = () => {
         dispatch(closeAuthModal())
         if (selectedRole === 'landlord') {
           navigate('/landlord')
+        } else if (selectedRole === 'service_provider') {
+          navigate('/service-provider')
         } else if (returnTo) {
           navigate(returnTo)
           localStorage.removeItem('sb_return_to')
@@ -180,18 +183,19 @@ export const AuthModal = () => {
         {tab === 'signup' && (
           <div>
             <p className="text-sm font-semibold text-gray-700 mb-2">I am a...</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-2">
               {ROLE_OPTIONS.map(opt => (
                 <button
                   key={opt.value}
                   type="button"
                   onClick={() => setSelectedRole(opt.value)}
-                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                  className={`px-4 py-2.5 rounded-xl border-2 text-left transition-all flex items-center gap-3 ${
                     selectedRole === opt.value
-                      ? 'border-[#CA3433] bg-[#fff5f5]'
+                      ? 'border-[#CA3433] bg-red-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
+                  <span className="text-lg">{opt.icon}</span>
                   <p className="text-sm font-semibold text-gray-900">{opt.label}</p>
                 </button>
               ))}

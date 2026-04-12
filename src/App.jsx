@@ -17,6 +17,9 @@ import TermsOfService from './pages/legal/TermsOfService'
 import CookiePolicy from './pages/legal/CookiePolicy'
 import RefundPolicy from './pages/legal/RefundPolicy'
 import { NearbyServices } from './pages/NearbyServices'
+import { ServiceDetail } from './pages/ServiceDetail'
+import { ServiceProviderDashboard } from './pages/ServiceProviderDashboard'
+import { ServiceNew } from './pages/ServiceNew'
 import { About } from './pages/About'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { AppInitializer } from './components/common/AppInitializer'
@@ -40,8 +43,23 @@ function App() {
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/cookies" element={<CookiePolicy />} />
           <Route path="/refund" element={<RefundPolicy />} />
-          <Route path="/nearby" element={<NearbyServices />} />
           <Route path="/about" element={<About />} />
+
+          {/* Nearby Services Routes */}
+          <Route path="/nearby" element={<NearbyServices />} />
+          <Route path="/services/:id" element={<ServiceDetail />} />
+
+          {/* Service Provider Routes */}
+          <Route path="/service-provider" element={
+            <ProtectedRoute allowedRoles={['service_provider']}>
+              <ServiceProviderDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/service-provider/new" element={
+            <ProtectedRoute allowedRoles={['service_provider']}>
+              <ServiceNew />
+            </ProtectedRoute>
+          } />
           
           {/* User Routes */}
           <Route path="/dashboard" element={
@@ -85,5 +103,6 @@ function App() {
     </BrowserRouter>
   )
 }
+
 
 export default App
