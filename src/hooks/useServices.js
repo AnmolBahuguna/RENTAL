@@ -37,6 +37,8 @@ export const useServices = () => {
 
       const from = reset ? 0 : page * PAGE_SIZE
       const { data, error } = await query
+        .eq('verification_status', 'verified')
+        .eq('payment_status', 'paid')
         .order('created_at', { ascending: false })
         .range(from, from + PAGE_SIZE - 1)
 
@@ -231,6 +233,39 @@ export const useServices = () => {
     return data || []
   }
 
+  // ── Admin Functions ───────────────────────────────────────────────
+  const getAdminPendingServices = async () => {
+    // We assume the caller checks if they are admin
+    const { data, error } = await supabase
+      .from('service_providers')
+      .select('*, profiles!service_providers_provider_id_fkey(full_name, email)')
+      .order('created_at', { ascending: false })
+      
+    if (error) throw error
+    return data || []
+  }
+
+  const updateServiceStatus = async (id, verificationStatus) => {
+    const { error } = await supabase
+      .from('service_providers')
+      .update({ verification_status: verificationStatus })
+      .eq('id', id)
+
+    if (error) throw error
+  }
+
+  // ── Payment Function ────────────────────────────────────────────────
+  const payServiceListing = async (id) => {
+    // Only successful payments should call this
+    const { error } = await supabase
+      .from('service_providers')
+      .update({ payment_status: 'paid' })
+      .eq('id', id)
+      .eq('provider_id', user.id)
+
+    if (error) throw error
+  }
+
   return {
     services, currentService, reviews, filters, loading, reviewsLoading, hasMore, page,
     fetchServices,
@@ -242,6 +277,9 @@ export const useServices = () => {
     updateService,
     deleteService,
     getMyServices,
+    getAdminPendingServices,
+    updateServiceStatus,
+    payServiceListing,
     updateFilters: useCallback((f) => dispatch(setServiceFilters(f)), [dispatch]),
   }
 }

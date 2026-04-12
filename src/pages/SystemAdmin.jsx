@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { LogOut, ShieldAlert, ShieldCheck, Activity, Users, Building, AlertTriangle } from 'lucide-react'
+import { useServices } from '../hooks/useServices'
+import { LogOut, ShieldAlert, ShieldCheck, Activity, Users, Building, AlertTriangle, FileText, CheckCircle, XCircle, Eye } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { Modal } from '../components/ui/Modal'
+import { Button } from '../components/ui/Button'
+import toast from 'react-hot-toast'
 
 export const SystemAdmin = () => {
   const { user, loading, signInWithGoogle, signOut } = useAuth()
+  const { getAdminPendingServices, updateServiceStatus } = useServices()
   const navigate = useNavigate()
   
   const [stats, setStats] = useState({ users: 0, properties: 0, services: 0 })
   const [loadingStats, setLoadingStats] = useState(true)
+
+  // Service Approvals State
+  const [providers, setProviders] = useState([])
+  const [loadingProviders, setLoadingProviders] = useState(true)
+  const [selectedDoc, setSelectedDoc] = useState(null)
 
   const ADMIN_EMAIL = 'prriiyansunegi@gmail.com'
 
@@ -17,6 +27,7 @@ export const SystemAdmin = () => {
     // Only load stats if authorized
     if (user && user.email === ADMIN_EMAIL) {
       loadStats()
+      loadProviders()
     }
   }, [user])
 
@@ -37,6 +48,28 @@ export const SystemAdmin = () => {
       console.error('Error loading admin stats:', e)
     } finally {
       setLoadingStats(false)
+    }
+  }
+
+  const loadProviders = async () => {
+    try {
+      const data = await getAdminPendingServices()
+      setProviders(data)
+    } catch (e) {
+      console.error('Failed to load pending services', e)
+    } finally {
+      setLoadingProviders(false)
+    }
+  }
+
+  const handleAction = async (id, newStatus) => {
+    const toastId = toast.loading(`Marking as ${newStatus}...`)
+    try {
+      await updateServiceStatus(id, newStatus)
+      setProviders(prev => prev.map(p => p.id === id ? { ...p, verification_status: newStatus } : p))
+      toast.success(`Service Provider ${newStatus}`, { id: toastId })
+    } catch (err) {
+      toast.error('Failed to update status', { id: toastId })
     }
   }
 
@@ -139,7 +172,7 @@ export const SystemAdmin = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto p-6 lg:p-10 space-y-8">
+      <main className="max-w-6xl mx-auto p-6 lg:p-10 space-y-12">
         
         {/* Welcome Section */}
         <div>
@@ -189,6 +222,98 @@ export const SystemAdmin = () => {
           </div>
         </div>
 
+        {/* ── APPROVAL WORKFLOW ── */}
+        <div>
+          <h2 className="text-2xl font-bold font-display mb-4 border-b border-white/10 pb-2">Service Provider Approvals</h2>
+          
+          {loadingProviders ? (
+            <div className="space-y-4">
+              {[1,2,3].map(i => <div key={i} className="h-20 bg-white/5 animate-pulse rounded-xl" />)}
+            </div>
+          ) : providers.length === 0 ? (
+            <div className="bg-white/5 rounded-2xl p-10 text-center border border-dashed border-white/10">
+              <p className="text-gray-400">No service providers looking for approval.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {providers.map(p => (
+                <div key={p.id} className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col md:flex-row gap-6 justify-between hover:bg-white/10 transition-colors">
+                  
+                  {/* Info */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h3 className="text-xl font-bold">{p.name}</h3>
+                      <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase
+                        ${p.verification_status === 'pending' ? 'bg-amber-500/20 text-amber-400' : ''}
+                        ${p.verification_status === 'verified' ? 'bg-green-500/20 text-green-400' : ''}
+                        ${p.verification_status === 'rejected' ? 'bg-red-500/20 text-red-400' : ''}
+                      `}>
+                        {p.verification_status}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-2">Owner: {p.profiles?.full_name} ({p.profiles?.email})</p>
+                    <p className="text-sm text-gray-300"><strong>Category:</strong> {p.category} | <strong>Area:</strong> {p.area}, {p.city}</p>
+                    <p className="text-sm text-gray-300 mt-1"><strong>Payment:</strong> <span className={p.payment_status === 'paid' ? 'text-green-400' : 'text-amber-400'}>{p.payment_status?.toUpperCase() || 'UNKNOWN'}</span></p>
+                  </div>
+
+                  {/* Documents & Actions */}
+                  <div className="flex flex-col items-end gap-3 justify-center border-l md:border-white/10 md:pl-6">
+                    {p.documents?.length > 0 ? (
+                      <button 
+                        onClick={() => setSelectedDoc(p.documents[0])}
+                        className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-500/10 px-4 py-2 rounded-xl transition-colors w-full md:w-auto justify-center"
+                      >
+                        <FileText size={16} /> View Document
+                      </button>
+                    ) : (
+                      <span className="text-sm text-gray-500">No Document Uploaded</span>
+                    )}
+
+                    <div className="flex gap-2 w-full md:w-auto">
+                      <button 
+                        onClick={() => handleAction(p.id, 'verified')}
+                        disabled={p.verification_status === 'verified'}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors"
+                      >
+                        <CheckCircle size={16} /> Approve
+                      </button>
+                      <button 
+                        onClick={() => handleAction(p.id, 'rejected')}
+                        disabled={p.verification_status === 'rejected'}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors"
+                      >
+                        <XCircle size={16} /> Reject
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Document Modal */}
+        <Modal open={!!selectedDoc} onClose={() => setSelectedDoc(null)} size="lg" className="bg-gray-900 border border-gray-800">
+          <div className="p-2">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white">Document Viewer</h3>
+            </div>
+            {selectedDoc && (
+              <div className="rounded-xl overflow-hidden bg-black/50 border border-white/5 flex items-center justify-center min-h-[400px]">
+                {selectedDoc.toLowerCase().endsWith('.pdf') ? (
+                  <iframe src={selectedDoc} className="w-full h-[60vh] rounded-xl" title="Document" />
+                ) : (
+                  <img src={selectedDoc} alt="Document" className="max-w-full max-h-[70vh] object-contain" />
+                )}
+              </div>
+            )}
+            <div className="mt-4 flex justify-end">
+              <Button onClick={() => setSelectedDoc(null)} variant="secondary" className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700">Close Viewer</Button>
+            </div>
+          </div>
+        </Modal>
+
         {/* Database Warning */}
         <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6">
           <div className="flex items-start gap-4">
@@ -197,7 +322,7 @@ export const SystemAdmin = () => {
               <h3 className="text-lg font-bold text-red-500 mb-1">Restricted Root Zone</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
                 You are viewing real production data. Direct database modifications are heavily restricted. 
-                For deeper manipulation like approving/rejecting listings or modifying coupons, use the direct Supabase Table Editor.
+                For deeper manipulation like adding new tables or managing users perfectly, use the direct Supabase Admin Panel.
               </p>
             </div>
           </div>

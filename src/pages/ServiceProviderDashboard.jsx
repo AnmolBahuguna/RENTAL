@@ -9,6 +9,7 @@ import { useServices } from '../hooks/useServices'
 import { Button } from '../components/ui/Button'
 import { Skeleton } from '../components/ui/Skeleton'
 import toast from 'react-hot-toast'
+import { Zap } from 'lucide-react'
 
 const CATEGORY_CONFIG = {
   tiffin:   { label: 'Tiffin',   emoji: '🍱', color: 'bg-amber-100 text-amber-700' },
@@ -38,6 +39,8 @@ export const ServiceProviderDashboard = () => {
 
   const [myServices, setMyServices] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadingAction, setLoadingAction] = useState(null)
+  const { payServiceListing } = useServices()
 
   const loadMyServices = async () => {
     setLoading(true)
@@ -61,6 +64,59 @@ export const ServiceProviderDashboard = () => {
       toast.success('Listing deleted')
     } catch {
       toast.error('Could not delete listing')
+    }
+  }
+
+  const handlePayment = async (service) => {
+    if (loadingAction) return
+    setLoadingAction(service.id)
+    try {
+      const loadRazorpay = () => new Promise((resolve) => {
+        if (window.Razorpay) return resolve(true)
+        const script = document.createElement('script')
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+        script.onload = () => resolve(true)
+        script.onerror = () => resolve(false)
+        document.body.appendChild(script)
+      })
+
+      const loaded = await loadRazorpay()
+      if (!loaded) throw new Error('Failed to load Razorpay SDK')
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: 19900, // ₹199 in paise
+        currency: 'INR',
+        name: 'GoEazy',
+        description: `Publishing fee for ${service.name}`,
+        handler: async function (response) {
+          try {
+            await payServiceListing(service.id)
+            toast.success('Payment successful! Your listing is now public.')
+            loadMyServices()
+          } catch (err) {
+            toast.error('Payment finalized but failed to update status')
+          }
+        },
+        prefill: {
+          name: profile?.full_name || 'Service Provider',
+          email: profile?.email || '',
+        },
+        theme: { color: '#CA3433' },
+        modal: {
+          ondismiss: () => setLoadingAction(null)
+        }
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.on('payment.failed', (resp) => {
+        toast.error('Payment failed: ' + (resp.error?.description || 'Could not complete payment'))
+        setLoadingAction(null)
+      })
+      rzp.open()
+    } catch (err) {
+      toast.error('Payment Error: ' + err.message)
+      setLoadingAction(null)
     }
   }
 
@@ -137,8 +193,33 @@ export const ServiceProviderDashboard = () => {
                     <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
                       <span className="flex items-center gap-1"><Eye size={11} /> {service.views || 0} views</span>
                       <span className="flex items-center gap-1"><Package size={11} /> {service.service_listings?.length || 0} items</span>
+                      {service.payment_status === 'paid' && (
+                        <span className="flex items-center gap-1 text-green-600 font-bold ml-2">
+                          <CheckCircle size={11} /> PUBLISHED
+                        </span>
+                      )}
                     </div>
                   </div>
+
+                  {/* Payment CTA for Verified but Unpaid */}
+                  {service.verification_status === 'verified' && service.payment_status !== 'paid' && (
+                    <div className="shrink-0 mr-2 xl:mr-6">
+                      <button
+                        onClick={() => handlePayment(service)}
+                        disabled={loadingAction === service.id}
+                        className="relative overflow-hidden flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#CA3433] to-[#E63946] text-white font-extrabold text-sm shadow-lg shadow-red-500/20 hover:shadow-red-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-70 group"
+                      >
+                         <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                         {loadingAction === service.id ? (
+                           <span className="animate-pulse">Processing...</span>
+                         ) : (
+                           <>
+                             <Zap size={14} className="shrink-0" /> PAY ₹199 to Publish
+                           </>
+                         )}
+                      </button>
+                    </div>
+                  )}
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 shrink-0">

@@ -18,8 +18,9 @@ export const RoleSelectionModal = () => {
   const [selectedRole, setSelectedRole] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  // Only show if user is logged in but has no role assigned yet
-  const isOpen = !!user && !!profile && !role
+  const location = window.location;
+  // Only show if user is logged in but has no role assigned yet, AND not on the admin page
+  const isOpen = !!user && !!profile && !role && location.pathname !== '/systemadmin'
 
   const handleConfirm = async () => {
     if (!selectedRole) {
