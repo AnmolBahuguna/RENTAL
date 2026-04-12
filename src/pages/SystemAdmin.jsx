@@ -20,6 +20,7 @@ export const SystemAdmin = () => {
   const [providers, setProviders] = useState([])
   const [loadingProviders, setLoadingProviders] = useState(true)
   const [selectedDoc, setSelectedDoc] = useState(null)
+  const [showApprovals, setShowApprovals] = useState(false)
 
   const ADMIN_EMAIL = 'prriiyansunegi@gmail.com'
 
@@ -184,119 +185,141 @@ export const SystemAdmin = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white border border-gray-100 rounded-2xl p-6 relative overflow-hidden group hover:border-[#CA3433]/30 transition-colors shadow-sm">
-            <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
+        <div className="grid grid-cols-3 gap-3 md:gap-6">
+          <div className="bg-white border border-gray-100 rounded-xl md:rounded-2xl p-3 md:p-6 relative overflow-hidden group hover:border-[#CA3433]/30 transition-colors shadow-sm flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="hidden md:block absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
               <Users size={80} className="text-gray-900" />
             </div>
-            <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center mb-4">
-              <Users size={20} />
+            <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center mb-2 md:mb-4">
+              <Users className="w-4 h-4 md:w-5 md:h-5" />
             </div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Total Users</p>
-            {loadingStats ? <div className="h-10 w-24 bg-gray-100 rounded animate-pulse" /> : 
-              <p className="text-4xl font-black text-gray-900">{stats.users}</p>}
+            <p className="text-[9px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-0.5 md:mb-1">Total Users</p>
+            {loadingStats ? <div className="h-6 md:h-10 w-12 md:w-24 bg-gray-100 rounded animate-pulse" /> : 
+              <p className="text-xl md:text-4xl font-black text-gray-900">{stats.users}</p>}
           </div>
 
-          <div className="bg-white border border-gray-100 rounded-2xl p-6 relative overflow-hidden group hover:border-[#CA3433]/30 transition-colors shadow-sm">
-            <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
+          <div className="bg-white border border-gray-100 rounded-xl md:rounded-2xl p-3 md:p-6 relative overflow-hidden group hover:border-[#CA3433]/30 transition-colors shadow-sm flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="hidden md:block absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
               <Building size={80} className="text-gray-900" />
             </div>
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
-              <Building size={20} />
+            <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center mb-2 md:mb-4">
+              <Building className="w-4 h-4 md:w-5 md:h-5" />
             </div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Total Properties</p>
-            {loadingStats ? <div className="h-10 w-24 bg-gray-100 rounded animate-pulse" /> : 
-              <p className="text-4xl font-black text-gray-900">{stats.properties}</p>}
+            <p className="text-[9px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-0.5 md:mb-1">Properties</p>
+            {loadingStats ? <div className="h-6 md:h-10 w-12 md:w-24 bg-gray-100 rounded animate-pulse" /> : 
+              <p className="text-xl md:text-4xl font-black text-gray-900">{stats.properties}</p>}
           </div>
 
-          <div className="bg-white border border-gray-100 rounded-2xl p-6 relative overflow-hidden group hover:border-[#CA3433]/30 transition-colors shadow-sm">
-            <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
+          <div className="bg-white border border-gray-100 rounded-xl md:rounded-2xl p-3 md:p-6 relative overflow-hidden group hover:border-[#CA3433]/30 transition-colors shadow-sm flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="hidden md:block absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-10 transition-opacity">
               <Activity size={80} className="text-gray-900" />
             </div>
-            <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center mb-4">
-              <Activity size={20} />
+            <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center mb-2 md:mb-4">
+              <Activity className="w-4 h-4 md:w-5 md:h-5" />
             </div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Service Providers</p>
-            {loadingStats ? <div className="h-10 w-24 bg-gray-100 rounded animate-pulse" /> : 
-              <p className="text-4xl font-black text-gray-900">{stats.services}</p>}
+            <p className="text-[9px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-0.5 md:mb-1">Providers</p>
+            {loadingStats ? <div className="h-6 md:h-10 w-12 md:w-24 bg-gray-100 rounded animate-pulse" /> : 
+              <p className="text-xl md:text-4xl font-black text-gray-900">{stats.services}</p>}
           </div>
         </div>
 
         {/* ── APPROVAL WORKFLOW ── */}
         <div>
-          <h2 className="text-2xl font-bold font-display mb-6">Service Provider Approvals</h2>
-          
-          {loadingProviders ? (
-            <div className="space-y-4">
-              {[1,2,3].map(i => <div key={i} className="h-28 bg-white border border-gray-100 shadow-sm animate-pulse rounded-2xl" />)}
-            </div>
-          ) : providers.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">
-              <CheckCircle className="mx-auto text-gray-300 mb-3" size={40} />
-              <p className="text-gray-500 font-medium">All caught up! No service providers waiting for approval.</p>
+          {!showApprovals ? (
+            <div 
+              className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#CA3433]/30 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+              onClick={() => setShowApprovals(true)}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-red-50 text-[#CA3433] rounded-xl flex items-center justify-center shrink-0">
+                  <CheckCircle size={28} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold font-display text-gray-900">Provider Approvals</h2>
+                  <p className="text-gray-500 text-sm mt-0.5">
+                     {loadingProviders ? 'Loading pending requests...' : `Manage ${providers.length} service provider listings`}
+                  </p>
+                </div>
+              </div>
+              <Button variant="primary" className="shrink-0 bg-gray-900 hover:bg-black group-hover:bg-[#CA3433] transition-colors border-none">
+                Open Management <span className="ml-1 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all">→</span>
+              </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {providers.map(p => (
-                <div key={p.id} className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 flex flex-col md:flex-row gap-6 justify-between hover:border-gray-200 transition-colors">
-                  
-                  {/* Info */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-bold text-gray-900">{p.name}</h3>
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                        ${p.verification_status === 'pending' ? 'bg-amber-100 text-amber-700' : ''}
-                        ${p.verification_status === 'verified' ? 'bg-green-100 text-green-700' : ''}
-                        ${p.verification_status === 'rejected' ? 'bg-red-100 text-red-700' : ''}
-                      `}>
-                        {p.verification_status}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">Owner: <span className="font-semibold text-gray-900">{p.profiles?.full_name}</span> ({p.profiles?.email})</p>
-                    
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-                      <p><strong className="text-gray-400 font-medium mr-1 uppercase text-[10px] tracking-wider">Category</strong> <span className="capitalize">{p.category}</span></p>
-                      <p><strong className="text-gray-400 font-medium mr-1 uppercase text-[10px] tracking-wider">Location</strong> {p.area}, {p.city}</p>
-                      <p>
-                        <strong className="text-gray-400 font-medium mr-1 uppercase text-[10px] tracking-wider">Fee</strong> 
-                        <span className={`font-bold ${p.payment_status === 'paid' ? 'text-green-600' : 'text-amber-500'}`}>{p.payment_status?.toUpperCase() || 'UNPAID'}</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Documents & Actions */}
-                  <div className="flex flex-col items-end gap-3 justify-center border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 w-full md:w-auto">
-                    {p.documents?.length > 0 ? (
-                      <button 
-                        onClick={() => setSelectedDoc(p.documents[0])}
-                        className="flex items-center gap-2 text-sm font-semibold text-[#CA3433] hover:text-white bg-red-50 hover:bg-[#CA3433] px-4 py-2 rounded-xl transition-colors w-full md:w-auto justify-center"
-                      >
-                        <FileText size={16} /> View Document
-                      </button>
-                    ) : (
-                      <span className="text-sm text-gray-400 italic">No Document Provided</span>
-                    )}
-
-                    <div className="flex gap-2 w-full md:w-auto mt-2">
-                      <button 
-                        onClick={() => handleAction(p.id, 'verified')}
-                        disabled={p.verification_status === 'verified'}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:hover:bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm active:scale-95"
-                      >
-                        <CheckCircle size={16} /> Approve
-                      </button>
-                      <button 
-                        onClick={() => handleAction(p.id, 'rejected')}
-                        disabled={p.verification_status === 'rejected'}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-red-100 hover:text-red-600 disabled:opacity-50 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors active:scale-95"
-                      >
-                        <XCircle size={16} /> Reject
-                      </button>
-                    </div>
-                  </div>
-
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+              <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
+                <h2 className="text-2xl font-bold font-display text-gray-900">Provider Approvals <span className="text-[#CA3433] text-lg ml-2">({providers.length})</span></h2>
+                <button onClick={() => setShowApprovals(false)} className="text-sm font-bold text-gray-500 hover:text-gray-900 px-4 py-2 rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-1.5 active:scale-95">
+                  <XCircle size={16} /> Close
+                </button>
+              </div>
+              
+              {loadingProviders ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                  {[1,2,3].map(i => <div key={i} className="h-64 bg-white border border-gray-100 shadow-sm animate-pulse rounded-2xl" />)}
                 </div>
-              ))}
+              ) : providers.length === 0 ? (
+                <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">
+                  <CheckCircle className="mx-auto text-gray-300 mb-3" size={40} />
+                  <p className="text-gray-500 font-medium">All caught up! No service providers waiting for approval.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                  {providers.map(p => (
+                    <div key={p.id} className="bg-white rounded-2xl border border-gray-100/80 shadow-[0_4px_16px_rgb(0,0,0,0.04)] overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group">
+                      <div className="p-5 flex-1 relative">
+                        {/* Status Badge */}
+                        <span className={`absolute top-4 right-4 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider
+                          ${p.verification_status === 'pending' ? 'bg-amber-100 text-amber-700' : ''}
+                          ${p.verification_status === 'verified' ? 'bg-green-100 text-green-700' : ''}
+                          ${p.verification_status === 'rejected' ? 'bg-red-100 text-red-700' : ''}
+                        `}>
+                          {p.verification_status}
+                        </span>
+                        
+                        {/* Icon */}
+                        <div className="w-12 h-12 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center text-xl mb-4">
+                          {p.category === 'tiffin' ? '🍱' : p.category === 'laundry' ? '🧺' : '🧹'}
+                        </div>
+                        
+                        {/* Headers */}
+                        <h3 className="font-bold text-lg text-gray-900 leading-tight mb-1 pr-16">{p.name}</h3>
+                        <p className="text-sm text-gray-500 font-medium mb-3">{p.area}, {p.city}</p>
+                        
+                        {/* Details Box */}
+                        <div className="space-y-1.5 text-xs text-gray-600 bg-gray-50/80 p-3.5 rounded-xl mb-4 border border-gray-100/50">
+                           <p><strong className="text-gray-400 font-medium tracking-wider uppercase text-[10px] mr-1">Owner</strong> {p.profiles?.full_name}</p>
+                           <p className="truncate"><strong className="text-gray-400 font-medium tracking-wider uppercase text-[10px] mr-1">Email</strong> {p.profiles?.email}</p>
+                           <p><strong className="text-gray-400 font-medium tracking-wider uppercase text-[10px] mr-1">Fee</strong> <span className={p.payment_status === 'paid' ? 'text-green-600 font-bold' : 'text-amber-500 font-bold'}>{p.payment_status?.toUpperCase() || 'UNPAID'}</span></p>
+                        </div>
+                        
+                        {/* Document Button */}
+                        {p.documents?.length > 0 ? (
+                          <button onClick={() => setSelectedDoc(p.documents[0])} className="w-full text-xs font-bold text-[#CA3433] bg-red-50 py-2.5 rounded-xl hover:bg-[#CA3433] hover:text-white transition-colors flex items-center justify-center gap-1.5">
+                             <FileText size={14} /> View Document
+                          </button>
+                        ) : <p className="text-center text-[11px] font-semibold tracking-wider uppercase text-gray-400 py-2.5 bg-gray-50 rounded-xl">No document</p>}
+                      </div>
+
+                      {/* Action Bar Bottom */}
+                      <div className="grid grid-cols-2 border-t border-gray-100 bg-gray-50/50">
+                        <button 
+                          onClick={() => handleAction(p.id, 'verified')} disabled={p.verification_status === 'verified'}
+                          className="py-3 text-xs font-black tracking-widest text-green-600 hover:bg-green-50 hover:text-green-700 disabled:opacity-40 disabled:hover:bg-transparent transition-colors border-r border-gray-100 flex items-center justify-center gap-1.5"
+                        >
+                           APPROVE
+                        </button>
+                        <button 
+                          onClick={() => handleAction(p.id, 'rejected')} disabled={p.verification_status === 'rejected'}
+                          className="py-3 text-xs font-black tracking-widest text-red-600 hover:bg-red-50 hover:text-red-700 disabled:opacity-40 disabled:hover:bg-transparent transition-colors flex items-center justify-center gap-1.5"
+                        >
+                           REJECT
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
