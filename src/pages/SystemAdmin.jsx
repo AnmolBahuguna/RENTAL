@@ -82,8 +82,8 @@ export const SystemAdmin = () => {
   // Still checking session loading from auth slice
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-[#F9F8F6] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-[#CA3433] border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
@@ -91,17 +91,17 @@ export const SystemAdmin = () => {
   // 1. Not Logged In -> Show Admin Google Login
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-gray-900 border border-gray-800 rounded-3xl p-8 shadow-2xl text-center">
-          <div className="w-20 h-20 bg-gray-800/50 rounded-full border border-gray-700 flex items-center justify-center mx-auto mb-6">
-            <ShieldCheck size={40} className="text-blue-500" />
+      <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white border border-gray-100 rounded-3xl p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center">
+          <div className="w-20 h-20 bg-red-50 rounded-full border border-red-100 flex items-center justify-center mx-auto mb-6">
+            <ShieldCheck size={40} className="text-[#CA3433]" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">System Admin</h1>
-          <p className="text-gray-400 text-sm mb-8">Authorized personnel only. Please sign in with the master administrator account to view the dashboard.</p>
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight font-display">System Admin</h1>
+          <p className="text-gray-500 text-sm mb-8 leading-relaxed">Authorized personnel only. Please sign in with the master administrator account to view the dashboard.</p>
           
           <button 
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 font-bold py-3.5 px-4 animate-in slide-in-from-bottom hover:bg-gray-100 transition-all rounded-xl hover:-translate-y-1 hover:shadow-lg hover:shadow-white/10 active:scale-95"
+            className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 text-gray-900 font-bold py-3.5 px-4 rounded-xl hover:bg-gray-50 transition-all shadow-sm active:scale-95"
           >
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
             Continue with Google
@@ -114,31 +114,31 @@ export const SystemAdmin = () => {
   // 2. Logged in, but WRONG EMAIL -> Access Denied!
   if (user.email !== ADMIN_EMAIL) {
     return (
-      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-4 relative overflow-hidden">
         {/* Warning Background */}
         <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
           <ShieldAlert size={800} className="text-red-600" />
         </div>
         
-        <div className="max-w-md w-full bg-gray-900 border border-red-900/50 rounded-3xl p-8 relative z-10 text-center shadow-2xl shadow-red-900/20">
-          <div className="w-20 h-20 bg-red-500/10 rounded-full border border-red-500/20 flex items-center justify-center mx-auto mb-6 animate-pulse">
+        <div className="max-w-md w-full bg-white border border-red-100 rounded-3xl p-8 relative z-10 text-center shadow-[0_8px_30px_rgb(202,52,51,0.08)]">
+          <div className="w-20 h-20 bg-red-50 rounded-full border border-red-100 flex items-center justify-center mx-auto mb-6 animate-pulse">
             <AlertTriangle size={40} className="text-red-500" />
           </div>
-          <h1 className="text-3xl font-extrabold text-red-500 mb-2 font-display">ACCESS DENIED</h1>
-          <p className="text-gray-300 mb-6 text-sm">
-            The account <strong className="text-white bg-gray-800 px-2 py-1 rounded mx-1">{user.email}</strong> does not have administrator privileges.
+          <h1 className="text-3xl font-extrabold text-red-600 mb-3 font-display">ACCESS DENIED</h1>
+          <p className="text-gray-600 mb-8 text-sm leading-relaxed">
+            The account <strong className="text-gray-900 bg-gray-100 px-2 py-1 rounded mx-1">{user.email}</strong> does not have administrator privileges.
           </p>
           
           <button
             onClick={async () => { await signOut(); navigate('/systemadmin'); }}
-            className="w-full py-3.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-bold transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl bg-gray-900 hover:bg-black text-white font-bold transition-all flex items-center justify-center gap-2 shadow-md active:scale-95"
           >
             <LogOut size={18} /> Sign Out
           </button>
           
           <button
             onClick={() => navigate('/')}
-            className="w-full mt-3 py-3.5 rounded-xl border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 font-bold transition-all"
+            className="w-full mt-3 py-3.5 rounded-xl border border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-bold transition-all active:scale-95"
           >
             Return to Homepage
           </button>
