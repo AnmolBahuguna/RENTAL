@@ -175,7 +175,10 @@ export const Navbar = () => {
                     <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden">
                       <div className="py-1">
                         <button
-                          onClick={() => { navigate(role === 'landlord' ? '/landlord' : '/dashboard'); setUserMenuOpen(false) }}
+                          onClick={() => { 
+                            const dest = role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/dashboard'
+                            navigate(dest); setUserMenuOpen(false) 
+                          }}
                           className="w-full flex flex-col items-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
                           {t('nav.dashboard')}
@@ -357,7 +360,7 @@ export const Navbar = () => {
           <div className="px-4 py-4 space-y-4">
             
             <Link to="/search" onClick={() => dispatch(closeMobileMenu())} className="block font-semibold text-gray-700 py-2">{t('nav.home')}</Link>
-            <button onClick={() => { dispatch(closeMobileMenu()); user ? navigate('/landlord') : dispatch(openAuthModal('login')) }} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.list')}</button>
+            <button onClick={() => { dispatch(closeMobileMenu()); user ? navigate(role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/landlord') : dispatch(openAuthModal('login')) }} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.list')}</button>
             <Link to="/nearby" onClick={() => dispatch(closeMobileMenu())} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.nearby')}</Link>
             <Link to="/about" onClick={() => dispatch(closeMobileMenu())} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.about')}</Link>
             
@@ -365,7 +368,7 @@ export const Navbar = () => {
             
             {user ? (
                <>
-                <Link to={role === 'landlord' ? '/landlord' : '/dashboard'}
+                <Link to={role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/dashboard'}
                   className="block font-semibold text-gray-700 py-2"
                   onClick={() => dispatch(closeMobileMenu())}
                 >

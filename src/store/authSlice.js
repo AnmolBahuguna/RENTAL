@@ -5,7 +5,7 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     profile: null,
-    role: null, // 'landlord' | 'user'
+    role: null, // 'landlord' | 'user' | 'service_provider'
     loading: true,
     authModalOpen: false,
     authModalTab: 'login', // 'login' | 'signup'
@@ -13,11 +13,13 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       state.user = action.payload
-      state.loading = false
+      // Do NOT clear loading here — we wait for setProfile to resolve the role
+      if (!action.payload) state.loading = false // only clear if logged out
     },
     setProfile: (state, action) => {
       state.profile = action.payload
       state.role = action.payload?.role || null
+      state.loading = false // role is now known — safe to render
     },
     setLoading: (state, action) => {
       state.loading = action.payload
