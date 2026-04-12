@@ -70,7 +70,7 @@ export const ServiceProviderDashboard = () => {
 
   return (
     <div className="pt-6 pb-20 min-h-screen bg-gray-50/50">
-      <div className="w-full px-4 sm:px-10 md:px-16 lg:px-20 max-w-5xl mx-auto">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">

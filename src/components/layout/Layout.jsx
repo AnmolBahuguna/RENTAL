@@ -18,7 +18,7 @@ export const Layout = ({ children }) => {
           success: { iconTheme: { primary: '#CA3433', secondary: '#fff' } },
         }}
       />
-      <Navbar />
+      {location.pathname !== '/systemadmin' && <Navbar />}
       <AnimatePresence mode="wait">
         <motion.main
           key={location.pathname}
@@ -26,7 +26,7 @@ export const Layout = ({ children }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="min-h-screen"
+          className={location.pathname === '/systemadmin' ? "" : "min-h-screen"}
         >
           {children}
         </motion.main>

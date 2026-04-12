@@ -77,7 +77,8 @@
           originalLog.apply(console, args);
         };
 
-        // Global Security & Anti-Copy Protection
+        // Global Security & Anti-Copy Protection (DISABLED FOR DEVELOPMENT)
+        /*
         document.addEventListener('contextmenu', e => e.preventDefault());
 
         document.addEventListener('keydown', function(e) {
@@ -102,6 +103,7 @@
             return false;
           }
         });
+        */
       })();
     </script>
   </head>

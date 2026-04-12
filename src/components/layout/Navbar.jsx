@@ -221,7 +221,7 @@ export const Navbar = () => {
       </div>
 
       {/* Secondary Navbar (Categories) */}
-      {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/privacy', '/terms', '/cookies', '/refund', '/about', '/nearby'].some(r => location.pathname.startsWith(r)) && (
+      {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/service-provider', '/privacy', '/terms', '/cookies', '/refund', '/about', '/nearby'].some(r => location.pathname.startsWith(r)) && (
         <>
           <BannerSlider />
 

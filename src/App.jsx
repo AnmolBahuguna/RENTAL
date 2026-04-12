@@ -21,6 +21,7 @@ import { ServiceDetail } from './pages/ServiceDetail'
 import { ServiceProviderDashboard } from './pages/ServiceProviderDashboard'
 import { ServiceNew } from './pages/ServiceNew'
 import { About } from './pages/About'
+import { SystemAdmin } from './pages/SystemAdmin'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { AppInitializer } from './components/common/AppInitializer'
 import { RoleSelectionModal } from './components/auth/RoleSelectionModal'
@@ -44,6 +45,9 @@ function App() {
           <Route path="/cookies" element={<CookiePolicy />} />
           <Route path="/refund" element={<RefundPolicy />} />
           <Route path="/about" element={<About />} />
+
+          {/* Admin Route */}
+          <Route path="/systemadmin" element={<SystemAdmin />} />
 
           {/* Nearby Services Routes */}
           <Route path="/nearby" element={<NearbyServices />} />
