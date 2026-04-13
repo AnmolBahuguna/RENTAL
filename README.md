@@ -102,7 +102,17 @@ User experience is the core of GoEazy. We've implemented several "Premium-Only" 
 ---
 
 ## 📈 Roadmap & Versions
-- **v2.2 (Current)**: 🔐 **Major Release**: System Admin Dashboard, RBAC Security, Service Provider Approvals, and Complete Uttarakhand Localization.
+- **v2.3 (Current)**: 🚀 **Feature & Polish Release**: 
+  - Integrated secure **Mapbox location tracking** mapped with `LocationViewer` and `LocationPicker`.
+  - Native map gating behind ₹9 micro-transactions for standard users.
+  - Resolved Ghost Sessions with automated sign-outs and hardened OAuth routing.
+  - Implemented initial role persistence metadata on signup to fix auth state gaps.
+  - Swept app telemetry for comprehensive `vite` console hygiene.
+- **v2.2**: 🔐 **Major Release**: 
+  - System Admin Dashboard, Hardened RBAC Security interceptors, and Service Provider approvals pipeline.
+  - Complete backend & frontend Uttarakhand Localization.
+  - Implemented dynamic Bento-style admin cards for analytics and approval queue.
+  - Optimized the SystemAdmin dashboard with GoEazy Light Theme and mobile-first horizontal scrolling stats.
 - **v2.0**: 🚀 **Major Release**: Monetized Listing Flow, Dashboard Redesign, and Advanced Content Protection.
 - **v1.2**: Landlord Analytics update and Full SEO Branding.
 
