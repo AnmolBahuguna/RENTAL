@@ -102,14 +102,17 @@ User experience is the core of GoEazy. We've implemented several "Premium-Only" 
 ---
 
 ## 📈 Roadmap & Versions
-- **v2.3 (Current)**: 🚀 **Feature & Polish Release**: 
-  - Integrated secure **Mapbox location tracking** mapped with `LocationViewer` and `LocationPicker`.
-  - Native map gating behind ₹9 micro-transactions for standard users.
-  - Resolved Ghost Sessions with automated sign-outs and hardened OAuth routing.
-  - Implemented initial role persistence metadata on signup to fix auth state gaps.
-  - Swept app telemetry for comprehensive `vite` console hygiene.
+- **v2.4 (Recent)**: 🎨 **UI Enhancement & Stability Release**:
+  - **Swiper Engine Fix**: Resolved navigation button collisions on Property and Service details.
+  - **Pricing Transparency**: Explicit "Pay ₹9 to Unlock Details" button labels and "/ month" form indicators.
+  - **Lighter Uploads**: Updated image limits to 1-3 photos with a 7MB size restriction for better performance.
+  - **Console Hygiene**: Hard-blocked Chrome `aria-labelledby` and state-persistence warnings.
+- **v2.3**: 🚀 **Map Gating & Auth Persistence**: 
+  - Integrated secure **Mapbox location tracking** with native map gating behind ₹9 micro-transactions.
+  - Role persistence in `user_metadata` to fix Google Sign-in role loss gaps.
+  - Swept app telemetry and optimized Canvas `willReadFrequently` performance.
 - **v2.2**: 🔐 **Major Release**: 
-  - System Admin Dashboard, Hardened RBAC Security interceptors, and Service Provider approvals pipeline.
+  - System Admin Dashboard, Hardened RBAC Security, and Service Provider approvals.
   - Complete backend & frontend Uttarakhand Localization.
   - Implemented dynamic Bento-style admin cards for analytics and approval queue.
   - Optimized the SystemAdmin dashboard with GoEazy Light Theme and mobile-first horizontal scrolling stats.
