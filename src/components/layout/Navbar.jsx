@@ -139,8 +139,8 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-6">
             <div className="flex items-center space-x-6 text-sm font-medium text-gray-500">
               <Link to="/search" className="px-3 py-1 bg-brand-lime text-gray-900 rounded-md font-semibold hover:bg-lime-400 transition-colors">{t('nav.home')}</Link>
-              <button onClick={() => user ? navigate('/landlord') : dispatch(openAuthModal('login'))} className="hover:text-gray-900 transition-colors">{t('nav.list')}</button>
               <Link to="/nearby" className="hover:text-gray-900 transition-colors py-2">{t('nav.nearby')}</Link>
+              <button onClick={() => user ? navigate('/landlord') : dispatch(openAuthModal('login'))} className="hover:text-gray-900 transition-colors">{t('nav.list')}</button>
               <Link to="/about" className="hover:text-gray-900 transition-colors py-2">{t('nav.about')}</Link>
             </div>
             
@@ -382,8 +382,8 @@ export const Navbar = () => {
           <div className="px-4 py-4 space-y-4">
             
             <Link to="/search" onClick={() => dispatch(closeMobileMenu())} className="block font-semibold text-gray-700 py-2">{t('nav.home')}</Link>
-            <button onClick={() => { dispatch(closeMobileMenu()); user ? navigate(role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/landlord') : dispatch(openAuthModal('login')) }} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.list')}</button>
             <Link to="/nearby" onClick={() => dispatch(closeMobileMenu())} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.nearby')}</Link>
+            <button onClick={() => { dispatch(closeMobileMenu()); user ? navigate(role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/landlord') : dispatch(openAuthModal('login')) }} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.list')}</button>
             <Link to="/about" onClick={() => dispatch(closeMobileMenu())} className="block w-full text-left font-semibold text-gray-700 py-2">{t('nav.about')}</Link>
             
             <div className="w-full h-px bg-gray-100 my-4" />

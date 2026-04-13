@@ -47,7 +47,18 @@ export const useAuth = () => {
       // If no profile exists (e.g., first-time OAuth), create one automatically
       if (!data && !error) {
 
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+        // ── GHOST SESSION GUARD ──
+        // If the user no longer exists in Supabase (deleted from dashboard),
+        // their JWT is orphaned. Force sign them out immediately.
+        if (userError || !user) {
+          console.warn('Auth: Ghost session detected — user deleted. Forcing sign-out.')
+          await supabase.auth.signOut()
+          dispatch(logout())
+          return
+        }
+
         const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
         
         const { data: newProfile, error: upsertError } = await supabase
@@ -63,11 +74,30 @@ export const useAuth = () => {
           .maybeSingle()
 
         if (upsertError) {
+          // ── FK CONSTRAINT GUARD ──
+          // code 23503 = foreign key violation (user deleted from auth.users)
+          // status 403/401 = JWT is now invalid
+          const isGhostUser = upsertError.code === '23503' || upsertError.status === 403 || upsertError.status === 401
+          if (isGhostUser) {
+            console.warn('Auth: Deleted account confirmed via FK/auth error. Forcing sign-out.')
+            await supabase.auth.signOut()
+            dispatch(logout())
+            return
+          }
           console.error('Auth: Profile creation failed', upsertError)
           throw upsertError
         }
         data = newProfile
       } else if (error) {
+        // ── FETCH ERROR GUARD ──
+        // 403/401 on profile fetch = stale/invalid token (user deleted)
+        const isAuthError = error.status === 403 || error.status === 401
+        if (isAuthError) {
+          console.warn('Auth: Invalid token on profile fetch. Forcing sign-out.')
+          await supabase.auth.signOut()
+          dispatch(logout())
+          return
+        }
         console.error('Auth: Profile fetch error', error)
         throw error
       }
