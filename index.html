@@ -17,9 +17,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+    <!-- Mapbox GL CSS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css' rel='stylesheet' />
     
     <!-- Console Cleanup & Permissions Policy -->
-    <meta http-equiv="Permissions-Policy" content="accelerometer=(self), gyroscope=(self), magnetometer=(self), camera=(), microphone=(), geolocation=()">
+    <meta http-equiv="Permissions-Policy" content="accelerometer=(self), gyroscope=(self), magnetometer=(self), camera=(), microphone=(), geolocation=(self)">
     <script>
       (function() {
         // Dynamic Tab Title
@@ -48,20 +50,24 @@
           'accelerometer',
           'sardine',
           'biometric',
-          'preloaded using link preload but not used',
-          'serviceworker',
-          'ERR_CONNECTION_REFUSED',
-          'localhost:37857',
+          'requestAnimationFrame',
+          'message',
+          'took',
+          'handler',
           'localhost:7070',
         ];
         const originalWarn = console.warn;
         const originalError = console.error;
         const originalLog = console.log;
+        const originalDebug = console.debug;
+        const originalInfo = console.info;
         
         const shouldIgnore = (args) => {
-          return args.some(arg => 
-            typeof arg === 'string' && ignoreStrings.some(s => arg.includes(s))
-          );
+          const strArgs = args.map(a => {
+            try { return typeof a === 'string' ? a : JSON.stringify(a); }
+            catch(e) { return ''; }
+          }).join(' ');
+          return ignoreStrings.some(s => strArgs.includes(s));
         };
 
         console.warn = function(...args) {
@@ -75,6 +81,14 @@
         console.log = function(...args) {
           if (shouldIgnore(args)) return;
           originalLog.apply(console, args);
+        };
+        console.debug = function(...args) {
+          if (shouldIgnore(args)) return;
+          originalDebug.apply(console, args);
+        };
+        console.info = function(...args) {
+          if (shouldIgnore(args)) return;
+          originalInfo.apply(console, args);
         };
 
         // Global Security & Anti-Copy Protection (DISABLED FOR DEVELOPMENT)

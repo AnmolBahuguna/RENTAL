@@ -9,6 +9,7 @@ import {
 import { useServices } from '../hooks/useServices'
 import { Button } from '../components/ui/Button'
 import toast from 'react-hot-toast'
+import { LocationPicker } from '../components/map/LocationPicker'
 
 const CATEGORIES = [
   { value: 'tiffin',   label: 'Tiffin 🍱',   docs: ['FSSAI License', 'Aadhaar Card', 'PAN Card'] },
@@ -71,7 +72,12 @@ export const ServiceNew = () => {
   // Step 2: Location
   const [location, setLocation] = useState({
     state: 'Uttarakhand', city: '', area: '', address: '', landmark: '',
+    latitude: null, longitude: null, map_address: '',
   })
+
+  const handleLocationPin = ({ latitude, longitude, map_address }) => {
+    setLocation(v => ({ ...v, latitude, longitude, map_address: map_address || '' }))
+  }
 
   // Step 3: Services (rows)
   const [serviceItems, setServiceItems] = useState([
@@ -279,6 +285,15 @@ export const ServiceNew = () => {
               </div>
               <TextareaField label="Full Address" rows={2} placeholder="House no., Street name, Colony..." value={location.address} onChange={e => setLocation(v => ({ ...v, address: e.target.value }))} />
               <InputField label="Nearby Landmark" placeholder="e.g. Near SBI Bank" value={location.landmark} onChange={e => setLocation(v => ({ ...v, landmark: e.target.value }))} />
+
+              {/* Map Pin */}
+              <div className="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
+                <LocationPicker
+                  value={{ latitude: location.latitude, longitude: location.longitude, map_address: location.map_address }}
+                  onChange={handleLocationPin}
+                  label="Pin Your Shop / Service Location"
+                />
+              </div>
             </div>
           )}
 

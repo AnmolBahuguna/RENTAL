@@ -60,6 +60,7 @@ export const useAuth = () => {
         }
 
         const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
+        const userRole = user?.user_metadata?.role || null
         
         const { data: newProfile, error: upsertError } = await supabase
           .from('profiles')
@@ -67,6 +68,7 @@ export const useAuth = () => {
             id: userId,
             email: user?.email,
             full_name: fullName,
+            role: userRole,
             avatar_url: user?.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${fullName}`,
             created_at: new Date().toISOString()
           })
@@ -113,7 +115,12 @@ export const useAuth = () => {
   const signUp = async ({ email, password, name, role }) => {
     const { data, error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { full_name: name } },
+      options: { 
+        data: { 
+          full_name: name,
+          role: role 
+        } 
+      },
     })
     if (error) throw error
 

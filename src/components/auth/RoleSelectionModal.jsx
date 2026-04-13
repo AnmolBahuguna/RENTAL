@@ -19,8 +19,10 @@ export const RoleSelectionModal = () => {
   const [loading, setLoading] = useState(false)
 
   const location = window.location;
-  // Only show if user is logged in but has no role assigned yet, AND not on the admin page
-  const isOpen = !!user && !!profile && !role && location.pathname !== '/systemadmin'
+  // Only show for Google OAuth users who haven't set a role yet.
+  // Email/password users always pick a role during the signup form — never show for them.
+  const isGoogleUser = user?.app_metadata?.provider === 'google'
+  const isOpen = !!user && !!profile && !role && isGoogleUser && location.pathname !== '/systemadmin'
 
   const handleConfirm = async () => {
     if (!selectedRole) {

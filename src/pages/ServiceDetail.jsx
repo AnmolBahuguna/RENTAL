@@ -17,6 +17,7 @@ import { Button } from '../components/ui/Button'
 import { Skeleton } from '../components/ui/Skeleton'
 import { openAuthModal } from '../store/authSlice'
 import toast from 'react-hot-toast'
+import { LocationViewer } from '../components/map/LocationViewer'
 
 const CATEGORY_CONFIG = {
   tiffin: { label: 'Tiffin', emoji: '🍱', color: 'bg-amber-100 text-amber-700', border: 'border-amber-200' },
@@ -320,6 +321,16 @@ export const ServiceDetail = () => {
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* Location on Map */}
+            {service.latitude && service.longitude && (
+              <LocationViewer
+                latitude={service.latitude}
+                longitude={service.longitude}
+                title={service.name}
+                address={service.map_address || service.address || `${service.area}, ${service.city}`}
+              />
             )}
           </div>
 

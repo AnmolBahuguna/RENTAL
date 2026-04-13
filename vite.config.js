@@ -6,11 +6,10 @@ const silenceViteLogs = () => ({
   name: 'silence-vite-hmr-logs',
   transform(code, id) {
     if (id.includes('/@vite/client') || id.includes('/vite/dist/client')) {
-      // Remove console.log calls that output [vite] messages
+      // More aggressive regex to catch styled and unstyled [vite] messages
+      // This targets console.log/debug/info calls that start with [vite]
       return code
-        .replace(/console\.log\('%c\[vite\][^']*'[^)]*\)/g, '(void 0)')
-        .replace(/console\.log\("\[vite\][^"]*"\)/g, '(void 0)')
-        .replace(/console\.log\(`\[vite\][^`]*`\)/g, '(void 0)')
+        .replace(/console\.(log|debug|info)\(['"`](%c)?\[vite\][\s\S]*?['"`]\s*(,[^)]*)?\)/g, '(void 0)')
     }
   }
 })

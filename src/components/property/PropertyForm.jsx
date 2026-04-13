@@ -8,6 +8,7 @@ import { useProperties } from '../../hooks/useProperties'
 import { useSelector } from 'react-redux'
 import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
+import { LocationPicker } from '../map/LocationPicker'
 
 // ── Persian Red Success Animation ────────────────────────────────────────────
 const ListingSuccessOverlay = () => (
@@ -101,8 +102,15 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
     exact_location: initialData?.exact_location || '',
     contact_phone: initialData?.contact_phone || '',
     contact_email: initialData?.contact_email || '',
-    availability: initialData?.availability ?? true
+    availability: initialData?.availability ?? true,
+    latitude: initialData?.latitude || null,
+    longitude: initialData?.longitude || null,
+    map_address: initialData?.map_address || '',
   })
+
+  const handleLocationChange = ({ latitude, longitude, map_address }) => {
+    setForm(f => ({ ...f, latitude, longitude, map_address: map_address || '' }))
+  }
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files)
@@ -370,6 +378,15 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
             placeholder="e.g. 2km from Metro Station, Next to Mall"
             value={form.nearby_landmarks} onChange={e => setForm({ ...form, nearby_landmarks: e.target.value })}
           />
+
+          {/* Map Pin Section */}
+          <div className="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
+            <LocationPicker
+              value={{ latitude: form.latitude, longitude: form.longitude, map_address: form.map_address }}
+              onChange={handleLocationChange}
+              label="Pin Property on Map"
+            />
+          </div>
         </div>
 
         <div className="space-y-4">

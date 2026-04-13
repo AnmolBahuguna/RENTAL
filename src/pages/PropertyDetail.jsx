@@ -16,6 +16,7 @@ import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../components/ui/Skeleton'
+import { LocationViewer } from '../components/map/LocationViewer'
 
 export const PropertyDetail = () => {
   const { id } = useParams()
@@ -440,7 +441,37 @@ export const PropertyDetail = () => {
               )}
             </div>
 
-
+            {/* Location on Map Card */}
+            {p.latitude && p.longitude && (
+              <div className="h-full">
+                {(hasUnlocked || p.landlord_id === user?.id) ? (
+                  <LocationViewer
+                    latitude={p.latitude}
+                    longitude={p.longitude}
+                    title={p.title}
+                    address={p.map_address || p.exact_location || `${p.area}, ${p.city}`}
+                  />
+                ) : (
+                  <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display flex items-center gap-2">
+                        <MapPin size={22} className="text-[#CA3433]" />
+                        Location on Map
+                      </h2>
+                    </div>
+                    <div className="relative min-h-[260px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
+                      <div className="absolute inset-0 select-none opacity-20" style={{ backgroundImage: 'radial-gradient(circle at center, #cbd5e1 2px, transparent 2px)', backgroundSize: '16px 16px', filter: 'blur(4px)', userSelect: 'none', pointerEvents: 'none' }}></div>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
+                        <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
+                          <EyeOff size={28} className="text-brand-500" />
+                        </div>
+                        <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
           </div>
 
