@@ -114,9 +114,15 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files)
-    if (files.length + previewUrls.length > 4) {
-      toast.error('Maximum 4 images allowed')
+    if (files.length + previewUrls.length > 3) {
+      toast.error('Maximum 3 images allowed')
       return
+    }
+    for (const file of files) {
+      if (file.size > 7 * 1024 * 1024) {
+        toast.error(`Image ${file.name} exceeds 7MB limit`)
+        return
+      }
     }
     setImages(prev => [...prev, ...files])
     const newPreviews = files.map(f => URL.createObjectURL(f))
@@ -146,8 +152,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
       toast.error('Please fill all required fields')
       return false
     }
-    if (previewUrls.length !== 4) {
-      toast.error('Exactly 4 images are required')
+    if (previewUrls.length < 1 || previewUrls.length > 3) {
+      toast.error('Please upload between 1 and 3 images')
       return false
     }
     return true
@@ -206,7 +212,7 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
         uploadedUrls.push(publicUrl)
       }
 
-      if (uploadedUrls.length !== 4) throw new Error('Image upload incomplete')
+      if (uploadedUrls.length !== images.length) throw new Error('Image upload incomplete')
 
       // 2. Load Razorpay SDK first
       const loadRazorpay = () => new Promise((resolve) => {
@@ -332,8 +338,10 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              id="property-price" name="price" label="Monthly Rent (₹) *" type="number"
+              id="property-price" name="price" label="Rent (₹) *" type="number"
               placeholder="e.g. 15000"
+              className="pr-20"
+              rightIcon={<span className="text-sm font-bold text-gray-400">/ month</span>}
               value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })} required
             />
             <Select
@@ -433,7 +441,10 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Photos (Exactly 4)</h3>
+          <div className="border-b pb-2">
+            <h3 className="text-xl font-bold text-gray-900">Photos (Up to 3)</h3>
+            <p className="text-sm text-gray-500 mt-1 font-medium">✨ We recommend uploading all 3 images for better visibility. (Max 7MB each)</p>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {previewUrls.map((url, i) => (
               <div key={i} className="relative aspect-video rounded-xl overflow-hidden group">
@@ -446,7 +457,7 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
                 </button>
               </div>
             ))}
-            {previewUrls.length < 4 && (
+            {previewUrls.length < 3 && (
               <label className="aspect-video rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-brand-400 hover:bg-brand-50 transition-colors text-gray-500">
                 <ImageIcon size={24} className="mb-2" />
                 <span className="text-sm font-semibold">Add Photo</span>

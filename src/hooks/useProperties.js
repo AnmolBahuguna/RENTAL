@@ -136,7 +136,6 @@ export const useProperties = () => {
       dispatch(setCurrentProperty(data))
       // Track recently viewed
       const isMock = MOCK_PROPERTIES.some(p => String(p.id) === String(id))
-      console.log(`[fetchPropertyById] Tracking ${id}. Mock: ${isMock}`)
 
       if (user && !isMock) {
         dispatch(addRecentlyViewed(id))

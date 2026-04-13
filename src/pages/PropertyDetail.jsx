@@ -43,8 +43,6 @@ export const PropertyDetail = () => {
   const [initialSlideIndex, setInitialSlideIndex] = useState(0)
   
   // State for custom navigation elements (ensures reliable init)
-  const [prevEl, setPrevEl] = useState(null)
-  const [nextEl, setNextEl] = useState(null)
   const [galleryPrevEl, setGalleryPrevEl] = useState(null)
   const [galleryNextEl, setGalleryNextEl] = useState(null)
 
@@ -250,16 +248,16 @@ export const PropertyDetail = () => {
   const mainImage = images[0] || PLACEHOLDER_IMAGE
   const otherImages = images.slice(1, 5) // up to 4 other images
 
-  const renderSlider = () => (
+  const renderSlider = (prefix) => (
     <div className="relative w-full aspect-square md:aspect-[4/3] bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group border border-gray-200/50">
       <Swiper
-        key={p.id}
+        key={`${p.id}-${prefix}`}
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={0}
         slidesPerView={1}
         navigation={{
-          prevEl: prevEl,
-          nextEl: nextEl,
+          prevEl: `.prev-btn-${prefix}`,
+          nextEl: `.next-btn-${prefix}`,
         }}
         pagination={{ clickable: true, dynamicBullets: true }}
         autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -282,10 +280,10 @@ export const PropertyDetail = () => {
       </Swiper>
 
       {/* Custom Navigation Icons */}
-      <button ref={setPrevEl} className="absolute left-1 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white">
+      <button className={`prev-btn-${prefix} absolute left-1 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white`}>
         <img src="/swipe-left.svg" alt="Previous" className="w-12 h-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
       </button>
-      <button ref={setNextEl} className="absolute right-1 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white">
+      <button className={`next-btn-${prefix} absolute right-1 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white`}>
         <img src="/swipe-right.svg" alt="Next" className="w-12 h-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
       </button>
       
@@ -311,7 +309,7 @@ export const PropertyDetail = () => {
 
         {/* MOBILE SLIDER - Top of page */}
         <div className="block lg:hidden w-full mb-6">
-          {renderSlider()}
+          {renderSlider('mobile')}
         </div>
 
         {/* MAIN CONTENT COLUMNS */}
@@ -479,7 +477,7 @@ export const PropertyDetail = () => {
           <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6">
             {/* DESKTOP SLIDER */}
             <div className="hidden lg:block w-full">
-              {renderSlider()}
+              {renderSlider('desktop')}
             </div>
 
             {/* CONTACT SIDEBAR */}
@@ -530,7 +528,22 @@ export const PropertyDetail = () => {
                   disabled={unlocking}
                   className="w-full bg-gray-900 text-white font-bold text-[15px] py-4 rounded-full hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {unlocking ? t('property.sections.processing') : t('property.sections.unlockBtn')}
+                  {unlocking ? (
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                      </svg>
+                      {t('property.sections.processing')}
+                    </span>
+                  ) : (
+                    <>
+                      <Lock size={18} />
+                      <span>Pay</span>
+                      <span className="bg-white/20 px-2 py-0.5 rounded-md text-[13px] font-black">₹9</span>
+                      <span>to Unlock Details</span>
+                    </>
+                  )}
                 </button>
               )}
             </div>

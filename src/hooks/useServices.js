@@ -138,24 +138,26 @@ export const useServices = () => {
   }
 
   // ── Create Service Provider Listing ────────────────────────────────
-  const createService = async (providerData, serviceItems, plans, documentFiles, posterImage) => {
+  const createService = async (providerData, serviceItems, plans, documentFiles, posterImages) => {
     if (!user) throw new Error('Not authenticated')
 
-    // 1. Upload Poster Image
+    // 1. Upload Poster Images
     const imageUrls = []
-    if (posterImage) {
-      const path = `${user.id}/${Date.now()}_poster_${posterImage.name.replace(/\s+/g, '_')}`
-      const { error: uploadError } = await supabase.storage
-        .from('service-images')
-        .upload(path, posterImage)
-      
-      if (!uploadError) {
-        const { data: { publicUrl } } = supabase.storage
+    if (posterImages && posterImages.length) {
+      for (const img of posterImages) {
+        const path = `${user.id}/${Date.now()}_poster_${img.name.replace(/\s+/g, '_')}`
+        const { error: uploadError } = await supabase.storage
           .from('service-images')
-          .getPublicUrl(path)
-        imageUrls.push(publicUrl)
-      } else {
-        console.error('Poster upload error:', uploadError)
+          .upload(path, img)
+        
+        if (!uploadError) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('service-images')
+            .getPublicUrl(path)
+          imageUrls.push(publicUrl)
+        } else {
+          console.error('Poster upload error:', uploadError)
+        }
       }
     }
 

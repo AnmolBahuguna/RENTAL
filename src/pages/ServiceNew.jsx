@@ -66,8 +66,8 @@ export const ServiceNew = () => {
   })
 
   // Step 1: Photo (Poster)
-  const [posterImage, setPosterImage] = useState(null)
-  const [posterPreview, setPosterPreview] = useState(null)
+  const [posterImages, setPosterImages] = useState([])
+  const [posterPreviews, setPosterPreviews] = useState([])
 
   // Step 2: Location
   const [location, setLocation] = useState({
@@ -113,7 +113,7 @@ export const ServiceNew = () => {
 
   const validateStep = () => {
     if (step === 0 && !basicInfo.name.trim()) { toast.error('Provider name is required'); return false }
-    if (step === 1 && !posterImage) { toast.error('Please upload a service poster image'); return false }
+    if (step === 1 && posterImages.length < 1) { toast.error('Please upload at least 1 service photo'); return false }
     if (step === 2 && !location.city.trim())   { toast.error('City is required'); return false }
     if (step === 2 && !location.area.trim())   { toast.error('Area is required'); return false }
     if (step === 6 && !contact.contact_phone.trim()) { toast.error('Phone number is required'); return false }
@@ -141,7 +141,7 @@ export const ServiceNew = () => {
       const validItems = serviceItems.filter(i => i.service_name.trim() && i.price)
       const validPlans = plans.filter(p => p.plan_name.trim() && p.price)
 
-      await createService(providerData, validItems, validPlans, documentFiles, posterImage)
+      await createService(providerData, validItems, validPlans, documentFiles, posterImages)
       toast.success('Service listing created! Pending verification.')
       navigate('/service-provider')
     } catch (err) {
@@ -221,56 +221,58 @@ export const ServiceNew = () => {
           {step === 1 && (
             <div className="space-y-5 text-center py-4">
               <div className="max-w-md mx-auto">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Upload Service Poster</h2>
-                <p className="text-sm text-gray-500 mb-6">
-                  {basicInfo.category === 'tiffin' 
-                    ? 'Upload a delicious image of your food to attract customers.' 
-                    : 'Upload a high-quality photo representing your service.'}
-                </p>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Photos (Up to 3)</h2>
+                <p className="text-sm text-gray-500 mb-6 font-medium">✨ We recommend uploading all 3 images for better visibility. (Max 7MB each)</p>
 
-                <div 
-                  className={`relative aspect-[4/3] rounded-2xl border-2 border-dashed transition-all cursor-pointer overflow-hidden flex flex-col items-center justify-center bg-gray-50 group ${posterPreview ? 'border-green-400' : 'border-gray-200 hover:border-[#CA3433]'}`}
-                  onClick={() => document.getElementById('poster-upload').click()}
-                >
-                  {posterPreview ? (
-                    <>
-                      <img src={posterPreview} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Upload className="text-white" size={32} />
-                      </div>
-                    </>
-                  ) : (
-                    <div className="p-8">
-                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                        <Image className="text-gray-300" size={32} />
-                      </div>
-                      <p className="text-sm font-bold text-gray-900">Choose Image</p>
-                      <p className="text-xs text-gray-500 mt-1">Only 1 photo allowed (max 5MB)</p>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  {posterPreviews.map((preview, i) => (
+                    <div key={i} className="relative aspect-video rounded-xl overflow-hidden group border border-gray-200">
+                      <img src={preview} className="w-full h-full object-cover" />
+                      <button 
+                        onClick={() => {
+                          setPosterImages(v => v.filter((_, idx) => idx !== i))
+                          setPosterPreviews(v => v.filter((_, idx) => idx !== i))
+                        }}
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  
+                  {posterPreviews.length < 3 && (
+                    <div 
+                      className={`relative aspect-video rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center bg-gray-50 hover:border-[#CA3433] hover:bg-red-50/50 border-gray-200 text-gray-500`}
+                      onClick={() => document.getElementById('poster-upload').click()}
+                    >
+                      <Image className="mb-2 text-gray-400" size={24} />
+                      <span className="text-sm font-semibold">Add Photo</span>
+                      <input 
+                        id="poster-upload" 
+                        type="file"
+                        multiple 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={e => {
+                          const files = Array.from(e.target.files)
+                          if (files.length + posterImages.length > 3) {
+                            toast.error('Maximum 3 images allowed')
+                            return
+                          }
+                          for (const file of files) {
+                            if (file.size > 7 * 1024 * 1024) {
+                              toast.error(`Image ${file.name} exceeds 7MB limit`)
+                              return
+                            }
+                          }
+                          setPosterImages(v => [...v, ...files])
+                          setPosterPreviews(v => [...v, ...files.map(f => URL.createObjectURL(f))])
+                          e.target.value = ''
+                        }} 
+                      />
                     </div>
                   )}
-                  <input 
-                    id="poster-upload" 
-                    type="file" 
-                    accept="image/*" 
-                    className="hidden" 
-                    onChange={e => {
-                      const file = e.target.files[0]
-                      if (file) {
-                        setPosterImage(file)
-                        setPosterPreview(URL.createObjectURL(file))
-                      }
-                    }} 
-                  />
                 </div>
-
-                {posterPreview && (
-                  <button 
-                    onClick={() => { setPosterImage(null); setPosterPreview(null) }}
-                    className="mt-4 text-xs font-bold text-red-500 flex items-center gap-1 mx-auto hover:underline"
-                  >
-                    <Trash2 size={12} /> Remove & Choose Different
-                  </button>
-                )}
               </div>
             </div>
           )}
