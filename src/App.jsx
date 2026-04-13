@@ -25,6 +25,7 @@ import { SystemAdmin } from './pages/SystemAdmin'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { AppInitializer } from './components/common/AppInitializer'
 import { RoleSelectionModal } from './components/auth/RoleSelectionModal'
+import { OnboardingQuiz } from './components/common/OnboardingQuiz'
 import ScrollToTop from './components/common/ScrollToTop'
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AppInitializer />
+      <OnboardingQuiz />
       <RoleSelectionModal />
       <Layout>
         <Routes>
