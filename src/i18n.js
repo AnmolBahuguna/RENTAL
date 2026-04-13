@@ -21,7 +21,7 @@ const resources = {
         titleSuffix: 'EAZY',
         subtitle: 'Find your perfect home, wherever you go.',
         desc: 'Rooms · Flats · Hostels · PGs — verified, affordable, and right where you need to be.',
-        searchPlaceholder: 'Search by city or area... (e.g. Koramangala, Pune)',
+        searchPlaceholder: 'Search by city or area... (e.g. Rajpur Road, Dehradun)',
         searchBtn: 'Search',
         trusted: 'Trusted by 50,000+ students & professionals',
         stats: {
@@ -89,7 +89,7 @@ const resources = {
         }
       },
       footer: {
-        description: "India's premium platform for students and professionals to find their perfect home away from home.",
+        description: "Uttarakhand's premium platform for students and professionals to find their perfect home away from home.",
         forRenters: 'For Renters',
         forLandlords: 'For Landlords',
         contact: 'Contact',
@@ -189,7 +189,7 @@ const resources = {
         titleSuffix: 'EAZY',
         subtitle: 'अपना आदर्श घर खोजें, जहाँ भी आप जाएँ।',
         desc: 'कमरे · फ्लैट · हॉस्टल · पीजी — सत्यापित, किफायती और जहाँ आपको ज़रूरत है।',
-        searchPlaceholder: 'शहर या क्षेत्र खोजें... (जैसे: कोरामंगला, पुणे)',
+        searchPlaceholder: 'शहर या क्षेत्र खोजें... (जैसे: राजपुर रोड, देहरादून)',
         searchBtn: 'खोजें',
         trusted: '50,000+ छात्रों और पेशेवरों द्वारा भरोसेमंद',
         stats: {
@@ -257,7 +257,7 @@ const resources = {
         }
       },
       footer: {
-        description: 'GoEazy सही आवास खोजने में आपका भरोसेमंद साथी है। हम छात्रों और पेशेवरों को सत्यापित संपत्तियों से जोड़ते हैं।',
+        description: 'GoEazy सही आवास खोजने में आपका भरोसेमंद साथी है। हम छात्रों और पेशेवरों को उत्तराखंड की सत्यापित संपत्तियों से जोड़ते हैं।',
         forRenters: 'किरायेदारों के लिए',
         forLandlords: 'मकान मालिकों के लिए',
         contact: 'संपर्क करें',

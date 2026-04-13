@@ -12,6 +12,8 @@ const serviceSlice = createSlice({
       state: '',
       area: '',
       query: '',
+      sortBy: 'created_at',
+      sortOrder: 'desc',
     },
     loading: false,
     reviewsLoading: false,
@@ -46,7 +48,15 @@ const serviceSlice = createSlice({
       state.services = []
     },
     resetServiceFilters: (state) => {
-      state.filters = { category: '', city: '', state: '', area: '', query: '' }
+      state.filters = { 
+        category: '', 
+        city: '', 
+        state: '', 
+        area: '', 
+        query: '',
+        sortBy: 'created_at',
+        sortOrder: 'desc'
+      }
       state.page = 0
       state.services = []
     },

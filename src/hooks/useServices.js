@@ -39,7 +39,7 @@ export const useServices = () => {
       const { data, error } = await query
         .eq('verification_status', 'verified')
         .eq('payment_status', 'paid')
-        .order('created_at', { ascending: false })
+        .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
         .range(from, from + PAGE_SIZE - 1)
 
       if (error) throw error
@@ -138,15 +138,32 @@ export const useServices = () => {
   }
 
   // ── Create Service Provider Listing ────────────────────────────────
-  const createService = async (providerData, serviceItems, plans, documentFiles) => {
+  const createService = async (providerData, serviceItems, plans, documentFiles, posterImage) => {
     if (!user) throw new Error('Not authenticated')
 
-    // Upload documents first
+    // 1. Upload Poster Image
+    const imageUrls = []
+    if (posterImage) {
+      const path = `${user.id}/${Date.now()}_poster_${posterImage.name.replace(/\s+/g, '_')}`
+      const { error: uploadError } = await supabase.storage
+        .from('service-images')
+        .upload(path, posterImage)
+      
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('service-images')
+          .getPublicUrl(path)
+        imageUrls.push(publicUrl)
+      } else {
+        console.error('Poster upload error:', uploadError)
+      }
+    }
+
+    // 2. Upload documents
     const documentUrls = []
     if (documentFiles?.length) {
       for (const file of documentFiles) {
-        const ext = file.name.split('.').pop()
-        const path = `${user.id}/${Date.now()}_${file.name.replace(/\s+/g, '_')}`
+        const path = `${user.id}/${Date.now()}_doc_${file.name.replace(/\s+/g, '_')}`
         const { error: uploadError } = await supabase.storage
           .from('service-documents')
           .upload(path, file)
@@ -159,10 +176,15 @@ export const useServices = () => {
       }
     }
 
-    // Insert main provider record
+    // 3. Insert main provider record
     const { data: provider, error: providerError } = await supabase
       .from('service_providers')
-      .insert({ ...providerData, provider_id: user.id, documents: documentUrls })
+      .insert({ 
+        ...providerData, 
+        provider_id: user.id, 
+        documents: documentUrls,
+        images: imageUrls
+      })
       .select()
       .maybeSingle()
 

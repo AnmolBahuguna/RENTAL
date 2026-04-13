@@ -6,7 +6,7 @@ import {
   setListings, appendListings, setFeatured, setCurrentProperty,
   setFavorites, toggleFavorite as toggleFav,
   setRecentlyViewed, addRecentlyViewed,
-  setLoading, setHasMore, setPage, setFilters, setTotalCount,
+  setLoading, setHasMore, setPage, setFilters, setTotalCount, resetFilters
 } from '../store/propertySlice'
 
 const PAGE_SIZE = 12

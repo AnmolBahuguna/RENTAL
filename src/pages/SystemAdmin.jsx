@@ -9,7 +9,7 @@ import { Button } from '../components/ui/Button'
 import toast from 'react-hot-toast'
 
 export const SystemAdmin = () => {
-  const { user, loading, signInWithGoogle, signOut } = useAuth()
+  const { user, profile, role, loading, signInWithGoogle, signOut } = useAuth()
   const { getAdminPendingServices, updateServiceStatus } = useServices()
   const navigate = useNavigate()
   
@@ -22,11 +22,10 @@ export const SystemAdmin = () => {
   const [selectedDoc, setSelectedDoc] = useState(null)
   const [showApprovals, setShowApprovals] = useState(false)
 
-  const ADMIN_EMAIL = 'prriiyansunegi@gmail.com'
 
   useEffect(() => {
     // Only load stats if authorized
-    if (user && user.email === ADMIN_EMAIL) {
+    if (user && role === 'admin') {
       loadStats()
       loadProviders()
     }
@@ -113,7 +112,7 @@ export const SystemAdmin = () => {
   }
 
   // 2. Logged in, but WRONG EMAIL -> Access Denied!
-  if (user.email !== ADMIN_EMAIL) {
+  if (role !== 'admin') {
     return (
       <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-4 relative overflow-hidden">
         {/* Warning Background */}

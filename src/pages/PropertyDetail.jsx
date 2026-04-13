@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock, EyeOff, X } from 'lucide-react'
+import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, EyeOff, X } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination, Navigation } from 'swiper/modules'
 import 'swiper/css'
@@ -24,6 +24,17 @@ export const PropertyDetail = () => {
   const { t } = useTranslation()
   const { user } = useSelector(s => s.auth)
   const { currentProperty, fetchPropertyById, favorites, toggleFavorite, loading } = useProperties()
+  const [showScrollToTop, setShowScrollToTop] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Toggle to Up arrow if we've scrolled past a threshold (e.g. 1000px) 
+      // or if we're near the contact section
+      setShowScrollToTop(window.scrollY > 800)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const [hasUnlocked, setHasUnlocked] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
@@ -522,17 +533,20 @@ export const PropertyDetail = () => {
       <div className="fixed bottom-6 right-4 sm:hidden z-40">
         <button 
           onClick={() => {
-            const section = document.getElementById('contact-section');
-            if (section) {
-              const offset = 80;
-              const top = section.getBoundingClientRect().top + window.scrollY - offset;
-              window.scrollTo({ top, behavior: 'smooth' });
+            if (showScrollToTop) {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              const section = document.getElementById('contact-section');
+              if (section) {
+                const offset = 80;
+                const top = section.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({ top, behavior: 'smooth' });
+              }
             }
           }}
           className="flex flex-col items-center justify-center p-2.5 bg-gray-900 text-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-800 active:scale-95 transition-transform"
         >
-          <ChevronDown size={18} className="mb-1" />
-          <span className="text-[10px] font-bold uppercase tracking-wider px-1">Jump to Contact</span>
+          {showScrollToTop ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </button>
       </div>
 

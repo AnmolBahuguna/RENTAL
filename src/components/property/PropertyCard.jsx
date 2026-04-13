@@ -56,7 +56,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
   if (layout === 'list') {
     return (
       <div 
-        className="group bg-white rounded-2xl border border-gray-100 flex gap-4 p-1.5 cursor-pointer hover:shadow-xl transition-all duration-300"
+        className="group bg-white rounded-2xl border border-gray-100 flex gap-4 p-1.5 cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
         onClick={() => navigate(`/property/${property.id}`)}
       >
         <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100/50">

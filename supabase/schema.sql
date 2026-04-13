@@ -6,7 +6,7 @@ CREATE TABLE public.profiles (
   email text,
   full_name text,
   avatar_url text,
-  role text CHECK (role IN ('user', 'landlord')),
+  role text CHECK (role IN ('user', 'landlord', 'admin', 'service_provider')),
   bio text,
   phone text,
   address text,

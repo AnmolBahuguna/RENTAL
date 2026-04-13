@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import {
   ArrowLeft, ArrowRight, Check, Plus, Trash2,
   Upload, Clock, IndianRupee, MapPin, User,
-  FileText, Phone, ChevronDown,
+  FileText, Phone, ChevronDown, Image,
 } from 'lucide-react'
 import { useServices } from '../hooks/useServices'
 import { Button } from '../components/ui/Button'
@@ -16,30 +16,13 @@ const CATEGORIES = [
   { value: 'cleaning', label: 'Cleaning 🧹', docs: ['Aadhaar Card', 'PAN Card', 'Business Registration (optional)'] },
 ]
 
-const INDIAN_STATES = [
-  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
-  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
-  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab',
-  'Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh',
-  'Uttarakhand','West Bengal','Delhi','Jammu & Kashmir','Ladakh','Chandigarh',
-  'Puducherry','Lakshadweep','Dadra & Nagar Haveli',
-]
 
-const DAYS = [
-  { label: 'Mon', key: 'mon' },
-  { label: 'Tue', key: 'tue' },
-  { label: 'Wed', key: 'wed' },
-  { label: 'Thu', key: 'thu' },
-  { label: 'Fri', key: 'fri' },
-  { label: 'Sat', key: 'sat' },
-  { label: 'Sun', key: 'sun' },
-]
 
 const STEPS = [
   { icon: User,         label: 'Basic Info'     },
+  { icon: Image,        label: 'Photo'          },
   { icon: MapPin,       label: 'Location'       },
   { icon: IndianRupee,  label: 'Services'       },
-  { icon: Clock,        label: 'Availability'   },
   { icon: IndianRupee,  label: 'Plans'          },
   { icon: FileText,     label: 'Documents'      },
   { icon: Phone,        label: 'Contact'        },
@@ -77,14 +60,17 @@ export const ServiceNew = () => {
   const [step, setStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
 
-  // Step 1: Basic Info
   const [basicInfo, setBasicInfo] = useState({
     name: '', category: 'tiffin', description: '', experience: '', speciality: '',
   })
 
+  // Step 1: Photo (Poster)
+  const [posterImage, setPosterImage] = useState(null)
+  const [posterPreview, setPosterPreview] = useState(null)
+
   // Step 2: Location
   const [location, setLocation] = useState({
-    state: '', city: '', area: '', address: '', landmark: '',
+    state: 'Uttarakhand', city: '', area: '', address: '', landmark: '',
   })
 
   // Step 3: Services (rows)
@@ -92,22 +78,15 @@ export const ServiceNew = () => {
     { service_name: '', price: '', unit: 'per month', description: '' },
   ])
 
-  // Step 4: Availability
-  const [isOpen, setIsOpen] = useState(true)
-  const [workingHours, setWorkingHours] = useState({
-    mon: '9 AM - 8 PM', tue: '9 AM - 8 PM', wed: '9 AM - 8 PM',
-    thu: '9 AM - 8 PM', fri: '9 AM - 8 PM', sat: '9 AM - 6 PM', sun: 'Closed',
-  })
-
-  // Step 5: Plans
+  // Step 4: Plans
   const [plans, setPlans] = useState([
     { plan_name: 'Monthly', price: '', description: '' },
   ])
 
-  // Step 6: Documents
+  // Step 5: Documents
   const [documentFiles, setDocumentFiles] = useState([])
 
-  // Step 7: Contact
+  // Step 6: Contact
   const [contact, setContact] = useState({ contact_phone: '', contact_email: '' })
 
   const selectedCategory = CATEGORIES.find(c => c.value === basicInfo.category)
@@ -128,9 +107,9 @@ export const ServiceNew = () => {
 
   const validateStep = () => {
     if (step === 0 && !basicInfo.name.trim()) { toast.error('Provider name is required'); return false }
-    if (step === 1 && !location.state)         { toast.error('State is required'); return false }
-    if (step === 1 && !location.city.trim())   { toast.error('City is required'); return false }
-    if (step === 1 && !location.area.trim())   { toast.error('Area is required'); return false }
+    if (step === 1 && !posterImage) { toast.error('Please upload a service poster image'); return false }
+    if (step === 2 && !location.city.trim())   { toast.error('City is required'); return false }
+    if (step === 2 && !location.area.trim())   { toast.error('Area is required'); return false }
     if (step === 6 && !contact.contact_phone.trim()) { toast.error('Phone number is required'); return false }
     return true
   }
@@ -151,14 +130,12 @@ export const ServiceNew = () => {
         ...basicInfo,
         ...location,
         ...contact,
-        is_open: isOpen,
-        working_hours: workingHours,
       }
 
       const validItems = serviceItems.filter(i => i.service_name.trim() && i.price)
       const validPlans = plans.filter(p => p.plan_name.trim() && p.price)
 
-      await createService(providerData, validItems, validPlans, documentFiles)
+      await createService(providerData, validItems, validPlans, documentFiles, posterImage)
       toast.success('Service listing created! Pending verification.')
       navigate('/service-provider')
     } catch (err) {
@@ -234,18 +211,68 @@ export const ServiceNew = () => {
             </div>
           )}
 
-          {/* ── Step 1: Location ───────────────────────────── */}
+          {/* ── Step 1: Photo ──────────────────────────────── */}
           {step === 1 && (
+            <div className="space-y-5 text-center py-4">
+              <div className="max-w-md mx-auto">
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Upload Service Poster</h2>
+                <p className="text-sm text-gray-500 mb-6">
+                  {basicInfo.category === 'tiffin' 
+                    ? 'Upload a delicious image of your food to attract customers.' 
+                    : 'Upload a high-quality photo representing your service.'}
+                </p>
+
+                <div 
+                  className={`relative aspect-[4/3] rounded-2xl border-2 border-dashed transition-all cursor-pointer overflow-hidden flex flex-col items-center justify-center bg-gray-50 group ${posterPreview ? 'border-green-400' : 'border-gray-200 hover:border-[#CA3433]'}`}
+                  onClick={() => document.getElementById('poster-upload').click()}
+                >
+                  {posterPreview ? (
+                    <>
+                      <img src={posterPreview} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Upload className="text-white" size={32} />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="p-8">
+                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                        <Image className="text-gray-300" size={32} />
+                      </div>
+                      <p className="text-sm font-bold text-gray-900">Choose Image</p>
+                      <p className="text-xs text-gray-500 mt-1">Only 1 photo allowed (max 5MB)</p>
+                    </div>
+                  )}
+                  <input 
+                    id="poster-upload" 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={e => {
+                      const file = e.target.files[0]
+                      if (file) {
+                        setPosterImage(file)
+                        setPosterPreview(URL.createObjectURL(file))
+                      }
+                    }} 
+                  />
+                </div>
+
+                {posterPreview && (
+                  <button 
+                    onClick={() => { setPosterImage(null); setPosterPreview(null) }}
+                    className="mt-4 text-xs font-bold text-red-500 flex items-center gap-1 mx-auto hover:underline"
+                  >
+                    <Trash2 size={12} /> Remove & Choose Different
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 2: Location ───────────────────────────── */}
+          {step === 2 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900">Service Location</h2>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">State <span className="text-[#CA3433]">*</span></label>
-                <select value={location.state} onChange={e => setLocation(v => ({ ...v, state: e.target.value }))}
-                  className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#CA3433] focus:ring-2 focus:ring-[#CA3433]/10">
-                  <option value="">Select State</option>
-                  {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
               <div className="grid grid-cols-2 gap-3">
                 <InputField label="City" required placeholder="e.g. Dehradun" value={location.city} onChange={e => setLocation(v => ({ ...v, city: e.target.value }))} />
                 <InputField label="Area" required placeholder="e.g. Rajpur Road" value={location.area} onChange={e => setLocation(v => ({ ...v, area: e.target.value }))} />
@@ -255,8 +282,8 @@ export const ServiceNew = () => {
             </div>
           )}
 
-          {/* ── Step 2: Services & Pricing ─────────────────── */}
-          {step === 2 && (
+          {/* ── Step 3: Services & Pricing ─────────────────── */}
+          {step === 3 && (
             <div className="space-y-4">
               <h2 className="text-lg font-bold text-gray-900">Services & Pricing</h2>
               <p className="text-sm text-gray-500">List each item/service you offer with its price.</p>
@@ -291,42 +318,6 @@ export const ServiceNew = () => {
             </div>
           )}
 
-          {/* ── Step 3: Availability ───────────────────────── */}
-          {step === 3 && (
-            <div className="space-y-5">
-              <h2 className="text-lg font-bold text-gray-900">Availability</h2>
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-semibold text-gray-700">Current Status</span>
-                <div className="flex gap-2">
-                  {[true, false].map(v => (
-                    <button key={String(v)} type="button" onClick={() => setIsOpen(v)}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${isOpen === v ? (v ? 'bg-green-500 text-white border-green-500' : 'bg-red-500 text-white border-red-500') : 'border-gray-200 text-gray-500'}`}>
-                      {v ? 'Open' : 'Closed'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Working Hours</p>
-                <div className="space-y-2">
-                  {DAYS.map(({ label, key }) => (
-                    <div key={key} className="flex items-center gap-3">
-                      <span className="text-sm font-semibold text-gray-600 w-10">{label}</span>
-                      <input
-                        type="text"
-                        placeholder="e.g. 9 AM - 8 PM or Closed"
-                        value={workingHours[key] || ''}
-                        onChange={e => setWorkingHours(v => ({ ...v, [key]: e.target.value }))}
-                        className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#CA3433] focus:bg-white"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* ── Step 4: Subscription Plans ─────────────────── */}
           {step === 4 && (
             <div className="space-y-4">
@@ -356,7 +347,7 @@ export const ServiceNew = () => {
             </div>
           )}
 
-          {/* ── Step 5: Documents ──────────────────────────── */}
+          {/* ── Step 5: Legal Documents ──────────────────────────── */}
           {step === 5 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900">Legal Documents</h2>
@@ -404,7 +395,7 @@ export const ServiceNew = () => {
             </div>
           )}
 
-          {/* ── Step 6: Contact ────────────────────────────── */}
+          {/* ── Step 6: Contact Details ────────────────────────────── */}
           {step === 6 && (
             <div className="space-y-5">
               <h2 className="text-lg font-bold text-gray-900">Contact Details</h2>

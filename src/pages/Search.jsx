@@ -33,8 +33,11 @@ export const Search = () => {
   // Read ?type= from URL and apply as filter
   useEffect(() => {
     const typeParam = searchParams.get('type')
-    if (typeParam && ['Room', 'Flat', 'Hostel', 'PG'].includes(typeParam) && filters.type !== typeParam) {
-      updateFilters({ type: typeParam })
+    if (typeParam && ['Room', 'Flat', 'Hostel', 'PG'].includes(typeParam)) {
+      if (filters.type !== typeParam) updateFilters({ type: typeParam })
+    } else {
+      // If no type param, ensure filter is cleared (important for "All Category" button)
+      if (filters.type) updateFilters({ type: '' })
     }
   }, [searchParams, updateFilters, filters.type])
 
@@ -77,7 +80,7 @@ export const Search = () => {
                  type="text" 
                  id="filter-city"
                  name="city"
-                 placeholder="City (e.g. Mumbai)" 
+                 placeholder="City (e.g. Dehradun)" 
                  className="w-full bg-transparent border-none text-sm py-2.5 px-3 focus:ring-0 outline-none" 
                  value={localFilters.city} 
                  onChange={e => setLocalFilters(prev => ({...prev, city: e.target.value}))} 

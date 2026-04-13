@@ -9,6 +9,7 @@ import { useProperties } from '../../hooks/useProperties'
 import { cn } from '../../utils/helpers'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../ui/Skeleton'
+import { CITIES } from '../../utils/constants'
 import { BannerSlider } from './BannerSlider'
 
 export const Navbar = () => {
@@ -22,7 +23,7 @@ export const Navbar = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [cityMenuOpen, setCityMenuOpen] = useState(false)
   const [langMenuOpen, setLangMenuOpen] = useState(false)
-  const [selectedCity, setSelectedCity] = useState('Dehradun')
+  const [selectedCity, setSelectedCity] = useState(filters.city || 'All Cities')
   const [searchQuery, setSearchQuery] = useState(filters.query || '')
   
   // Debounce effect for search
@@ -49,7 +50,6 @@ export const Navbar = () => {
     setLangMenuOpen(false)
   }
 
-  const CITIES = ['Dehradun', 'Srinagar', 'Rishikesh', 'Haldwani', 'Nainital', 'Haridwar', 'Roorkee', 'Rudrapur']
 
   const handleSignOut = async () => {
     await signOut()
@@ -166,7 +166,7 @@ export const Navbar = () => {
                   ) : (
                     <User size={16} />
                   )}
-                  <span>{profile?.full_name?.split(' ')[0] || 'Dashboard'}</span>
+                  <span>{role === 'admin' ? 'Admin Panel' : (profile?.full_name?.split(' ')[0] || 'Dashboard')}</span>
                 </button>
 
                 {userMenuOpen && (
@@ -176,12 +176,12 @@ export const Navbar = () => {
                       <div className="py-1">
                         <button
                           onClick={() => { 
-                            const dest = role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/dashboard'
+                            const dest = role === 'admin' ? '/systemadmin' : role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/dashboard'
                             navigate(dest); setUserMenuOpen(false) 
                           }}
                           className="w-full flex flex-col items-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                          {t('nav.dashboard')}
+                          {role === 'admin' ? 'Admin Panel' : t('nav.dashboard')}
                         </button>
                         <button
                           onClick={() => { navigate('/settings'); setUserMenuOpen(false) }}
@@ -221,11 +221,11 @@ export const Navbar = () => {
       </div>
 
       {/* Secondary Navbar (Categories) */}
-      {!location.pathname.startsWith('/property/') && !['/dashboard', '/settings', '/landlord', '/service-provider', '/privacy', '/terms', '/cookies', '/refund', '/about', '/nearby'].some(r => location.pathname.startsWith(r)) && (
+      {!location.pathname.startsWith('/property/') && !location.pathname.startsWith('/services/') && !['/dashboard', '/settings', '/landlord', '/service-provider', '/privacy', '/terms', '/cookies', '/refund', '/about', '/nearby'].some(r => location.pathname.startsWith(r)) && (
         <>
           <BannerSlider />
 
-          <div className="w-full border-t border-b border-gray-100 bg-white flex relative mt-2 overflow-hidden">
+          <div className="w-full border-t border-b border-gray-100 bg-white flex relative mt-2">
             {/* Scroll Indicator Gradient */}
             <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none md:hidden" />
             
@@ -264,7 +264,7 @@ export const Navbar = () => {
 
             <div className="hidden lg:flex items-center h-16 border-l border-gray-100 pl-6 pr-8 bg-white min-w-max relative cursor-pointer shrink-0" onClick={() => setCityMenuOpen(!cityMenuOpen)}>
                 <div className="flex items-center gap-3">
-                  <div className="relative w-10 h-10 rounded-full border border-gray-200 overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+                  <div className="relative w-10 h-10 rounded-full border border-[#CA3433] overflow-hidden bg-gray-50 flex items-center justify-center shrink-0">
                     <img src="/1.webp" alt="City" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex flex-col text-sm">
@@ -278,12 +278,23 @@ export const Navbar = () => {
                 {cityMenuOpen && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setCityMenuOpen(false); }} />
-                    <div className="absolute right-4 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden py-2" onClick={(e) => e.stopPropagation()}>
+                    <div className="absolute right-4 top-full mt-3 w-48 bg-white rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 z-50 overflow-hidden py-2" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => {
+                          setSelectedCity('All Cities')
+                          updateFilters({ city: '' })
+                          setCityMenuOpen(false)
+                        }}
+                        className={`w-full text-left px-5 py-2.5 text-sm font-bold transition-colors ${selectedCity === 'All Cities' ? 'bg-[#fff5f5] text-[#CA3433]' : 'text-gray-700 hover:bg-gray-50'}`}
+                      >
+                        All Cities
+                      </button>
                       {CITIES.map(city => (
                         <button
                           key={city}
                           onClick={() => {
                             setSelectedCity(city)
+                            updateFilters({ city })
                             setCityMenuOpen(false)
                           }}
                           className={`w-full text-left px-5 py-2.5 text-sm font-semibold transition-colors ${selectedCity === city ? 'bg-[#fff5f5] text-[#CA3433]' : 'text-gray-700 hover:bg-gray-50'}`}
@@ -304,7 +315,7 @@ export const Navbar = () => {
             <div className="relative shrink-0">
               <button 
                 onClick={() => setCityMenuOpen(!cityMenuOpen)}
-                className="flex items-center gap-1.5 p-1 bg-gray-50 rounded-full border border-gray-200"
+                className="flex items-center gap-1.5 p-1 bg-gray-50 rounded-full border border-[#CA3433]"
               >
                 <div className="w-8 h-8 rounded-full overflow-hidden border border-white shadow-sm">
                   <img src="/1.webp" alt="City" className="w-full h-full object-cover" />
@@ -319,11 +330,22 @@ export const Navbar = () => {
                     <div className="px-3 py-2 border-b border-gray-50 mb-1">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('search.filters')}</span>
                     </div>
+                    <button
+                      onClick={() => {
+                        setSelectedCity('All Cities')
+                        updateFilters({ city: '' })
+                        setCityMenuOpen(false)
+                      }}
+                      className={`w-full text-left px-4 py-2 text-xs font-bold transition-colors ${selectedCity === 'All Cities' ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
+                    >
+                      All Cities
+                    </button>
                     {CITIES.map(city => (
                       <button
                         key={city}
                         onClick={() => {
                           setSelectedCity(city)
+                          updateFilters({ city })
                           setCityMenuOpen(false)
                         }}
                         className={`w-full text-left px-4 py-2 text-xs font-bold transition-colors ${selectedCity === city ? 'bg-brand-50 text-brand-600' : 'text-gray-700 hover:bg-gray-50'}`}
@@ -368,11 +390,11 @@ export const Navbar = () => {
             
             {user ? (
                <>
-                <Link to={role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/dashboard'}
+                <Link to={role === 'admin' ? '/systemadmin' : role === 'landlord' ? '/landlord' : role === 'service_provider' ? '/service-provider' : '/dashboard'}
                   className="block font-semibold text-gray-700 py-2"
                   onClick={() => dispatch(closeMobileMenu())}
                 >
-                  {t('nav.dashboard')}
+                  {role === 'admin' ? 'Admin Panel' : t('nav.dashboard')}
                 </Link>
                 <Link to="/settings"
                   className="block font-semibold text-gray-700 py-2"
