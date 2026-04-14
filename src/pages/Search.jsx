@@ -12,6 +12,7 @@ import { PROPERTY_TYPES, AMENITIES, SORT_OPTIONS } from '../utils/constants'
 import { AMENITY_ICONS, cn } from '../utils/helpers'
 import { Skeleton } from '../components/ui/Skeleton'
 import { useAuth } from '../hooks/useAuth'
+import { RecommendedSection } from '../components/property/RecommendedSection'
 
 export const Search = () => {
   const { t } = useTranslation()
@@ -264,6 +265,9 @@ export const Search = () => {
              </div>
           </div>
         </div>
+
+        {/* New Recommendation Section */}
+        <RecommendedSection />
 
         {/* Results Area */}
         {loading && listings.length === 0 ? (
