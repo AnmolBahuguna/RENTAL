@@ -285,45 +285,78 @@ export const LandlordDashboard = () => {
           /* ── VIEW ALL: Full list view with management controls ── */
           <div className="grid grid-cols-1 gap-4">
             {displayProperties.map(p => (
-              <div key={p.id} className="bg-white rounded-2xl border border-gray-100 p-3 sm:p-4 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-sm hover:shadow-md transition-shadow">
-                <div className="relative w-full sm:w-48 aspect-video sm:aspect-auto sm:h-32 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
-                  <img src={p.images?.[0] || ''} alt={p.title} className="w-full h-full object-cover" />
-                  <div className="absolute top-2 left-2"><TypeBadge type={p.type} /></div>
+              <div 
+                key={p.id} 
+                className="group bg-white rounded-2xl border border-gray-100 flex gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+              >
+                {/* Image Section - Match PropertyCard structure */}
+                <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0 overflow-hidden bg-gray-50 rounded-r-2xl shadow-sm">
+                  <img 
+                    src={p.images?.[0] || ''} 
+                    alt={p.title} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                  />
+                  <div className="absolute top-2 left-2">
+                    <TypeBadge type={p.type} />
+                  </div>
                 </div>
                 
-                <div className="flex-1 w-full min-w-0 py-1">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 md:gap-4 mb-2">
-                    <h3 className="font-bold text-lg text-gray-900 truncate">{p.title}</h3>
-                    <div className="flex items-center gap-3">
-                      <span className="font-extrabold text-xl text-[#CA3433]">{formatPriceShort(p.price)}</span>
-                      <div className={cn('px-2 py-0.5 text-[10px] uppercase font-bold rounded-md', p.availability ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700')}>
+                {/* Info & Actions Section */}
+                <div className="flex-1 py-3 flex flex-col justify-between min-w-0 pr-4">
+                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-1 md:gap-4">
+                    <div className="min-w-0">
+                      <h3 className="font-extrabold text-gray-900 text-base sm:text-lg leading-tight line-clamp-1 mb-1">
+                        {p.title}
+                      </h3>
+                      <p className="text-xs text-gray-500 font-medium truncate">
+                        {p.area}, {p.city}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end shrink-0">
+                      <span className="font-black text-lg text-[#CA3433] leading-none">
+                        {formatPriceShort(p.price)}
+                      </span>
+                      <div className={cn(
+                        'mt-1.5 px-2 py-0.5 text-[9px] uppercase font-bold rounded-md', 
+                        p.availability ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      )}>
                         {p.availability ? 'Available' : 'Rented'}
                       </div>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 mb-3">{p.area}, {p.city}</p>
-                  <div className="flex items-center gap-4 text-sm text-gray-400">
-                    <span className="flex items-center gap-2 font-medium bg-gray-50 px-3 py-1 rounded-lg">
-                      <Eye size={14} className="text-gray-400"/>
-                      <span className="text-gray-600 font-bold">{p.views || 0}</span>
-                      <span className="text-[10px] uppercase tracking-wide">views</span>
-                    </span>
+
+                  <div className="flex items-end justify-between mt-auto">
+                    <div className="flex items-center gap-4 text-xs text-gray-400">
+                      <span className="flex items-center gap-1.5 font-bold bg-gray-50 px-2 py-1 rounded-lg">
+                        <Eye size={12} className="text-gray-400"/>
+                        <span className="text-gray-700">{p.views || 0}</span>
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigate(`/property/${p.id}`) }}
+                        className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all text-xs font-bold flex items-center gap-1.5"
+                        title="View"
+                      >
+                        <Eye size={14} /> <span className="hidden sm:inline">View</span>
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigate(`/landlord/properties/${p.id}/edit`) }}
+                        className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all text-xs font-bold flex items-center gap-1.5 border border-blue-100"
+                        title="Edit"
+                      >
+                        <Edit size={14} /> <span className="hidden sm:inline">Edit</span>
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDelete(p.id) }}
+                        className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all border border-red-100"
+                        title="Delete"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-0 border-gray-50">
-                  <Button variant="secondary" size="md" className="flex-1 sm:flex-none px-5 font-bold rounded-xl h-10" onClick={() => navigate(`/property/${p.id}`)}>
-                    <Eye size={16} className="mr-1.5" /> View
-                  </Button>
-                  <Button variant="secondary" size="md" className="flex-1 sm:flex-none px-5 font-bold rounded-xl h-10 text-blue-600 hover:bg-blue-50 border-blue-100" onClick={() => navigate(`/landlord/properties/${p.id}/edit`)}>
-                    <Edit size={16} className="mr-1.5" /> Edit
-                  </Button>
-                  <button
-                    className="p-2.5 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-colors border border-red-100"
-                    onClick={() => handleDelete(p.id)} title="Delete"
-                  >
-                    <Trash2 size={18} />
-                  </button>
                 </div>
               </div>
             ))}
