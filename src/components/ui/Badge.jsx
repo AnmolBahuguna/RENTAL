@@ -10,6 +10,7 @@ export const Badge = ({ children, variant = 'default', className = '' }) => {
     warning:  'bg-yellow-100 text-yellow-700',
     danger:   'bg-red-100 text-red-700',
     purple:   'bg-purple-100 text-purple-700',
+    ghost:    'bg-transparent text-gray-700 p-0 shadow-none',
   }
   return (
     <span className={cn(
@@ -21,7 +22,7 @@ export const Badge = ({ children, variant = 'default', className = '' }) => {
   )
 }
 
-export const TypeBadge = ({ type }) => {
+export const TypeBadge = ({ type, variant: customVariant }) => {
   const map = {
     Room:   { variant: 'brand',   icon: <Home size={12} /> },
     Flat:   { variant: 'success', icon: <Building size={12} /> },
@@ -29,5 +30,5 @@ export const TypeBadge = ({ type }) => {
     PG:     { variant: 'purple',  icon: <Building size={12} /> },
   }
   const { variant = 'default', icon = <MapPin size={12} /> } = map[type] || {}
-  return <Badge variant={variant}>{icon} {type}</Badge>
+  return <Badge variant={customVariant || variant}>{icon} {type}</Badge>
 }
