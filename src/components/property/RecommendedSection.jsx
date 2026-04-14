@@ -41,16 +41,18 @@ export const RecommendedSection = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+      <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-6 pt-2 scrollbar-hide snap-x snap-mandatory px-1 -mx-1" style={{ WebkitOverflowScrolling: 'touch' }}>
         {recommendations.map(p => (
-           <PropertyCard key={p.id} property={p} compact />
+           <div key={p.id} className="flex-none w-[170px] xs:w-[220px] sm:w-[280px] snap-center">
+             <PropertyCard property={p} compact />
+           </div>
         ))}
       </div>
       
-      {recommendations.length === 8 && (
-        <div className="mt-6 flex justify-center">
+      {recommendations.length > 2 && (
+        <div className="mt-2 flex justify-center">
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
-                <span>Swipe for more results matching your vibe</span>
+                <span>Swipe for more results</span>
                 <ArrowRight size={10} />
             </p>
         </div>
