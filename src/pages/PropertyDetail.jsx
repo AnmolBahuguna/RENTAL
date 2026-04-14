@@ -24,8 +24,9 @@ export const PropertyDetail = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const { user } = useSelector(s => s.auth)
-  const { currentProperty, fetchPropertyById, favorites, toggleFavorite, loading } = useProperties()
+  const { currentProperty, fetchPropertyById, fetchGatedData, favorites, toggleFavorite, loading } = useProperties()
   const [showScrollToTop, setShowScrollToTop] = useState(false)
+  const [gatedData, setGatedData] = useState(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,8 +65,20 @@ export const PropertyDetail = () => {
       .eq('user_id', user.id)
       .eq('property_id', id)
       .maybeSingle()
-    if (data) setHasUnlocked(true)
+    if (data) {
+      setHasUnlocked(true)
+      const gated = await fetchGatedData(id)
+      setGatedData(gated)
+    }
   }
+
+  // Also fetch gated data if current user is the landlord
+  useEffect(() => {
+    const isLandlord = currentProperty && user && currentProperty.landlord_id === user.id
+    if (isLandlord && !gatedData) {
+      fetchGatedData(id).then(setGatedData)
+    }
+  }, [currentProperty, user, id, fetchGatedData, gatedData])
 
   if (loading || !currentProperty) {
     return (
@@ -336,7 +349,7 @@ export const PropertyDetail = () => {
                 <span>{p.city}</span>
               </div>
               <p className="text-gray-500 text-sm">
-                {hasUnlocked || (p.landlord_id === user?.id) ? (p.exact_location || `${p.area}, ${p.city} • ${p.pincode}`) : `${p.area}, ${p.city} • ${p.pincode}`}
+                {(hasUnlocked || p.landlord_id === user?.id) ? (gatedData?.exact_location || `${p.area}, ${p.city}`) : `${p.area}, ${p.city} • ${p.pincode}`}
               </p>
             </div>
 
@@ -440,34 +453,42 @@ export const PropertyDetail = () => {
             </div>
 
             {/* Location on Map Card */}
-            {p.latitude && p.longitude && (
+            {gatedData?.latitude && gatedData?.longitude ? (
               <div className="h-full">
-                {(hasUnlocked || p.landlord_id === user?.id) ? (
-                  <LocationViewer
-                    latitude={p.latitude}
-                    longitude={p.longitude}
-                    title={p.title}
-                    address={p.map_address || p.exact_location || `${p.area}, ${p.city}`}
-                  />
-                ) : (
-                  <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display flex items-center gap-2">
-                        <MapPin size={22} className="text-[#CA3433]" />
-                        Location on Map
-                      </h2>
-                    </div>
-                    <div className="relative min-h-[260px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                      <div className="absolute inset-0 select-none opacity-20" style={{ backgroundImage: 'radial-gradient(circle at center, #cbd5e1 2px, transparent 2px)', backgroundSize: '16px 16px', filter: 'blur(4px)', userSelect: 'none', pointerEvents: 'none' }}></div>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
-                        <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
-                          <EyeOff size={28} className="text-brand-500" />
-                        </div>
-                        <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
+                <LocationViewer
+                  latitude={gatedData.latitude}
+                  longitude={gatedData.longitude}
+                  title={p.title}
+                  address={gatedData.exact_location || `${p.area}, ${p.city}`}
+                />
+              </div>
+            ) : (
+              <div className="h-full">
+                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display flex items-center gap-2">
+                      <MapPin size={22} className="text-gray-300" />
+                      Location on Map
+                    </h2>
+                  </div>
+                  <div className="relative h-[260px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gray-50 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/0,0,1/400x300?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}')] bg-cover opacity-20 grayscale pointer-events-none" style={{ filter: 'blur(4px)' }} />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
+                      <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
+                        <Lock size={28} className="text-brand-500" />
                       </div>
+                      <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.locationLocked')}</p>
+                      <Button 
+                        variant="primary" 
+                        size="sm" 
+                        className="mt-4 rounded-full px-6 bg-[#CA3433] hover:bg-[#ac2d2c]"
+                        onClick={handleUnlock}
+                      >
+                        Unlock Map for ₹9
+                      </Button>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             )}
 
@@ -493,10 +514,10 @@ export const PropertyDetail = () => {
                 {user ? (
                     (hasUnlocked || p.landlord_id === user.id) ? (
                       <div className="space-y-3">
-                        <a href={`tel:${p.contact_phone || p.profiles?.phone || p.landlord?.phone || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-colors text-[15px]">
-                          <Phone size={18} /> {p.contact_phone || p.profiles?.phone || 'Call Now'}
+                        <a href={`tel:${gatedData?.contact_phone || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-colors text-[15px]">
+                          <Phone size={18} /> {gatedData?.contact_phone || 'Call Now'}
                         </a>
-                        <a href={`mailto:${p.contact_email || p.profiles?.email || 'owner@example.com'}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-colors shadow-sm text-[15px]">
+                        <a href={`mailto:${gatedData?.contact_email || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-colors shadow-sm text-[15px]">
                           <Mail size={18} /> Send Email
                         </a>
                       </div>
@@ -558,8 +579,9 @@ export const PropertyDetail = () => {
                   <div className="flex flex-col text-sm text-gray-500 mt-1 gap-1">
                     {(hasUnlocked || p.landlord_id === user?.id) ? (
                       <>
-                        <a href={`mailto:${p.contact_email || p.profiles?.email}`} className="hover:text-gray-900 truncate">{p.contact_email || p.profiles?.email || 'owner@example.com'}</a>
-                        <a href={`tel:${p.contact_phone || p.profiles?.phone}`} className="hover:text-gray-900">{p.contact_phone || p.profiles?.phone || 'Not provided'}</a>
+                        <a href={`mailto:${gatedData?.contact_email || ''}`} className="hover:text-gray-900">{gatedData?.contact_email || 'Email provided after unlock'}</a>
+                        <span className="hidden sm:inline">•</span>
+                        <a href={`tel:${gatedData?.contact_phone || ''}`} className="hover:text-gray-900">{gatedData?.contact_phone || 'Phone provided after unlock'}</a>
                       </>
                     ) : (
                       <span>{t('property.sections.contactLocked')}</span>
