@@ -18,11 +18,9 @@ export const RoleSelectionModal = () => {
   const [selectedRole, setSelectedRole] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const location = window.location;
-  // Only show for Google OAuth users who haven't set a role yet.
-  // Email/password users always pick a role during the signup form — never show for them.
-  const isGoogleUser = user?.app_metadata?.provider === 'google'
-  const isOpen = !!user && !!profile && !role && isGoogleUser && location.pathname !== '/systemadmin'
+  // Show for any logged-in user who has a profile but no role yet
+  const location = window.location
+  const isOpen = !!user && !!profile && !role && location.pathname !== '/systemadmin'
 
   const handleConfirm = async () => {
     if (!selectedRole) {
