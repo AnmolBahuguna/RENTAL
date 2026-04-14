@@ -491,19 +491,20 @@ export const PropertyDetail = () => {
                   <Calendar size={16} />
                   {t('property.sections.bookVisit')}
                 </h4>
-                <div className="flex flex-col xs:flex-row gap-3">
-                  <div className="flex-1 relative">
+                <div className="flex flex-col gap-4">
+                  <div className="relative w-full">
                     <input 
                       type="date" 
                       min={new Date().toISOString().split('T')[0]}
                       value={visitDate}
                       onChange={(e) => setVisitDate(e.target.value)}
-                      className="w-full bg-white border border-red-100 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-[#CA3433]/10 focus:border-[#CA3433] outline-none transition-all cursor-pointer font-bold text-gray-700 shadow-inner"
+                      className="w-full bg-white border border-red-100 rounded-xl px-4 py-3.5 text-sm focus:ring-4 focus:ring-[#CA3433]/10 focus:border-[#CA3433] outline-none transition-all cursor-pointer font-bold text-gray-900 shadow-sm appearance-none min-h-[50px]"
+                      style={{ colorScheme: 'light' }}
                     />
                   </div>
                   <Button 
                     variant="primary" 
-                    className="rounded-xl px-6 py-3 bg-[#CA3433] whitespace-nowrap shadow-lg shadow-[#CA3433]/20 hover:shadow-[#CA3433]/30 transition-all active:scale-[0.97] font-bold text-sm"
+                    className="w-full rounded-xl py-4 bg-[#CA3433] shadow-lg shadow-[#CA3433]/20 hover:shadow-[#CA3433]/30 transition-all active:scale-[0.97] font-bold text-sm"
                     onClick={submitSiteVisit}
                     disabled={bookingVisit}
                   >
