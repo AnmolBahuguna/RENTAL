@@ -102,7 +102,13 @@ User experience is the core of GoEazy. We've implemented several "Premium-Only" 
 ---
 
 ## 📈 Roadmap & Versions
-- **v2.4 (Recent)**: 🎨 **UI Enhancement & Stability Release**:
+- **v3.0 (Latest)**: 🛡️ **Major Release: Security Hardening & UI Overhaul**:
+  - **Tiered Data Access**: Implemented a "Zero-Trust" frontend model. Restricted all public API fetches to non-sensitive fields to prevent scraping via browser dev tools.
+  - **Secure RPC Gating**: Sensitive information (Latitude, Longitude, Contact Details) is now strictly gated behind PostgreSQL RPC functions that verify user authorization/payment before retrieval.
+  - **Recommended for You**: Intelligence-driven horizontal slider on the Search page for personalized property discovery.
+  - **Onboarding Quiz**: Integrated a new interactive onboarding flow to tailor the user experience from the first visit.
+  - **Premium UI Restoration**: Re-engineered the Property and Service detail galleries with Swiper 12 and brand-exclusive "Floating" navigation.
+- **v2.4**: 🎨 **UI Enhancement & Stability Release**:
   - **Swiper Engine Fix**: Resolved navigation button collisions on Property and Service details.
   - **Pricing Transparency**: Explicit "Pay ₹9 to Unlock Details" button labels and "/ month" form indicators.
   - **Lighter Uploads**: Updated image limits to 1-3 photos with a 7MB size restriction for better performance.
