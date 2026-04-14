@@ -55,6 +55,15 @@ export const PropertyDetail = () => {
   const [reviewText, setReviewText] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
 
+  const [visitDate, setVisitDate] = useState('')
+  const [bookingVisit, setBookingVisit] = useState(false)
+  const [pulseUnlock, setPulseUnlock] = useState(false)
+  const visitDateRef = React.useRef('')
+  
+  useEffect(() => {
+    visitDateRef.current = visitDate
+  }, [visitDate])
+
   useEffect(() => {
     const handleScroll = () => {
       // Toggle to Up arrow if we've scrolled past a threshold (e.g. 1000px) 
@@ -157,6 +166,40 @@ export const PropertyDetail = () => {
     toast.success(t('property.sections.linkCopied'))
   }
 
+  const submitSiteVisit = async () => {
+    if (!user) { dispatch(openAuthModal('login')); return }
+    if (p.landlord_id === user.id) { toast.error('You cannot book a visit for your own property'); return }
+    if (!visitDate) { toast.error('Please select a date for the visit'); return }
+    
+    if (!hasUnlocked) {
+       setPulseUnlock(true)
+       const unlockBtn = document.getElementById('unlock-button')
+       if (unlockBtn) unlockBtn.scrollIntoView({ behavior: 'smooth', block: 'center' })
+       toast.error('Please unlock contact details to confirm your visit')
+       setTimeout(() => setPulseUnlock(false), 2000)
+       return
+    }
+    
+    setBookingVisit(true)
+    try {
+      const { error } = await supabase.from('site_visits').insert({
+        property_id: p.id,
+        user_id: user.id,
+        landlord_id: p.landlord_id,
+        visit_date: visitDate,
+        status: 'pending'
+      })
+      if (error) throw error
+      toast.success('Visit Request Sent! Track it in your dashboard.')
+      setVisitDate('')
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to book visit.')
+    } finally {
+      setBookingVisit(false)
+    }
+  }
+
   const handleUnlock = async () => {
     if (!user) { dispatch(openAuthModal('login')); return }
     if (unlocking) return // Prevent double-submission
@@ -242,6 +285,19 @@ export const PropertyDetail = () => {
             toast.success('Payment verified! Contact details unlocked.')
             setHasUnlocked(true)
             checkUnlockStatus() 
+            if (visitDateRef.current) {
+              const { error: visitErr } = await supabase.from('site_visits').insert({
+                 property_id: p.id,
+                 user_id: user.id,
+                 landlord_id: p.landlord_id,
+                 visit_date: visitDateRef.current,
+                 status: 'pending'
+              });
+              if (!visitErr) {
+                 toast.success('Visit Request Sent! Track it in your dashboard.')
+                 setVisitDate('')
+              }
+            }
           } catch (vErr) {
             console.error('Verification error:', vErr)
             toast.error('Payment verification failed: ' + vErr.message)
@@ -540,6 +596,30 @@ export const PropertyDetail = () => {
             <div id="contact-section" className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] border border-gray-100/50">
               <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.requestContact')}</h3>
               
+              <div className="mb-6 p-5 bg-white rounded-xl border border-[#CA3433]/20 shadow-[0_4px_12px_rgb(202,52,51,0.05)] relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-[#CA3433]"></div>
+                <h4 className="font-bold text-gray-900 mb-3 text-sm flex items-center justify-between">
+                  Book a Site Visit
+                </h4>
+                <div className="flex gap-2">
+                  <input 
+                    type="date" 
+                    min={new Date().toISOString().split('T')[0]}
+                    value={visitDate}
+                    onChange={(e) => setVisitDate(e.target.value)}
+                    className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#CA3433]/20 focus:border-[#CA3433] outline-none transition-all cursor-pointer"
+                  />
+                  <Button 
+                    variant="primary" 
+                    className="rounded-lg px-5 bg-[#CA3433] whitespace-nowrap shadow-md shadow-[#CA3433]/20"
+                    onClick={submitSiteVisit}
+                    disabled={bookingVisit}
+                  >
+                    {bookingVisit ? 'Booking...' : 'Book'}
+                  </Button>
+                </div>
+              </div>
+
               <div className="space-y-4 mb-8">
                 <div className="p-4 bg-[#F9F8F6] rounded-xl border border-gray-100">
                    <p className="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wider">{t('property.sections.owner')}</p>
@@ -580,9 +660,10 @@ export const PropertyDetail = () => {
 
               {((user && !(hasUnlocked || p.landlord_id === user.id)) || !user) && (
                 <button 
+                  id="unlock-button"
                   onClick={handleUnlock} 
                   disabled={unlocking}
-                  className="w-full bg-gray-900 text-white font-bold text-[15px] py-4 rounded-full hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                  className={`w-full bg-gray-900 text-white font-bold text-[15px] py-4 rounded-full hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed ${pulseUnlock ? 'ring-4 ring-[#CA3433] bg-[#CA3433] scale-105 transition-all duration-300' : ''}`}
                 >
                   {unlocking ? (
                     <span className="flex items-center gap-2">

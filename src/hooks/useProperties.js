@@ -27,7 +27,7 @@ export const useProperties = () => {
     loading, hasMore, page, totalCount,
     reviews, reviewsLoading 
   } = useSelector(s => s.property)
-  const { user } = useSelector(s => s.auth)
+  const { user, profile } = useSelector(s => s.auth)
 
   const fetchProperties = useCallback(async (reset = false) => {
     dispatch(setLoading(true))
@@ -273,9 +273,29 @@ export const useProperties = () => {
   }
 
   const getRecommendedProperties = useCallback(() => {
-    if (!listings || listings.length === 0) return []
-    return [...listings].sort(() => 0.5 - Math.random()).slice(0, 6)
-  }, [listings])
+    if (!listings || listings.length === 0 || !profile?.onboarding_data) return []
+
+    const prefs = profile.onboarding_data
+
+    // If user skipped (legacy guard)
+    if (prefs?.skipped) return []
+
+    let filtered = [...listings]
+    if (prefs?.type) filtered = filtered.filter(p => p.type === prefs.type)
+    if (prefs?.city) filtered = filtered.filter(p => p.city?.toLowerCase().includes(prefs.city.toLowerCase()))
+    if (prefs?.budget?.range) {
+      const [min, max] = prefs.budget.range
+      filtered = filtered.filter(p => p.price >= min && p.price <= max)
+    }
+
+    // Fallback to type-only if strict match returns nothing
+    if (filtered.length === 0 && prefs?.type) {
+      filtered = listings.filter(p => p.type === prefs.type)
+    }
+    if (filtered.length === 0) return []
+
+    return filtered.sort(() => 0.5 - Math.random()).slice(0, 6)
+  }, [listings, profile])
 
   return {
     listings, featured, currentProperty, favorites, recentlyViewed, filters,

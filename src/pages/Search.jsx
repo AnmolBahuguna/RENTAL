@@ -11,10 +11,13 @@ import { resetFilters } from '../store/propertySlice'
 import { PROPERTY_TYPES, AMENITIES, SORT_OPTIONS } from '../utils/constants'
 import { AMENITY_ICONS, cn } from '../utils/helpers'
 import { Skeleton } from '../components/ui/Skeleton'
+import { AuthGateModal } from '../components/auth/AuthGateModal'
+import { useAuth } from '../hooks/useAuth'
 
 export const Search = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const { updateProfile } = useAuth()
   const [searchParams] = useSearchParams()
   const { listings, filters, loading, hasMore, fetchProperties, updateFilters, totalCount, getRecommendedProperties } = useProperties()
 
@@ -74,10 +77,14 @@ export const Search = () => {
     return () => window.removeEventListener('goeazy_recommendations_updated', handler)
   }, [listings, getRecommendedProperties])
 
-  const handleResetQuiz = () => {
-    localStorage.removeItem('goeazy_onboarding_done')
-    // Trigger a page reload or just the quiz
-    window.location.reload()
+  const handleResetQuiz = async () => {
+    try {
+      await updateProfile({ onboarding_data: null })
+      setRecommendations([])
+      // OnboardingQuiz will reopen automatically via its profile useEffect
+    } catch (err) {
+      console.error('Reset failed', err)
+    }
   }
 
   // Use the actual totalCount from database
@@ -191,6 +198,9 @@ export const Search = () => {
 
   return (
     <div className="pt-4 pb-12 min-h-screen bg-gray-50/50">
+      {/* Force login overlay — renders on top of the blurred search page */}
+      <AuthGateModal />
+
       <div className="w-full px-2 sm:px-4">
 
         {/* Header Area */}
