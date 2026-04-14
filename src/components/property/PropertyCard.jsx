@@ -7,7 +7,7 @@ import { useProperties } from '../../hooks/useProperties'
 import { cn } from '../../utils/helpers'
 import { useTranslation } from 'react-i18next'
 
-const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) => {
+const PropertyCardComponent = ({ property, layout = 'grid', compact = false, condensed = false }) => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const dispatch = useDispatch()
@@ -68,10 +68,16 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
 
         <div className="flex-1 py-3 flex flex-col justify-between min-w-0 pr-4">
           <div>
-            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.1em] mb-0.5 block">
+            <span className={cn(
+              "font-extrabold text-gray-400 uppercase tracking-[0.1em] mb-0.5 block",
+              condensed ? "text-[8px]" : "text-[10px]"
+            )}>
               {t(`property.types.${property.type}`) || property.type || 'ROOM'}
             </span>
-            <h3 className="font-black text-gray-900 text-base sm:text-lg leading-tight line-clamp-1 mb-1">
+            <h3 className={cn(
+              "font-black text-gray-900 leading-tight line-clamp-1 mb-1",
+              condensed ? "text-sm" : "text-base sm:text-lg"
+            )}>
               {property.title}
             </h3>
           </div>
@@ -79,12 +85,18 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
           <div className="flex items-end justify-between mt-auto pb-0.5">
             <div className="flex flex-col">
               <span className="text-[9px] font-bold text-gray-400 uppercase leading-none mb-0.5">{t('property.labels.from')}</span>
-              <span className="font-black text-gray-900 text-base sm:text-lg leading-none">₹{formatPrice(property.price)}</span>
+              <span className={cn(
+                "font-black text-gray-900 leading-none",
+                condensed ? "text-base" : "text-base sm:text-lg"
+              )}>₹{formatPrice(property.price)}</span>
             </div>
             
-            <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100 shadow-sm">
-              <span className="font-black text-xs text-gray-900">{rating}</span>
-              <Star size={10} fill="currentColor" className="text-orange-400" />
+            <div className={cn(
+              "flex items-center gap-1 bg-gray-50 rounded-lg border border-gray-100 shadow-sm",
+              condensed ? "px-1.5 py-0.5" : "px-2 py-1"
+            )}>
+              <span className={cn("font-black text-gray-900", condensed ? "text-[10px]" : "text-xs")}>{rating}</span>
+              <Star size={condensed ? 8 : 10} fill="currentColor" className="text-orange-400" />
             </div>
           </div>
         </div>
@@ -106,12 +118,15 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
           </div>
         </div>
         <div className="px-3 py-2">
-          <h3 className="font-bold text-gray-900 text-[13px] line-clamp-1 mb-0.5">{property.title}</h3>
+          <h3 className={cn(
+            "font-bold text-gray-900 line-clamp-1 mb-0.5",
+            condensed ? "text-[11px]" : "text-[13px]"
+          )}>{property.title}</h3>
           <div className="flex items-center justify-between text-[10px] text-gray-500 font-bold">
-             <span className="text-gray-900">₹{formatPrice(property.price)}</span>
+             <span className={cn("text-gray-900", condensed ? "text-[11px]" : "text-[13px]")}>₹{formatPrice(property.price)}</span>
              <div className="flex items-center gap-0.5 text-gray-900">
                <Star size={9} className="text-orange-400" fill="currentColor" />
-               {rating}
+               <span className={condensed ? "text-[9px]" : "text-[10px]"}>{rating}</span>
              </div>
           </div>
         </div>
@@ -155,16 +170,22 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
 
       <div className="px-3 py-2 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-0.5">
-          <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+          <span className={cn(
+            "font-black text-gray-400 uppercase tracking-widest",
+            condensed ? "text-[8px]" : "text-[9px]"
+          )}>
             {t(`property.types.${property.type}`) || property.type}
           </span>
           <div className="flex items-center gap-1 bg-gray-50/50 px-1 py-0.5 rounded-lg">
-            <span className="font-black text-[9px] text-gray-900">{rating}</span>
-            <Star size={9} className="text-orange-400" fill="currentColor" />
+            <span className={cn("font-black text-gray-900", condensed ? "text-[8px]" : "text-[9px]")}>{rating}</span>
+            <Star size={condensed ? 8 : 9} className="text-orange-400" fill="currentColor" />
           </div>
         </div>
         
-        <h3 className="font-extrabold text-gray-900 text-sm leading-tight line-clamp-1 mb-0.5">
+        <h3 className={cn(
+          "font-extrabold text-gray-900 leading-tight line-clamp-1 mb-0.5",
+          condensed ? "text-[11px]" : "text-sm"
+        )}>
           {property.title}
         </h3>
         
@@ -172,10 +193,13 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
         <div className="mt-auto pt-1.5 border-t border-gray-50 flex items-center justify-between">
           <p className="flex flex-col">
             <span className="text-[8px] font-bold text-gray-400 uppercase leading-none">{t('property.labels.from')}</span>
-            <span className="font-black text-gray-900 text-base leading-tight">₹{formatPrice(property.price)}</span>
+            <span className={cn(
+              "font-black text-gray-900 leading-tight",
+              condensed ? "text-sm" : "text-base"
+            )}>₹{formatPrice(property.price)}</span>
           </p>
           <button className="text-[#CA3433] hover:text-brand-800 transition-colors">
-            <Eye size={18} />
+            <Eye size={condensed ? 14 : 18} />
           </button>
         </div>
       </div>

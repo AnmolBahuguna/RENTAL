@@ -7,7 +7,7 @@ import { cn } from '../../utils/helpers'
 
 export const RecommendedSection = ({ viewMode = 'grid' }) => {
   const { getRecommendedProperties, loading } = useProperties()
-  
+
   const recommendations = useMemo(() => getRecommendedProperties(), [getRecommendedProperties])
 
   if (loading || !recommendations.length) return null
@@ -30,30 +30,32 @@ export const RecommendedSection = ({ viewMode = 'grid' }) => {
           onClick={handleResetQuiz}
           className="text-xs font-bold text-[#CA3433] hover:underline px-3 py-1.5 rounded-lg border border-red-100 bg-red-50/30 transition-all active:scale-95"
         >
-          Reset Preferences
+          Reset
         </button>
       </div>
 
       {/* Horizontal Scroll with peeking cards */}
-      <div className="flex gap-3 sm:gap-6 xl:gap-8 overflow-x-auto pb-4 px-1 no-scrollbar -mx-1 snap-x snap-mandatory">
+      <div className="flex gap-3 sm:gap-6 xl:gap-8 overflow-x-auto pb-4 px-1 no-scrollbar -mx-1 snap-x snap-mandatory pt-2">
         {recommendations.map(p => (
           <div
             key={`rec-${p.id}`}
             className={cn(
-              "relative flex-none ring-1 ring-[#CA3433]/10 rounded-2xl group snap-start",
+              "relative flex-none ring-1 ring-[#CA3433]/10 rounded-2xl group snap-start transition-all duration-300",
               viewMode === 'list'
                 ? "w-[88%]"
                 : "w-[40%] sm:w-[25%] lg:w-[20%] xl:w-[16%]"
             )}
           >
-            {/* Match badge */}
+            {/* Creative Match Badge - Bottom Left of Image area */}
             <div className={cn(
-              "absolute z-10 px-2 py-0.5 bg-black/60 backdrop-blur-md text-white text-[9px] font-bold rounded-full uppercase tracking-widest border border-white/10",
-              viewMode === 'list' ? "bottom-3 left-3" : "top-3 left-3"
+              "absolute z-10 flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-[#CA3433] to-[#ff4d4d] text-white text-[8px] font-black rounded-full uppercase tracking-widest border border-white/20 shadow-lg shadow-red-500/20 animate-pulse",
+              viewMode === 'list' ? "bottom-4 left-4" : "top-[58%] left-3"
             )}>
+              <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping absolute -left-0.5 -top-0.5" />
+              <Sparkles size={10} className="fill-current" />
               Match Found
             </div>
-            <PropertyCard property={p} layout={viewMode} />
+            <PropertyCard property={p} layout={viewMode} condensed={true} />
           </div>
         ))}
       </div>
