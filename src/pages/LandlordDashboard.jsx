@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Home, Eye, Edit, Trash2, ArrowRight, List as ListIcon, Calendar, Check, X } from 'lucide-react'
+import { Plus, Home, Eye, Edit, Trash2, ArrowRight, ArrowLeft, List as ListIcon, Calendar, Check, X } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useProperties } from '../hooks/useProperties'
 import { Button } from '../components/ui/Button'
@@ -113,6 +113,17 @@ export const LandlordDashboard = () => {
     <div className="pt-12 lg:pt-0 pb-20 bg-gray-50 min-h-screen">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         
+        {/* Top Actions */}
+        <div className="flex items-center justify-between mb-4">
+          <button 
+            onClick={() => navigate('/')}
+            className="flex items-center gap-1.5 text-sm font-bold text-gray-400 hover:text-[#CA3433] transition-colors group"
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+            <span>Back to Home</span>
+          </button>
+        </div>
+
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
@@ -312,7 +323,7 @@ export const LandlordDashboard = () => {
                         <p className="text-xs text-gray-500 font-medium truncate">
                           {p.area}, {p.city}
                         </p>
-                        <Badge variant={p.availability ? 'success' : 'danger'} className="uppercase text-[8px] tracking-widest px-1.5 py-0.5 font-bold">
+                        <Badge variant={p.availability ? 'success' : 'danger'} className="uppercase text-[7px] tracking-widest px-1 py-0.5 font-bold leading-none">
                           {p.availability ? 'Available' : 'Rented'}
                         </Badge>
                       </div>
