@@ -11,6 +11,13 @@ import {
 
 const PAGE_SIZE = 12
 
+const PUBLIC_PROPERTY_FIELDS = `
+  id, landlord_id, type, title, description, price, city, area, pincode, 
+  amenities, images, availability, views, created_at
+`
+
+const PUBLIC_PROFILE_FIELDS = 'full_name, avatar_url, bio'
+
 export const useProperties = () => {
   const dispatch = useDispatch()
   const { listings, featured, currentProperty, favorites, recentlyViewed, filters, loading, hasMore, page, totalCount } = useSelector(s => s.property)
@@ -21,7 +28,7 @@ export const useProperties = () => {
     try {
       let query = supabase
         .from('properties')
-        .select('*, profiles!properties_landlord_id_fkey(full_name, avatar_url, phone)', { count: 'exact' })
+        .select(`${PUBLIC_PROPERTY_FIELDS}, profiles!properties_landlord_id_fkey(${PUBLIC_PROFILE_FIELDS})`, { count: 'exact' })
         .eq('availability', true)
 
       if (filters.type) query = query.eq('type', filters.type)
@@ -37,68 +44,39 @@ export const useProperties = () => {
       }
 
       if (filters.area) {
-        // Fuzzy matching: e.g. "bndra" -> "%b%n%d%r%a%"
         const fuzzyPattern = '%' + filters.area.toLowerCase().split('').filter(c => c.trim()).join('%') + '%'
         query = query.ilike('area', fuzzyPattern)
       }
 
-      if (filters.query) {
-        const q = `%${filters.query}%`
-        query = query.or(`title.ilike.${q},city.ilike.${q},area.ilike.${q},description.ilike.${q}`)
-      }
-
+      const from = reset ? 0 : page * PAGE_SIZE
       const { data, error, count: dbCount } = await query
         .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
-        .range(reset ? 0 : page * PAGE_SIZE, (reset ? 0 : page * PAGE_SIZE) + PAGE_SIZE - 1)
+        .range(from, from + PAGE_SIZE - 1)
 
       if (error) throw error
 
-      if (dbCount !== null) dispatch(setTotalCount(dbCount))
-      
-      if (reset) dispatch(setListings(data || []))
-      else dispatch(appendListings(data || []))
-      
-      // If we got fewer items than PAGE_SIZE, we hit the end
+      if (reset) {
+        dispatch(setListings(data || []))
+        dispatch(setTotalCount(dbCount || 0))
+      } else {
+        dispatch(appendListings(data || []))
+      }
+
       dispatch(setHasMore((data || []).length === PAGE_SIZE))
       dispatch(setPage(reset ? 1 : page + 1))
     } catch (err) {
-      console.error(err)
-      // Fallback to mock data with client filtering
-      let result = [...MOCK_PROPERTIES]
-      if (filters.city) result = result.filter(p => p.city?.toLowerCase().includes(filters.city.toLowerCase()))
-      if (filters.type) result = result.filter(p => p.type === filters.type)
-      if (filters.amenities?.length) result = result.filter(p => filters.amenities.every(a => p.amenities?.includes(a)))
-      
-      if (filters.query) {
-        const q = filters.query.toLowerCase()
-        result = result.filter(p => 
-          p.title?.toLowerCase().includes(q) || 
-          p.city?.toLowerCase().includes(q) || 
-          p.area?.toLowerCase().includes(q) || 
-          p.description?.toLowerCase().includes(q)
-        )
-      }
-
-      result = result.filter(p => p.price >= filters.priceMin && p.price <= filters.priceMax)
-      
-      if (filters.area) {
-        const fuzzyRegex = new RegExp(filters.area.toLowerCase().split('').filter(c => c.trim()).join('.*'))
-        result = result.filter(p => fuzzyRegex.test(p.area?.toLowerCase()))
-      }
-
-      if (reset) dispatch(setListings(result))
-      else dispatch(appendListings(result))
-      dispatch(setHasMore(false))
+      console.error('fetchProperties error:', err)
+      dispatch(setListings([]))
     } finally {
       dispatch(setLoading(false))
     }
-  }, [filters, page])
+  }, [filters, page, dispatch])
 
   const fetchFeatured = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('properties')
-        .select('*, profiles!properties_landlord_id_fkey(full_name, avatar_url)')
+        .select(`${PUBLIC_PROPERTY_FIELDS}, profiles!properties_landlord_id_fkey(${PUBLIC_PROFILE_FIELDS})`)
         .eq('availability', true)
         .order('views', { ascending: false })
         .limit(8)
@@ -107,13 +85,13 @@ export const useProperties = () => {
     } catch {
       dispatch(setFeatured(MOCK_PROPERTIES.sort((a, b) => b.views - a.views).slice(0, 8)))
     }
-  }, [])
+  }, [dispatch])
 
   const fetchByType = useCallback(async (type) => {
     try {
       const { data, error } = await supabase
         .from('properties')
-        .select('*')
+        .select(`${PUBLIC_PROPERTY_FIELDS}`)
         .eq('type', type)
         .eq('availability', true)
         .order('views', { ascending: false })
@@ -126,53 +104,51 @@ export const useProperties = () => {
   }, [])
 
   const fetchPropertyById = useCallback(async (id) => {
+    dispatch(setLoading(true))
     try {
       const { data, error } = await supabase
         .from('properties')
-        .select('*, profiles!properties_landlord_id_fkey(full_name, avatar_url, phone, bio)')
+        .select(`${PUBLIC_PROPERTY_FIELDS}, profiles!properties_landlord_id_fkey(${PUBLIC_PROFILE_FIELDS})`)
         .eq('id', id)
         .maybeSingle()
       if (error) throw error
       dispatch(setCurrentProperty(data))
-      // Track recently viewed
-      const isMock = MOCK_PROPERTIES.some(p => String(p.id) === String(id))
-
-      if (user && !isMock) {
+      
+      if (user && data) {
         dispatch(addRecentlyViewed(id))
         await supabase.from('recently_viewed').upsert({ user_id: user.id, property_id: id, viewed_at: new Date().toISOString() })
-      } else if (isMock) {
-        dispatch(addRecentlyViewed(id))
       }
-    } catch {
-      const mock = MOCK_PROPERTIES.find(p => String(p.id) === String(id))
-      dispatch(setCurrentProperty(mock || null))
+    } catch (err) {
+      console.error('Error fetching property:', err)
+    } finally {
+      dispatch(setLoading(false))
+    }
+  }, [user, dispatch])
+
+  const fetchGatedData = useCallback(async (id) => {
+    if (!user) return null
+    try {
+      const { data, error } = await supabase
+        .rpc('get_unlocked_property_details', { prop_id: id })
+      if (error) throw error
+      return data?.[0] || null
+    } catch (err) {
+      console.error('Error fetching gated data:', err)
+      return null
     }
   }, [user])
 
   const createProperty = async (propertyData, images) => {
-    // Upload images first
     const imageUrls = []
     for (const img of images) {
       const ext = img.name.split('.').pop()
       const path = `properties/${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
-      
-      console.log(`[useProperties] Uploading image: ${path}`)
       const { error: uploadError } = await supabase.storage.from('property-images').upload(path, img)
-
-      if (uploadError) {
-        console.error('[useProperties] Image upload failed:', uploadError)
-        throw new Error(`Image upload failed: ${uploadError.message}`)
-      }
-      
+      if (uploadError) throw new Error(`Image upload failed: ${uploadError.message}`)
       const { data: { publicUrl } } = supabase.storage.from('property-images').getPublicUrl(path)
       imageUrls.push(publicUrl)
     }
-
-    const { data, error } = await supabase
-      .from('properties')
-      .insert({ ...propertyData, landlord_id: user.id, images: imageUrls, views: 0 })
-      .select()
-      .maybeSingle()
+    const { data, error } = await supabase.from('properties').insert({ ...propertyData, landlord_id: user.id, images: imageUrls, views: 0 }).select().maybeSingle()
     if (error) throw error
     return data
   }
@@ -183,84 +159,44 @@ export const useProperties = () => {
       for (const img of newImages) {
         const ext = img.name.split('.').pop()
         const path = `properties/${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
-        
-        console.log(`[useProperties] Uploading new image: ${path}`)
         const { error: uploadError } = await supabase.storage.from('property-images').upload(path, img)
-
-        if (uploadError) {
-          console.error('[useProperties] New image upload failed:', uploadError)
-          throw new Error(`Image upload failed: ${uploadError.message}`)
-        }
-        
+        if (uploadError) throw new Error(`Image upload failed: ${uploadError.message}`)
         const { data: { publicUrl } } = supabase.storage.from('property-images').getPublicUrl(path)
         imageUrls.push(publicUrl)
       }
     }
-    const { data, error } = await supabase
-      .from('properties')
-      .update({ ...updates, images: imageUrls })
-      .eq('id', id)
-      .eq('landlord_id', user.id)
-      .select()
-      .maybeSingle()
+    const { data, error } = await supabase.from('properties').update({ ...updates, images: imageUrls }).eq('id', id).eq('landlord_id', user.id).select().maybeSingle()
     if (error) throw error
     return data
   }
 
   const deleteProperty = async (id) => {
-    // Verify session identity before deletion
-    const { data: { user: sessionUser }, error: sessionError } = await supabase.auth.getUser()
-    if (sessionError || !sessionUser) {
-      throw new Error('Authentication session expired. Please log in again.')
-    }
-
-    const { error: deleteError, count } = await supabase
-      .from('properties')
-      .delete({ count: 'exact' })
-      .eq('id', id)
-
-    if (deleteError) throw deleteError
-
-    if (count === 0) {
-      throw new Error('Property not found or you do not have permission to delete it')
-    }
-
-    return true
+    const { count, error } = await supabase.from('properties').delete({ count: 'exact' }).eq('id', id).eq('landlord_id', user.id)
+    if (error) throw error
+    return count > 0
   }
 
   const fetchFavorites = useCallback(async () => {
     if (!user) return
     try {
-      const { data, error } = await supabase
-        .from('favorites')
-        .select('property_id')
-        .eq('user_id', user.id)
+      const { data, error } = await supabase.from('favorites').select('property_id').eq('user_id', user.id)
       if (error) throw error
       dispatch(setFavorites(data?.map(f => f.property_id) || []))
     } catch { /* silent */ }
-  }, [user])
+  }, [user, dispatch])
 
   const toggleFavorite = async (propertyId) => {
     if (!user) return
     const isFav = favorites.includes(propertyId)
-    const isMock = MOCK_PROPERTIES.some(p => String(p.id) === String(propertyId))
-    
     dispatch(toggleFav(propertyId))
-    
-    if (isMock) {
-      console.log('[toggleFavorite] Mock property handled in-memory.')
-      return
-    }
-
     try {
       if (isFav) {
         await supabase.from('favorites').delete().eq('user_id', user.id).eq('property_id', propertyId)
       } else {
         await supabase.from('favorites').insert({ user_id: user.id, property_id: propertyId })
       }
-    } catch (err) { 
-      console.error('[toggleFavorite] Sync failed:', err)
-      dispatch(toggleFav(propertyId)) /* revert */ 
+    } catch (err) {
+      dispatch(toggleFav(propertyId))
     }
   }
 
@@ -268,44 +204,21 @@ export const useProperties = () => {
     if (!user) return
     try {
       const seventyTwoHoursAgo = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString()
-      
-      // 1. Storage Optimization: Delete records older than 72 hours
-      await supabase
-        .from('recently_viewed')
-        .delete()
-        .eq('user_id', user.id)
-        .lt('viewed_at', seventyTwoHoursAgo)
-
-      // 2. Functional Fetch: Get only last 20 items from last 72h
-      const { data } = await supabase
-        .from('recently_viewed')
-        .select('property_id')
-        .eq('user_id', user.id)
-        .gte('viewed_at', seventyTwoHoursAgo)
-        .order('viewed_at', { ascending: false })
-        .limit(20)
-        
+      const { data } = await supabase.from('recently_viewed').select('property_id').eq('user_id', user.id).gte('viewed_at', seventyTwoHoursAgo).order('viewed_at', { ascending: false }).limit(20)
       dispatch(setRecentlyViewed(data?.map(r => r.property_id) || []))
-    } catch (err) {
-      console.error('[fetchRecentlyViewed] Error:', err)
-    }
+    } catch {}
   }, [user, dispatch])
 
   const getLandlordProperties = async () => {
-    // Get session ID directly for reliability
-    const { data: { user: sessionUser } } = await supabase.auth.getUser()
-    const activeId = sessionUser?.id || user?.id
-
-    if (!activeId) throw new Error('You must be logged in to view your properties')
-
-    const { data, error } = await supabase
-      .from('properties')
-      .select('*')
-      .eq('landlord_id', activeId)
-      .order('created_at', { ascending: false })
+    const { data, error } = await supabase.from('properties').select('*').eq('landlord_id', user.id).order('created_at', { ascending: false })
     if (error) throw error
     return data || []
   }
+
+  const getRecommendedProperties = useCallback(() => {
+    if (!listings || listings.length === 0) return []
+    return [...listings].sort(() => 0.5 - Math.random()).slice(0, 6)
+  }, [listings])
 
   return {
     listings, featured, currentProperty, favorites, recentlyViewed, filters,
@@ -315,5 +228,7 @@ export const useProperties = () => {
     fetchFavorites, toggleFavorite, fetchRecentlyViewed, getLandlordProperties,
     updateFilters: useCallback((f) => dispatch(setFilters(f)), [dispatch]),
     resetFilters: useCallback(() => dispatch(resetFilters()), [dispatch]),
+    getRecommendedProperties,
+    fetchGatedData,
   }
 }

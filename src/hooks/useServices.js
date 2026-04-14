@@ -10,6 +10,12 @@ import {
 
 const PAGE_SIZE = 12
 
+const PUBLIC_SERVICE_FIELDS = `
+  id, provider_id, name, category, description, experience, speciality, area, city, state, is_open, images, verification_status, views, created_at
+`
+
+const PUBLIC_PROFILE_FIELDS = 'full_name, avatar_url, bio'
+
 export const useServices = () => {
   const dispatch = useDispatch()
   const {
@@ -24,7 +30,7 @@ export const useServices = () => {
     try {
       let query = supabase
         .from('service_providers')
-        .select('*, profiles!service_providers_provider_id_fkey(full_name, avatar_url)')
+        .select(`${PUBLIC_SERVICE_FIELDS}, profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS})`)
 
       if (filters.category) query = query.eq('category', filters.category)
       if (filters.state)    query = query.ilike('state', `%${filters.state}%`)
@@ -61,10 +67,9 @@ export const useServices = () => {
   const fetchServiceById = useCallback(async (id) => {
     try {
       const { data, error } = await supabase
-        .from('service_providers')
         .select(`
-          *,
-          profiles!service_providers_provider_id_fkey(full_name, avatar_url),
+          ${PUBLIC_SERVICE_FIELDS},
+          profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS}),
           service_listings(*),
           service_plans(*)
         `)
@@ -81,6 +86,19 @@ export const useServices = () => {
       dispatch(setCurrentService(null))
     }
   }, [dispatch])
+
+  const fetchServiceGatedData = useCallback(async (id) => {
+    if (!user) return null
+    try {
+      const { data, error } = await supabase
+        .rpc('get_unlocked_service_details', { prov_id: id })
+      if (error) throw error
+      return data?.[0] || null
+    } catch (err) {
+      console.error('Error fetching service gated data:', err)
+      return null
+    }
+  }, [user])
 
   // ── Fetch Reviews for a Provider ───────────────────────────────────
   const fetchReviews = useCallback(async (serviceProviderId) => {
@@ -303,7 +321,8 @@ export const useServices = () => {
     getMyServices,
     getAdminPendingServices,
     updateServiceStatus,
-    payServiceListing,
-    updateFilters: useCallback((f) => dispatch(setServiceFilters(f)), [dispatch]),
+    submitReview, deleteReview, 
+    setServiceFilters: useCallback((f) => dispatch(setServiceFilters(f)), [dispatch]),
+    fetchServiceGatedData
   }
 }

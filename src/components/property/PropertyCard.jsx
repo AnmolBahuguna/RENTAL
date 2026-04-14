@@ -56,10 +56,10 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
   if (layout === 'list') {
     return (
       <div 
-        className="group bg-white rounded-2xl border border-gray-100 flex gap-4 p-1.5 cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+        className="group bg-white rounded-2xl border border-gray-100 flex gap-4 cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
         onClick={() => navigate(`/property/${property.id}`)}
       >
-        <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100/50">
+        <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0 overflow-hidden bg-gray-50 rounded-r-2xl shadow-sm">
           <img 
             src={mainImage} 
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
@@ -79,7 +79,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
           </button>
         </div>
 
-        <div className="flex-1 py-1 flex flex-col justify-between min-w-0 pr-2">
+        <div className="flex-1 py-3 flex flex-col justify-between min-w-0 pr-4">
           <div>
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.1em] mb-0.5 block">
               {t(`property.types.${property.type}`) || property.type || 'ROOM'}
@@ -144,7 +144,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
       )}
       onClick={() => navigate(`/property/${property.id}`)}
     >
-      <div className="relative w-full aspect-[4/3] bg-gray-50 overflow-hidden rounded-b-2xl">
+      <div className="relative w-full aspect-[4/3] bg-gray-50 overflow-hidden rounded-b-2xl shadow-sm">
         <img
           src={mainImage}
           alt={property.title}

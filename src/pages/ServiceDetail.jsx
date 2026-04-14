@@ -50,9 +50,14 @@ export const ServiceDetail = () => {
   const dispatch = useDispatch()
   const { user, profile } = useSelector(s => s.auth)
 
-  const { currentService, reviews, reviewsLoading, fetchServiceById, fetchReviews, submitReview, deleteReview } = useServices()
+  const { 
+    currentService, reviews, reviewsLoading, 
+    fetchServiceById, fetchReviews, submitReview, deleteReview,
+    fetchServiceGatedData 
+  } = useServices()
 
   const [contactUnlocked, setContactUnlocked] = useState(false)
+  const [gatedData, setGatedData] = useState(null)
   const [reviewRating, setReviewRating] = useState(0)
   const [reviewText, setReviewText] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
@@ -82,6 +87,21 @@ export const ServiceDetail = () => {
     load()
   }, [id])
 
+  // Check if current user is the provider or has unlocked (if we have unlock records for services)
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (!user || !service || !id) return
+      
+      const isProvider = service?.provider_id === user.id
+      if (isProvider) {
+        setContactUnlocked(true)
+        const gated = await fetchServiceGatedData(id)
+        setGatedData(gated)
+      }
+    }
+    checkStatus()
+  }, [service, user, id, fetchServiceGatedData])
+
   const service = currentService
   const cat = service ? (CATEGORY_CONFIG[service.category] || {}) : {}
   const images = service?.images || []
@@ -100,7 +120,8 @@ export const ServiceDetail = () => {
       return
     }
     setContactUnlocked(true)
-    toast.success('Contact info revealed!')
+    fetchServiceGatedData(id).then(setGatedData)
+    toast.success('Contact details revealed!')
   }
 
   const handleShare = () => {
@@ -327,10 +348,10 @@ export const ServiceDetail = () => {
             {/* Location on Map */}
             {service.latitude && service.longitude && (
               <LocationViewer
-                latitude={service.latitude}
-                longitude={service.longitude}
+                latitude={gatedData?.latitude || service.latitude}
+                longitude={gatedData?.longitude || service.longitude}
                 title={service.name}
-                address={service.map_address || service.address || `${service.area}, ${service.city}`}
+                address={gatedData?.address || service.map_address || service.address || `${service.area}, ${service.city}`}
               />
             )}
           </div>
@@ -359,7 +380,7 @@ export const ServiceDetail = () => {
                 <div className="flex items-start gap-2">
                   <MapPin size={16} className="text-gray-400 mt-1 shrink-0" />
                   <p className="text-xs text-gray-600 font-medium leading-relaxed">
-                    {service.address || `${service.area}, ${service.city}, ${service.state}`}
+                    {gatedData?.address || service.address || `${service.area}, ${service.city}, ${service.state}`}
                     {service.landmark && <span className="block mt-1 text-gray-400">Near {service.landmark}</span>}
                   </p>
                 </div>
@@ -395,13 +416,13 @@ export const ServiceDetail = () => {
                 ) : (
                   <div className="space-y-3">
                     {service.contact_phone && (
-                      <a href={`tel:${service.contact_phone}`} className="flex items-center justify-center gap-2 w-full py-4 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-all shadow-md active:scale-95">
-                        <Phone size={18} /> {service.contact_phone}
+                      <a href={`tel:${gatedData?.contact_phone || service.contact_phone}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-colors text-[15px]">
+                        <Phone size={18} /> {gatedData?.contact_phone || service.contact_phone}
                       </a>
                     )}
                     {service.contact_email && (
-                      <a href={`mailto:${service.contact_email}`} className="flex items-center justify-center gap-2 w-full py-4 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-all shadow-sm active:scale-95">
-                        <Mail size={18} /> Send Email
+                      <a href={`mailto:${gatedData?.contact_email || service.contact_email}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-colors shadow-sm text-[15px]">
+                        <Mail size={18} /> {gatedData?.contact_email || 'Send Email'}
                       </a>
                     )}
                   </div>
