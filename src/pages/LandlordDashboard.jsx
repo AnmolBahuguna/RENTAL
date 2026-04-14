@@ -289,15 +289,15 @@ export const LandlordDashboard = () => {
                 key={p.id} 
                 className="group bg-white rounded-2xl border border-gray-100 flex gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
               >
-                {/* Image Section - Match PropertyCard structure */}
-                <div className="relative w-32 sm:w-40 self-stretch flex-shrink-0 overflow-hidden bg-gray-50 rounded-r-2xl shadow-sm">
+                {/* Image Section - Fixed Square */}
+                <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0 overflow-hidden bg-gray-50 rounded-r-2xl shadow-sm">
                   <img 
                     src={p.images?.[0] || ''} 
                     alt={p.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
                   />
                   <div className="absolute top-2 left-2">
-                    <TypeBadge type={p.type} variant="ghost" className="text-white drop-shadow-md font-black" />
+                    <TypeBadge type={p.type} />
                   </div>
                 </div>
                 
@@ -308,19 +308,19 @@ export const LandlordDashboard = () => {
                       <h3 className="font-extrabold text-gray-900 text-base sm:text-lg leading-tight line-clamp-1 mb-1">
                         {p.title}
                       </h3>
-                      <p className="text-xs text-gray-500 font-medium truncate">
-                        {p.area}, {p.city}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end shrink-0">
-                      <span className="font-black text-lg text-[#CA3433] leading-none">
-                        {formatPriceShort(p.price)}
-                      </span>
-                      <div className="mt-2 text-right">
-                        <Badge variant={p.availability ? 'success' : 'danger'} className="uppercase text-[10px] tracking-widest px-3 py-1.5 font-black border border-transparent">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-xs text-gray-500 font-medium truncate">
+                          {p.area}, {p.city}
+                        </p>
+                        <Badge variant={p.availability ? 'success' : 'danger'} className="uppercase text-[9px] tracking-widest px-1.5 py-0.5 font-bold">
                           {p.availability ? 'Available' : 'Rented'}
                         </Badge>
                       </div>
+                    </div>
+                    <div className="shrink-0">
+                      <span className="font-black text-lg text-[#CA3433] leading-none">
+                        {formatPriceShort(p.price)}
+                      </span>
                     </div>
                   </div>
 
