@@ -485,26 +485,36 @@ export const PropertyDetail = () => {
             <div id="contact-section" className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] border border-gray-100/50">
               <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.requestContact')}</h3>
               
-              <div className="mb-6 p-5 bg-white rounded-xl border border-[#CA3433]/20 shadow-[0_4px_12px_rgb(202,52,51,0.05)] relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-[#CA3433]"></div>
-                <h4 className="font-bold text-gray-900 mb-3 text-sm">{t('property.sections.bookVisit')}</h4>
-                <div className="flex gap-2">
-                  <input 
-                    type="date" 
-                    min={new Date().toISOString().split('T')[0]}
-                    value={visitDate}
-                    onChange={(e) => setVisitDate(e.target.value)}
-                    className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#CA3433]/20 focus:border-[#CA3433] outline-none transition-all cursor-pointer"
-                  />
+              <div className="mb-8 p-6 bg-[#FEF2F2] rounded-2xl border border-red-100 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-[#CA3433]"></div>
+                <h4 className="font-extrabold text-[#CA3433] mb-4 text-[13px] uppercase tracking-wider flex items-center gap-2">
+                  <Calendar size={16} />
+                  {t('property.sections.bookVisit')}
+                </h4>
+                <div className="flex flex-col xs:flex-row gap-3">
+                  <div className="flex-1 relative">
+                    <input 
+                      type="date" 
+                      min={new Date().toISOString().split('T')[0]}
+                      value={visitDate}
+                      onChange={(e) => setVisitDate(e.target.value)}
+                      className="w-full bg-white border border-red-100 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-[#CA3433]/10 focus:border-[#CA3433] outline-none transition-all cursor-pointer font-bold text-gray-700 shadow-inner"
+                    />
+                  </div>
                   <Button 
                     variant="primary" 
-                    className="rounded-lg px-5 bg-[#CA3433] whitespace-nowrap shadow-md shadow-[#CA3433]/20"
+                    className="rounded-xl px-6 py-3 bg-[#CA3433] whitespace-nowrap shadow-lg shadow-[#CA3433]/20 hover:shadow-[#CA3433]/30 transition-all active:scale-[0.97] font-bold text-sm"
                     onClick={submitSiteVisit}
                     disabled={bookingVisit}
                   >
-                    {bookingVisit ? '...' : t('property.sections.book')}
+                    {bookingVisit ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : t('property.sections.book')}
                   </Button>
                 </div>
+                <p className="mt-4 text-[11px] text-gray-500 font-medium">
+                  * Direct visit coordinate sharing is available for verified users.
+                </p>
               </div>
 
               <div className="space-y-4 mb-8">

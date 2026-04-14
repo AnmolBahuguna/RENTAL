@@ -116,7 +116,9 @@ const resources = {
           reviewSuccess: 'Review posted successfully!',
           reviewError: 'Failed to post review',
           posting: 'Posting...',
-          anonymous: 'Anonymous'
+          anonymous: 'Anonymous',
+          bookVisit: 'Book a Site Visit',
+          book: 'Book Now'
         }
       },
       services: {
@@ -376,7 +378,9 @@ const resources = {
           reviewSuccess: 'रिव्यु सफलतापूर्वक पोस्ट किया गया!',
           reviewError: 'रिव्यु पोस्ट करने में विफल',
           posting: 'पोस्ट हो रहा है...',
-          anonymous: 'अज्ञात'
+          anonymous: 'अज्ञात',
+          bookVisit: 'साइट विजिट बुक करें',
+          book: 'बुक करें'
         }
       },
       services: {
