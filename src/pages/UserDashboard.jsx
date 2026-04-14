@@ -121,28 +121,28 @@ export const UserDashboard = () => {
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="flex items-start sm:items-center justify-between gap-4 mb-10 flex-col sm:flex-row">
+        <div className="flex items-center justify-between gap-4 mb-10 w-full relative">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-brand-200 bg-gray-200">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-brand-200 bg-gray-200 shadow-sm flex-shrink-0">
               {profile ? (
                 <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <Skeleton variant="circle" className="w-full h-full" />
               )}
             </div>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900 font-display">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900 font-display leading-tight">
                 {profile ? `Hi, ${profile?.full_name?.split(' ')[0] || 'User'}!` : <Skeleton className="h-8 w-32" />}
               </h1>
-              <p className="text-gray-500">Pick up exactly where you left off.</p>
+              <p className="text-xs sm:text-sm text-gray-500 font-medium">Pick up exactly where you left off.</p>
             </div>
           </div>
 
           {/* Notifications Bell */}
-          <div className="relative self-end sm:self-auto">
+          <div className="relative">
             <button 
               onClick={() => setShowNotifications(!showNotifications)}
-              className={`p-3 rounded-xl bg-[#fffdf5] text-yellow-500 hover:bg-[#fff9c4] transition-colors relative cursor-pointer shadow-sm border border-yellow-200`}
+              className={`p-2 text-yellow-500 hover:text-yellow-600 transition-all relative cursor-pointer active:scale-95`}
             >
               <Bell size={24} className="fill-current" />
               {unreadCount > 0 && (
@@ -183,9 +183,7 @@ export const UserDashboard = () => {
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#fdf2f2] text-[#CA3433] flex items-center justify-center">
-                <Heart size={20} fill="currentColor" />
-              </div>
+              <Heart size={24} className="text-[#CA3433]" fill="currentColor" />
               <div>
                 <h2 className="text-xl font-black text-gray-900 font-display leading-none">Saved Properties</h2>
                 {!loading && <span className="text-xs font-bold text-gray-400 mt-1 block uppercase tracking-wider">{favProps.length} Items</span>}
@@ -224,9 +222,7 @@ export const UserDashboard = () => {
         {/* Recently Viewed */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-[#fdf2f2] text-[#CA3433] flex items-center justify-center">
-              <Clock size={20} />
-            </div>
+            <Clock size={24} className="text-[#CA3433]" />
             <div>
               <h2 className="text-xl font-black text-gray-900 font-display leading-none">Recently Viewed</h2>
               <p className="text-[10px] text-gray-400 mt-1 font-medium bg-gray-50 px-2 py-0.5 rounded-md inline-block">
@@ -255,9 +251,7 @@ export const UserDashboard = () => {
         {/* My Site Visits */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
-              <Calendar size={20} />
-            </div>
+            <Calendar size={24} className="text-orange-500" />
             <div>
               <h2 className="text-xl font-black text-gray-900 font-display leading-none">My Site Visits</h2>
               {!loadingData && <span className="text-[10px] text-gray-400 mt-1 font-medium bg-gray-50 px-2 py-0.5 rounded-md inline-block uppercase tracking-wider">

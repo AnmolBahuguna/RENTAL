@@ -12,11 +12,6 @@ import {
 
 const PAGE_SIZE = 12
 
-<<<<<<< HEAD
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> bugs-and-warnings
 const PUBLIC_PROPERTY_FIELDS = `
   id, landlord_id, type, title, description, price, city, area, pincode, 
   amenities, images, availability, views, created_at
@@ -24,10 +19,6 @@ const PUBLIC_PROPERTY_FIELDS = `
 
 const PUBLIC_PROFILE_FIELDS = 'full_name, avatar_url, bio'
 
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
->>>>>>> bugs-and-warnings
 export const useProperties = () => {
   const dispatch = useDispatch()
   const { 
@@ -43,15 +34,7 @@ export const useProperties = () => {
     try {
       let query = supabase
         .from('properties')
-<<<<<<< HEAD
         .select(`${PUBLIC_PROPERTY_FIELDS}, profiles!properties_landlord_id_fkey(${PUBLIC_PROFILE_FIELDS})`, { count: 'exact' })
-=======
-<<<<<<< Updated upstream
-        .select('*, profiles!properties_landlord_id_fkey(full_name, avatar_url, phone)', { count: 'exact' })
-=======
-        .select(`${PUBLIC_PROPERTY_FIELDS}, profiles!properties_landlord_id_fkey(${PUBLIC_PROFILE_FIELDS})`, { count: 'exact' })
->>>>>>> Stashed changes
->>>>>>> bugs-and-warnings
         .eq('availability', true)
 
       if (filters.type) query = query.eq('type', filters.type)
@@ -322,17 +305,9 @@ export const useProperties = () => {
     fetchFavorites, toggleFavorite, fetchRecentlyViewed, getLandlordProperties,
     updateFilters: useCallback((f) => dispatch(setFilters(f)), [dispatch]),
     resetFilters: useCallback(() => dispatch(resetFilters()), [dispatch]),
-<<<<<<< HEAD
     getRecommendedProperties,
     fetchGatedData,
     reviews, reviewsLoading,
     fetchReviews, submitReview, deleteReview
-=======
-<<<<<<< Updated upstream
-=======
-    getRecommendedProperties,
-    fetchGatedData,
->>>>>>> Stashed changes
->>>>>>> bugs-and-warnings
   }
 }
