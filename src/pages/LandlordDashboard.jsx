@@ -289,8 +289,8 @@ export const LandlordDashboard = () => {
                 key={p.id} 
                 className="group bg-white rounded-2xl border border-gray-100 flex gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
               >
-                {/* Image Section - Fixed Square */}
-                <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0 overflow-hidden bg-gray-50 rounded-r-2xl shadow-sm">
+                {/* Image Section - Auto-fitting Height */}
+                <div className="relative w-32 sm:w-40 self-stretch flex-shrink-0 overflow-hidden bg-gray-50 rounded-r-2xl shadow-sm">
                   <img 
                     src={p.images?.[0] || ''} 
                     alt={p.title} 
