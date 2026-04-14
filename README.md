@@ -102,11 +102,17 @@ User experience is the core of GoEazy. We've implemented several "Premium-Only" 
 ---
 
 ## 📈 Roadmap & Versions
-- **v3.0 (Latest)**: 🛡️ **Major Release: Security Hardening & UI Overhaul**:
+- **v3.2.0 (Latest)**: 🔐 **Major Release: Authentication Hardening & Onboarding v2**:
+  - **Forced Auth Modal**: Implemented a global authentication gate for search results to ensure only registered users can access platform data.
+  - **Universal Role Selection**: All new users (Google & Email) are now prompted for a role upon first login.
+  - **Tiered Onboarding**: Redesigned the onboarding quiz to trigger exclusively for Tenants, while Landlords and Service Providers are routed directly to their specialized dashboards.
+  - **Site Visit Booking**: New interactive visit request system integrated into the gated contact flow.
+  - **Unified Reviews System**: Property-specific ratings and reviews with automatic average calculation and reviewer verification.
+  - **UX Refinement**: Cleaned Dashboard interface with optimized notification positioning and box-less icon aesthetic.
+- **v3.1.0**: 🛡️ **Major Release: Security Hardening & UI Overhaul**:
   - **Tiered Data Access**: Implemented a "Zero-Trust" frontend model. Restricted all public API fetches to non-sensitive fields to prevent scraping via browser dev tools.
   - **Secure RPC Gating**: Sensitive information (Latitude, Longitude, Contact Details) is now strictly gated behind PostgreSQL RPC functions that verify user authorization/payment before retrieval.
   - **Recommended for You**: Intelligence-driven horizontal slider on the Search page for personalized property discovery.
-  - **Onboarding Quiz**: Integrated a new interactive onboarding flow to tailor the user experience from the first visit.
   - **Premium UI Restoration**: Re-engineered the Property and Service detail galleries with Swiper 12 and brand-exclusive "Floating" navigation.
 - **v2.4**: 🎨 **UI Enhancement & Stability Release**:
   - **Swiper Engine Fix**: Resolved navigation button collisions on Property and Service details.
