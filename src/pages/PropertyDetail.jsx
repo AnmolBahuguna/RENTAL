@@ -495,6 +495,7 @@ export const PropertyDetail = () => {
                   <div className="relative w-full">
                     {!visitDate && (
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-sm font-bold flex items-center gap-2">
+                         <Calendar size={14} />
                          <span>dd / mm / yyyy</span>
                       </div>
                     )}
