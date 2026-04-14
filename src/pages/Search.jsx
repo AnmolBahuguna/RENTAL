@@ -17,7 +17,7 @@ import { useAuth } from '../hooks/useAuth'
 export const Search = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const { updateProfile } = useAuth()
+  const { user, updateProfile } = useAuth()
   const [searchParams] = useSearchParams()
   const { listings, filters, loading, hasMore, fetchProperties, updateFilters, totalCount, getRecommendedProperties } = useProperties()
 
@@ -65,8 +65,10 @@ export const Search = () => {
   }
 
   useEffect(() => {
-    fetchProperties(true)
-  }, [filters, fetchProperties])
+    if (user) {
+      fetchProperties(true)
+    }
+  }, [filters, fetchProperties, user])
 
   // Get recommendations on load and when listings or quiz changes
   useEffect(() => {
@@ -290,8 +292,8 @@ export const Search = () => {
           </div>
         </div>
 
-        {/* Recommended Section (If quiz done) */}
-        {!loading && recommendations.length > 0 && (
+        {/* Recommended Section (Only if user logged in and has preferences) */}
+        {user && !loading && recommendations.length > 0 && (
           <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
             <div className="flex items-center justify-between mb-4 px-1">
               <div className="flex items-center gap-2">
@@ -332,9 +334,9 @@ export const Search = () => {
         )}
 
         {/* Results Area */}
-        {loading && listings.length === 0 ? (
+        {(!user || (loading && listings.length === 0)) ? (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6 xl:gap-8">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
               <div key={i} className="bg-white rounded-xl border border-gray-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-4 overflow-hidden">
                 <Skeleton className="aspect-[4/3] w-full rounded-b-2xl" />
                 <div className="space-y-3 p-4">
