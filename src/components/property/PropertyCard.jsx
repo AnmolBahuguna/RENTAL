@@ -7,7 +7,7 @@ import { useProperties } from '../../hooks/useProperties'
 import { cn } from '../../utils/helpers'
 import { useTranslation } from 'react-i18next'
 
-const PropertyCardComponent = ({ property, layout = 'grid', compact = false, condensed = false }) => {
+const PropertyCardComponent = ({ property, layout = 'grid', compact = false, condensed = false, badge = null }) => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const dispatch = useDispatch()
@@ -54,7 +54,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false, con
             loading="lazy"
           />
           {!imgLoaded && <div className="skeleton absolute inset-0" />}
-          
+          {badge && <div className="absolute bottom-2 left-2 z-20">{badge}</div>}
           <button
             onClick={handleFav}
             className={cn(
@@ -116,6 +116,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false, con
           <div className="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[8px] font-black text-brand-600 uppercase tracking-wider">
              {t(`property.types.${property.type}`) || property.type}
           </div>
+          {badge && <div className="absolute bottom-2 left-2 z-20">{badge}</div>}
         </div>
         <div className="px-3 py-2">
           <h3 className={cn(
@@ -155,7 +156,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false, con
           loading="lazy"
         />
         {!imgLoaded && <div className="skeleton absolute inset-0" />}
-        
+        {badge && <div className="absolute bottom-2 left-2 z-20">{badge}</div>}
         <button
           onClick={handleFav}
           className={cn(
