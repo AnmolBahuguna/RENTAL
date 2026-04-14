@@ -26,9 +26,22 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { AppInitializer } from './components/common/AppInitializer'
 import { RoleSelectionModal } from './components/auth/RoleSelectionModal'
 import { OnboardingQuiz } from './components/common/OnboardingQuiz'
+import { useSelector } from 'react-redux'
+import { useAuth } from './hooks/useAuth'
 import ScrollToTop from './components/common/ScrollToTop'
 
 function App() {
+  useAuth() 
+  const { loading } = useSelector(s => s.auth)
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="w-12 h-12 border-4 border-[#CA3433] border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -37,7 +50,7 @@ function App() {
       <RoleSelectionModal />
       <Layout>
         <Routes>
-          <Route path="/" element={<Navigate to="/search" />} />
+          <Route path="/" element={<Navigate to="/search" replace />} />
           <Route path="/search" element={<Search />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
           
@@ -49,7 +62,11 @@ function App() {
           <Route path="/about" element={<About />} />
 
           {/* Admin Route */}
-          <Route path="/systemadmin" element={<SystemAdmin />} />
+          <Route path="/systemadmin" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <SystemAdmin />
+            </ProtectedRoute>
+          } />
 
           {/* Nearby Services Routes */}
           <Route path="/nearby" element={<NearbyServices />} />
@@ -69,13 +86,13 @@ function App() {
           
           {/* User Routes */}
           <Route path="/dashboard" element={
-            <ProtectedRoute allowedRoles={['user', null]}>
+            <ProtectedRoute allowedRoles={['user', 'landlord', 'service_provider']}>
               <UserDashboard />
             </ProtectedRoute>
           } />
           
           <Route path="/dashboard/saved" element={
-            <ProtectedRoute allowedRoles={['user', null]}>
+            <ProtectedRoute>
               <SavedProperties />
             </ProtectedRoute>
           } />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Heart, Clock, User as UserIcon, ChevronLeft } from 'lucide-react'
+import { Heart, Clock, User as UserIcon, ChevronLeft, Bell, Calendar, MapPin } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useProperties } from '../hooks/useProperties'
 import { PropertyCard } from '../components/property/PropertyCard'
@@ -15,11 +15,46 @@ export const UserDashboard = () => {
   const [recentProps, setRecentProps] = useState([])
   const [loading, setLoading] = useState(true)
 
+  const [notifications, setNotifications] = useState([])
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [myVisits, setMyVisits] = useState([])
+  const [loadingData, setLoadingData] = useState(true)
+
   useEffect(() => {
     if (user) {
       loadProperties()
+      loadUserData()
     }
   }, [user, favorites, recentlyViewed]) // React to changes in the Redux IDs
+
+  const loadUserData = async () => {
+    if (!user) return
+    try {
+      setLoadingData(true)
+      const [notifRes, visitRes] = await Promise.all([
+        supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+        supabase.from('site_visits').select('*, property:properties(title, city)').eq('user_id', user.id).order('created_at', { ascending: false })
+      ])
+      
+      if (!notifRes.error) setNotifications(notifRes.data || [])
+      if (!visitRes.error) setMyVisits(visitRes.data || [])
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoadingData(false)
+    }
+  }
+
+  const markAsRead = async () => {
+    try {
+      await supabase.from('notifications').update({ is_read: true }).eq('user_id', user.id).eq('is_read', false)
+      setNotifications(prev => prev.map(n => ({...n, is_read: true})))
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  
+  const unreadCount = notifications.filter(n => !n.is_read).length
 
   const loadProperties = async () => {
     if (!user) return
@@ -86,19 +121,61 @@ export const UserDashboard = () => {
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="flex items-center gap-4 mb-10">
-          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-brand-200 bg-gray-200">
-            {profile ? (
-              <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" className="w-full h-full object-cover" />
-            ) : (
-              <Skeleton variant="circle" className="w-full h-full" />
-            )}
+        <div className="flex items-start sm:items-center justify-between gap-4 mb-10 flex-col sm:flex-row">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-brand-200 bg-gray-200">
+              {profile ? (
+                <img src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <Skeleton variant="circle" className="w-full h-full" />
+              )}
+            </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-gray-900 font-display">
+                {profile ? `Hi, ${profile?.full_name?.split(' ')[0] || 'User'}!` : <Skeleton className="h-8 w-32" />}
+              </h1>
+              <p className="text-gray-500">Pick up exactly where you left off.</p>
+            </div>
           </div>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 font-display">
-              {profile ? `Hi, ${profile?.full_name?.split(' ')[0] || 'User'}!` : <Skeleton className="h-8 w-32" />}
-            </h1>
-            <p className="text-gray-500">Pick up exactly where you left off.</p>
+
+          {/* Notifications Bell */}
+          <div className="relative self-end sm:self-auto">
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className={`p-3 rounded-xl bg-[#fffdf5] text-yellow-500 hover:bg-[#fff9c4] transition-colors relative cursor-pointer shadow-sm border border-yellow-200`}
+            >
+              <Bell size={24} className="fill-current" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm ring-2 ring-red-500/20 animate-pulse">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+
+            {/* Notification Dropdown */}
+            {showNotifications && (
+               <div className="absolute top-full right-0 mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-[0_10px_40px_rgb(0,0,0,0.1)] border border-gray-100 p-4 z-50">
+                 <div className="flex items-center justify-between mb-3 border-b border-gray-50 pb-2">
+                   <h3 className="font-bold text-gray-900">Notifications</h3>
+                   {unreadCount > 0 && <button onClick={markAsRead} className="text-xs font-bold text-[#CA3433] hover:underline px-2 py-1 rounded-md hover:bg-red-50 transition-colors">Mark all read</button>}
+                 </div>
+                 <div className="space-y-3 max-h-80 overflow-y-auto pr-1 customize-scrollbar">
+                   {notifications.length === 0 ? (
+                     <div className="text-center py-6">
+                       <Bell size={24} className="mx-auto text-gray-300 mb-2" />
+                       <p className="text-sm text-gray-500 font-medium">No notifications yet</p>
+                     </div>
+                   ) : (
+                     notifications.map(n => (
+                       <div key={n.id} className={`p-3 rounded-xl border transition-colors ${n.is_read ? 'bg-white border-gray-100 text-gray-500' : 'bg-[#fffcf0] border-yellow-200 text-gray-900'}`}>
+                         <p className={`text-[13px] leading-relaxed ${n.is_read ? 'font-medium' : 'font-semibold'}`}>{n.message}</p>
+                         <p className="text-[10px] mt-2 text-gray-400 font-bold uppercase tracking-wider">{new Date(n.created_at).toLocaleDateString()}</p>
+                       </div>
+                     ))
+                   )}
+                 </div>
+               </div>
+            )}
           </div>
         </div>
 
@@ -172,6 +249,50 @@ export const UserDashboard = () => {
                 </div>
               ))}
             </div>
+          )}
+        </div>
+
+        {/* My Site Visits */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+              <Calendar size={20} />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-gray-900 font-display leading-none">My Site Visits</h2>
+              {!loadingData && <span className="text-[10px] text-gray-400 mt-1 font-medium bg-gray-50 px-2 py-0.5 rounded-md inline-block uppercase tracking-wider">
+                {myVisits.length} Requests
+              </span>}
+            </div>
+          </div>
+
+          {loadingData ? (
+             <LoadingRow />
+          ) : myVisits.length === 0 ? (
+             <div className="bg-white p-10 rounded-3xl border border-gray-100 text-center shadow-sm">
+               <Calendar size={32} className="mx-auto text-gray-300 mb-3" />
+               <p className="text-gray-500 font-medium font-display">You haven't requested any site visits.</p>
+             </div>
+          ) : (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+               {myVisits.map(visit => (
+                 <div key={visit.id} className="bg-white border border-gray-100 rounded-xl p-4 flex flex-col gap-3 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:shadow-[0_4px_16px_rgb(0,0,0,0.05)] transition-all cursor-pointer" onClick={() => navigate(`/property/${visit.property_id}`)}>
+                   <div className="flex justify-between items-start">
+                     <div className="pr-2">
+                       <h3 className="font-bold text-gray-900 line-clamp-1 text-[15px] hover:text-[#CA3433] transition-colors">{visit.property?.title || 'Property Unavaliable'}</h3>
+                       <p className="text-[13px] text-gray-500 mt-1 flex items-center gap-1"><MapPin size={12} className="text-gray-400"/>{visit.property?.city || 'Unknown'}</p>
+                     </div>
+                     <span className={`text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest border ${visit.status === 'approved' ? 'bg-green-50 text-green-700 border-green-200' : visit.status === 'declined' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'}`}>
+                       {visit.status}
+                     </span>
+                   </div>
+                   <div className="pt-3 border-t border-gray-50 flex items-center gap-2 text-sm text-gray-700 font-semibold bg-gray-50/50 rounded-lg p-2">
+                     <Calendar size={14} className="text-gray-400" />
+                     {new Date(visit.visit_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
+                   </div>
+                 </div>
+               ))}
+             </div>
           )}
         </div>
 

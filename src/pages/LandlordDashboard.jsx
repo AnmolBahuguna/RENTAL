@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Home, Eye, Edit, Trash2, ArrowRight, List as ListIcon } from 'lucide-react'
+import { Plus, Home, Eye, Edit, Trash2, ArrowRight, List as ListIcon, Calendar, Check, X } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useProperties } from '../hooks/useProperties'
 import { Button } from '../components/ui/Button'
@@ -9,6 +9,7 @@ import { PropertyCard } from '../components/property/PropertyCard'
 import { formatPriceShort, cn } from '../utils/helpers'
 import toast from 'react-hot-toast'
 import { Skeleton } from '../components/ui/Skeleton'
+import { supabase } from '../lib/supabase'
 
 export const LandlordDashboard = () => {
   const { user, profile } = useAuth()
@@ -18,10 +19,14 @@ export const LandlordDashboard = () => {
   const [properties, setProperties] = useState([])
   const [loading, setLoading] = useState(true)
   const [showAll, setShowAll] = useState(false)
+  const [siteVisits, setSiteVisits] = useState([])
+  const [loadingVisits, setLoadingVisits] = useState(true)
+  const [actioningVisitId, setActioningVisitId] = useState(null)
 
   useEffect(() => {
     if (user) {
       loadProperties()
+      loadSiteVisits()
     }
   }, [user])
 
@@ -47,6 +52,53 @@ export const LandlordDashboard = () => {
     } catch (err) {
       console.error('Delete failed:', err)
       toast.error(err.message || 'Failed to delete property', { id: toastId })
+    }
+  }
+
+  const loadSiteVisits = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_visits')
+        .select(`
+          *,
+          property:properties(id, title),
+          renter:profiles!user_id(full_name)
+        `)
+        .eq('landlord_id', user.id)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      setSiteVisits(data || [])
+    } catch (err) {
+      console.error('Failed to load visits:', err)
+    } finally {
+      setLoadingVisits(false)
+    }
+  }
+
+  const handleVisitAction = async (visitId, userId, propertyTitle, action) => {
+    setActioningVisitId(visitId)
+    try {
+      const { error } = await supabase
+        .from('site_visits')
+        .update({ status: action })
+        .eq('id', visitId)
+      if (error) throw error
+
+      const msg = `Your site visit request for "${propertyTitle || 'Property'}" has been ${action}.`
+      await supabase.from('notifications').insert({
+        user_id: userId,
+        message: msg
+      })
+
+      toast.success(`Visit ${action} successfully`)
+      setSiteVisits(prev => prev.filter(v => v.id !== visitId))
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to update visit status')
+    } finally {
+      setActioningVisitId(null)
     }
   }
 
@@ -104,6 +156,49 @@ export const LandlordDashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* Site Visit Requests */}
+        {!loadingVisits && siteVisits.length > 0 && (
+          <div className="mb-10">
+            <h2 className="text-xl font-bold text-gray-900 font-display mb-4 flex items-center gap-2">
+              <Calendar size={20} className="text-[#CA3433]" />
+              Visit Requests
+              <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-bold">{siteVisits.length}</span>
+            </h2>
+            <div className="grid gap-3">
+              {siteVisits.map(visit => (
+                <div key={visit.id} className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-all">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-bold text-gray-900 truncate">{visit.property?.title || 'Property'}</h4>
+                    <p className="text-sm text-gray-500 mt-0.5">
+                      Requested by <span className="font-semibold text-gray-700">{visit.renter?.full_name || 'User'}</span> for <span className="font-semibold text-[#CA3433]">{new Date(visit.visit_date).toLocaleDateString()}</span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 flex-shrink-0">
+                    <Button 
+                      variant="primary" 
+                      size="sm" 
+                      onClick={() => handleVisitAction(visit.id, visit.user_id, visit.property?.title, 'approved')}
+                      disabled={actioningVisitId === visit.id}
+                      className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 shadow-md shadow-green-600/20"
+                    >
+                      <Check size={16} className="mr-1" /> Approve
+                    </Button>
+                    <Button 
+                      variant="secondary" 
+                      size="sm" 
+                      onClick={() => handleVisitAction(visit.id, visit.user_id, visit.property?.title, 'declined')}
+                      disabled={actioningVisitId === visit.id}
+                      className="flex-1 sm:flex-none text-red-600 hover:bg-red-50 border-red-100"
+                    >
+                      <X size={16} className="mr-1" /> Decline
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Listings Header */}
         <div className="flex items-center justify-between mb-6">
