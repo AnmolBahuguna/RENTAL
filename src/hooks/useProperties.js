@@ -273,28 +273,41 @@ export const useProperties = () => {
   }
 
   const getRecommendedProperties = useCallback(() => {
+    // If no listings or no quiz data, return empty
     if (!listings || listings.length === 0 || !profile?.onboarding_data) return []
 
     const prefs = profile.onboarding_data
 
-    // If user skipped (legacy guard)
-    if (prefs?.skipped) return []
+    // If user explicitly skipped or haven't finished quiz
+    if (prefs?.skipped || !prefs?.persona) return []
 
     let filtered = [...listings]
-    if (prefs?.type) filtered = filtered.filter(p => p.type === prefs.type)
-    if (prefs?.city) filtered = filtered.filter(p => p.city?.toLowerCase().includes(prefs.city.toLowerCase()))
+
+    // 1. Strict filtering (City + Type)
+    if (prefs?.type) {
+      filtered = filtered.filter(p => p.type === prefs.type)
+    }
+    
+    if (prefs?.city) {
+      filtered = filtered.filter(p => 
+        p.city?.toLowerCase() === prefs.city.toLowerCase() || 
+        p.address?.toLowerCase().includes(prefs.city.toLowerCase())
+      )
+    }
+
+    // 2. Budget filtering
     if (prefs?.budget?.range) {
       const [min, max] = prefs.budget.range
       filtered = filtered.filter(p => p.price >= min && p.price <= max)
     }
 
-    // Fallback to type-only if strict match returns nothing
+    // 3. Fallback logic: if strictly filtered is empty, try type only
     if (filtered.length === 0 && prefs?.type) {
-      filtered = listings.filter(p => p.type === prefs.type)
+      filtered = listings.filter(p => p.type === prefs.type).slice(0, 10)
     }
-    if (filtered.length === 0) return []
 
-    return filtered.sort(() => 0.5 - Math.random()).slice(0, 6)
+    // Sort randomly and limit to 8 results for the section
+    return filtered.sort(() => 0.5 - Math.random()).slice(0, 8)
   }, [listings, profile])
 
   return {
