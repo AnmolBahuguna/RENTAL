@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-<<<<<<< HEAD
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, EyeOff, X, Star, Trash2 } from 'lucide-react'
-=======
-<<<<<<< Updated upstream
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, EyeOff, X } from 'lucide-react'
->>>>>>> bugs-and-warnings
+import { 
+  MapPin, Heart, Share2, Phone, Mail, ArrowLeft, 
+  CheckCircle2, ChevronDown, ChevronUp, Lock, EyeOff, X, 
+  Star, Trash2, Sparkles 
+} from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination, Navigation } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
-=======
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock, EyeOff } from 'lucide-react'
->>>>>>> Stashed changes
 import { useSelector, useDispatch } from 'react-redux'
 import { openAuthModal } from '../store/authSlice'
 import { useProperties } from '../hooks/useProperties'
@@ -51,12 +47,13 @@ export const PropertyDetail = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const { user } = useSelector(s => s.auth)
-<<<<<<< HEAD
+  
   const { 
     currentProperty, fetchPropertyById, fetchGatedData, 
     favorites, toggleFavorite, loading,
     reviews, fetchReviews, submitReview, deleteReview
   } = useProperties()
+
   const [showScrollToTop, setShowScrollToTop] = useState(false)
   const [gatedData, setGatedData] = useState(null)
   
@@ -67,25 +64,20 @@ export const PropertyDetail = () => {
   const [visitDate, setVisitDate] = useState('')
   const [bookingVisit, setBookingVisit] = useState(false)
   const [pulseUnlock, setPulseUnlock] = useState(false)
-  const visitDateRef = React.useRef('')
+  const visitDateRef = useRef('')
+
+  const [hasUnlocked, setHasUnlocked] = useState(false)
+  const [unlocking, setUnlocking] = useState(false)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [initialSlideIndex, setInitialSlideIndex] = useState(0)
   
+  // State for gallery navigation elements
+  const [galleryPrevEl, setGalleryPrevEl] = useState(null)
+  const [galleryNextEl, setGalleryNextEl] = useState(null)
+
   useEffect(() => {
     visitDateRef.current = visitDate
   }, [visitDate])
-=======
-<<<<<<< Updated upstream
-  const { currentProperty, fetchPropertyById, favorites, toggleFavorite, loading } = useProperties()
-  const [showScrollToTop, setShowScrollToTop] = useState(false)
-=======
-  
-  const { currentProperty, fetchPropertyById, fetchGatedData, favorites, toggleFavorite, loading } = useProperties()
-  
-  const [showScrollToTop, setShowScrollToTop] = useState(false)
-  const [gatedData, setGatedData] = useState(null)
-  const [hasUnlocked, setHasUnlocked] = useState(false)
-  const [unlocking, setUnlocking] = useState(false)
->>>>>>> Stashed changes
->>>>>>> bugs-and-warnings
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,29 +86,12 @@ export const PropertyDetail = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-<<<<<<< Updated upstream
-
-  const [hasUnlocked, setHasUnlocked] = useState(false)
-  const [unlocking, setUnlocking] = useState(false)
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
-  const [initialSlideIndex, setInitialSlideIndex] = useState(0)
-  
-  // State for custom navigation elements (ensures reliable init)
-  const [galleryPrevEl, setGalleryPrevEl] = useState(null)
-  const [galleryNextEl, setGalleryNextEl] = useState(null)
-
-  const openGallery = (index) => {
-    setInitialSlideIndex(index)
-    setIsGalleryOpen(true)
-  }
-=======
->>>>>>> Stashed changes
 
   useEffect(() => {
     fetchPropertyById(id)
     fetchReviews(id)
     checkUnlockStatus()
-  }, [id, user])
+  }, [id, user, fetchPropertyById, fetchReviews])
 
   const checkUnlockStatus = async () => {
     if (!user || !id) return
@@ -140,6 +115,11 @@ export const PropertyDetail = () => {
       fetchGatedData(id).then(setGatedData)
     }
   }, [currentProperty, user, id, fetchGatedData, gatedData])
+
+  const openGallery = (index) => {
+    setInitialSlideIndex(index)
+    setIsGalleryOpen(true)
+  }
 
   if (loading || !currentProperty) {
     return (
@@ -311,44 +291,23 @@ export const PropertyDetail = () => {
           email: user?.email || '',
           contact: user?.user_metadata?.phone || '9999999999'
         },
-<<<<<<< Updated upstream
         theme: { color: '#CA3433' },
         modal: {
           ondismiss: function() {
             setUnlocking(false)
           }
         }
-=======
-        theme: { color: '#FF3366' }
->>>>>>> Stashed changes
       }
       new window.Razorpay(options).open()
     } catch (err) {
-<<<<<<< Updated upstream
       console.error('Payment initiation error:', err)
-      
-      // Attempt to extract detailed error from Supabase Function response
-      let errorMsg = err.message
-      if (err.context && typeof err.context.json === 'function') {
-        try {
-          const body = await err.context.json()
-          if (body.error) errorMsg = body.error
-        } catch {
-          // fallback to original message
-        }
-      }
-      
-      toast.error('Could not initiate payment: ' + errorMsg)
-=======
       toast.error('Could not initiate payment')
->>>>>>> Stashed changes
     } finally {
       setUnlocking(false)
     }
   }
 
   const images = p.images || []
-  const mainImage = images[0] || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%239ca3af'%3ENo Image Available%3C/text%3E%3C/svg%3E"
   const otherImages = images.slice(1, 5)
 
   const renderSlider = (prefix) => (
@@ -382,7 +341,6 @@ export const PropertyDetail = () => {
         ))}
       </Swiper>
 
-      {/* Custom Navigation Icons */}
       <button className={`prev-btn-${prefix} absolute left-1 top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer active:scale-95 transition-all outline-none border-none bg-transparent text-white`}>
         <img src="/swipe-left.svg" alt="Previous" className="w-12 h-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
       </button>
@@ -390,7 +348,6 @@ export const PropertyDetail = () => {
         <img src="/swipe-right.svg" alt="Next" className="w-12 h-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
       </button>
       
-      {/* Overlay Actions */}
       <div className="absolute top-4 right-4 flex gap-2 z-10">
         <button className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm cursor-pointer" onClick={handleShare}>
           <Share2 size={18} />
@@ -404,17 +361,11 @@ export const PropertyDetail = () => {
 
   return (
     <div className="pt-8 pb-20 bg-[#F9F8F6] min-h-screen">
-<<<<<<< Updated upstream
       <div className="w-full px-4 sm:px-10 md:px-16 lg:px-20">
-        
-=======
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
->>>>>>> Stashed changes
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft size={16} /> {t('property.labels.back')}
         </button>
 
-<<<<<<< Updated upstream
         {/* MOBILE SLIDER - Top of page */}
         <div className="block lg:hidden w-full mb-6">
           {renderSlider('mobile')}
@@ -426,36 +377,7 @@ export const PropertyDetail = () => {
           {/* LEFT COLUMN - CONTENT GRID */}
           <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
             
-            {/* Header Card - Full Width */}
-=======
-        {/* IMAGE BENTO GRID */}
-        <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ${images.length >= 5 ? 'h-[400px] sm:h-[550px]' : 'h-[400px]'}`}>
-          <div className={`${images.length >= 5 ? 'md:col-span-2 md:row-span-2' : 'md:col-span-4'} h-full rounded-lg sm:rounded-xl overflow-hidden relative group`}>
-            <img src={mainImage} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 bg-gray-200" />
-            <div className="absolute top-4 right-4 flex gap-2 z-10">
-              <Button variant="secondary" className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm" onClick={handleShare}>
-                <Share2 size={16} />
-              </Button>
-              <Button variant="secondary" className={`bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center transition-colors shadow-sm ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-900 hover:bg-white'}`} onClick={handleFav}>
-                <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
-              </Button>
-            </div>
-          </div>
-          {images.length >= 5 && otherImages.map((img, i) => (
-            <div key={i} className="hidden md:block col-span-1 row-span-1 h-full rounded-lg sm:rounded-xl overflow-hidden relative group bg-gray-200">
-              <img src={img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={`view-${i}`} />
-              {i === 3 && images.length > 5 && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-xl backdrop-blur-[2px]">
-                  +{images.length - 5}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          <div className="lg:col-span-2 space-y-6">
->>>>>>> Stashed changes
+            {/* Header Card */}
             <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <div className="flex justify-between items-start mb-4">
                  <div className="flex flex-col gap-1">
@@ -470,7 +392,7 @@ export const PropertyDetail = () => {
                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">• {reviews.length} {t('property.labels.reviews')}</span>
                    </div>
                  </div>
-                 <div className="bg-brand-lime px-4 py-1.5 rounded-full text-brand-900 font-bold text-sm tracking-wide">
+                 <div className="bg-[#E6FF80] px-4 py-1.5 rounded-full text-[#1A1C14] font-bold text-sm tracking-wide">
                    {isAvailable ? t('property.labels.active') : t('property.labels.inactive')}
                  </div>
               </div>
@@ -486,187 +408,86 @@ export const PropertyDetail = () => {
               </p>
             </div>
 
-<<<<<<< Updated upstream
-            {/* Amenities Card - Top Left */}
-            <div className="h-full">
-              {p.amenities && p.amenities.length > 0 && (
-                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    {p.amenities.map(a => (
-                      <div key={a} className="flex gap-3 items-center">
-                         <div className="w-10 h-10 rounded-full bg-[#F9F8F6] flex items-center justify-center text-gray-600">
-                           {(() => {
-                             const Icon = AMENITY_ICONS[a];
-                             return Icon ? <Icon size={20} /> : null;
-                           })()}
-                         </div>
-                         <span className="font-semibold text-gray-700 capitalize text-[15px]">{a}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Key Details Card - Top Right */}
-            <div className="h-full bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 flex flex-col">
-               <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.keyDetails')}</h2>
-               <div className="grid grid-cols-2 gap-6 gap-y-8 border-t border-gray-100 pt-6">
-                 <div>
-                   <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t(`property.types.${p.type}`) || t('search.properties')}</p>
-                   <p className="text-gray-900 font-semibold">{t(`property.types.${p.type}`) || p.type}</p>
-                 </div>
-                 <div>
-                   <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t('search.cityArea')}</p>
-                   <p className="text-gray-900 font-semibold">{t(`cities.${p.city}`) || p.city}</p>
-                 </div>
-                 <div>
-                   <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t('property.labels.pincode')}</p>
-                   <p className="text-gray-900 font-semibold mx-0">{p.pincode || 'N/A'}</p>
-                 </div>
-                 <div>
-                   <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t('property.labels.views')}</p>
-                   <p className="text-gray-900 font-semibold">{p.views}</p>
-                 </div>
-               </div>
-            </div>
-
-            {/* About Card - Middle Left */}
-            <div className="h-full">
-              {p.description && (
-                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
-                  {(hasUnlocked || p.landlord_id === user?.id) ? (
-                    <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
-                      {p.description}
-=======
-            {p.description && (
-              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
-                <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">{p.description}</div>
-              </div>
-            )}
-
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-               <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.keyDetails')}</h2>
-               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 gap-y-8 border-t border-gray-100 pt-6">
-                 <div><p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">Type</p><p className="text-gray-900 font-semibold">{t(`property.types.${p.type}`) || p.type}</p></div>
-                 <div><p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">City</p><p className="text-gray-900 font-semibold">{p.city}</p></div>
-                 <div><p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">Pincode</p><p className="text-gray-900 font-semibold">{p.pincode || 'N/A'}</p></div>
-                 <div><p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">Views</p><p className="text-gray-900 font-semibold">{p.views}</p></div>
-               </div>
-            </div>
-
-            {p.amenities?.length > 0 && (
+            {/* Amenities Card */}
+            {p.amenities && p.amenities.length > 0 && (
               <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {p.amenities.map(a => (
                     <div key={a} className="flex gap-3 items-center">
                        <div className="w-10 h-10 rounded-full bg-[#F9F8F6] flex items-center justify-center text-gray-600">
-                         {(() => { const Icon = AMENITY_ICONS[a]; return Icon ? <Icon size={20} /> : null; })()}
+                         {(() => {
+                           const Icon = AMENITY_ICONS[a];
+                           return Icon ? <Icon size={20} /> : null;
+                         })()}
                        </div>
                        <span className="font-semibold text-gray-700 capitalize text-[15px]">{a}</span>
->>>>>>> Stashed changes
                     </div>
-                  ) : (
-                    <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                      <div className="absolute inset-0 p-6 text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px] select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
-                        {p.description}
-                      </div>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
-                        <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
-                          <EyeOff size={28} className="text-brand-500" />
-                        </div>
-                        <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-<<<<<<< Updated upstream
-              )}
-            </div>
-
-            {/* Nearby Landmarks Card - Middle Right */}
-            <div className="h-full">
-              {p.nearby_landmarks && (
-                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50 h-full flex flex-col">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
-                  {(hasUnlocked || p.landlord_id === user?.id) ? (
-                    <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
-                      <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
-                      <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
-                    </div>
-                  ) : (
-                    <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                      <div className="absolute inset-0 p-6 flex items-start gap-4 select-none" style={{ filter: 'blur(8px)', userSelect: 'none', pointerEvents: 'none' }}>
-                        <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
-                        <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
-                      </div>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
-                        <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
-                          <EyeOff size={28} className="text-brand-500" />
-                        </div>
-                        <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.detailsLocked')}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Location on Map Card */}
-            {gatedData?.latitude && gatedData?.longitude ? (
-              <div className="h-full">
-                <LocationViewer
-                  latitude={gatedData.latitude}
-                  longitude={gatedData.longitude}
-                  title={p.title}
-                  address={gatedData.exact_location || `${p.area}, ${p.city}`}
-                />
-              </div>
-            ) : (
-              <div className="h-full">
-                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display flex items-center gap-2">
-                      <MapPin size={22} className="text-gray-300" />
-                      {t('property.sections.locationMap')}
-                    </h2>
-                  </div>
-                  <div className="relative h-[260px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gray-50 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/0,0,1/400x300?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}')] bg-cover opacity-20 grayscale pointer-events-none" style={{ filter: 'blur(4px)' }} />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-brand-50/20 backdrop-blur-[12px] border border-brand-500/20">
-                      <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-brand-100 shadow-sm mb-3">
-                        <Lock size={28} className="text-brand-500" />
-                      </div>
-                      <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.locationLocked')}</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             )}
 
+            {/* About & Nearby */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {p.description && (
+                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
+                  <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">{p.description}</div>
+                </div>
+              )}
+              {p.nearby_landmarks && (
+                <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+                   <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
+                   <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
+                     <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
+                     <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
+                   </div>
+                </div>
+              )}
+            </div>
+
+            {/* Location on Map */}
+            {gatedData?.latitude && gatedData?.longitude ? (
+              <LocationViewer
+                latitude={gatedData.latitude}
+                longitude={gatedData.longitude}
+                title={p.title}
+                address={gatedData.exact_location || `${p.area}, ${p.city}`}
+              />
+            ) : (
+              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display flex items-center gap-2">
+                    <MapPin size={22} className="text-gray-300" />
+                    {t('property.sections.locationMap')}
+                  </h2>
+                </div>
+                <div className="relative h-[260px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gray-50 bg-cover opacity-20 grayscale pointer-events-none" style={{ filter: 'blur(4px)' }} />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#fff5f5]/20 backdrop-blur-[12px] border border-[#CA3433]/20">
+                    <div className="w-14 h-14 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-3 border border-red-100 shadow-sm text-[#CA3433]">
+                      <Lock size={28} />
+                    </div>
+                    <p className="text-[#CA3433] font-bold tracking-widest text-[12px] uppercase">{t('property.sections.locationLocked')}</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* RIGHT COLUMN - SLIDER & SIDEBAR */}
+          {/* RIGHT COLUMN - SIDEBAR */}
           <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6">
-            {/* DESKTOP SLIDER */}
             <div className="hidden lg:block w-full">
               {renderSlider('desktop')}
             </div>
 
-            {/* CONTACT SIDEBAR */}
             <div id="contact-section" className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] border border-gray-100/50">
               <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.requestContact')}</h3>
               
-<<<<<<< HEAD
               <div className="mb-6 p-5 bg-white rounded-xl border border-[#CA3433]/20 shadow-[0_4px_12px_rgb(202,52,51,0.05)] relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-[#CA3433]"></div>
-                <h4 className="font-bold text-gray-900 mb-3 text-sm flex items-center justify-between">
-                  Book a Site Visit
-                </h4>
+                <h4 className="font-bold text-gray-900 mb-3 text-sm">{t('property.sections.bookVisit')}</h4>
                 <div className="flex gap-2">
                   <input 
                     type="date" 
@@ -681,80 +502,21 @@ export const PropertyDetail = () => {
                     onClick={submitSiteVisit}
                     disabled={bookingVisit}
                   >
-                    {bookingVisit ? 'Booking...' : 'Book'}
+                    {bookingVisit ? '...' : t('property.sections.book')}
                   </Button>
                 </div>
               </div>
 
-=======
-=======
-              </div>
-            )}
-
-            {p.nearby_landmarks && (
-              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
-                {(hasUnlocked || p.landlord_id === user?.id) ? (
-                  <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
-                    <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
-                    <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
-                  </div>
-                ) : (
-                  <div className="relative h-20 overflow-hidden rounded-xl border border-black/5 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-brand-50/20 backdrop-blur-[12px] flex items-center justify-center">
-                      <Lock size={18} className="text-brand-500 mr-2" />
-                      <p className="text-brand-900/60 font-bold tracking-widest text-[10px] uppercase">Details Locked</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {gatedData?.latitude && gatedData?.longitude ? (
-              <LocationViewer latitude={gatedData.latitude} longitude={gatedData.longitude} title={p.title} address={gatedData.exact_location || `${p.area}, ${p.city}`} />
-            ) : (
-              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display flex items-center gap-2"><MapPin size={22} className="text-gray-300" /> Location Map</h2>
-                <div className="relative h-[260px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex flex-col items-center justify-center">
-                   <Lock size={28} className="text-brand-500 mb-2" />
-                   <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">Map Locked</p>
-                   <Button variant="primary" size="sm" className="mt-4 rounded-full px-6 bg-[#CA3433]" onClick={handleUnlock}>Unlock for ₹9</Button>
-                </div>
-              </div>
-            )}
-
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">Listing Agent</h2>
-              <div className="flex items-center gap-6">
-                <img src={p.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">{p.profiles?.full_name || 'Listing Owner'} <CheckCircle2 size={16} className="text-green-500" /></h3>
-                  <div className="flex gap-4 text-sm text-gray-500 mt-1">
-                    {(hasUnlocked || p.landlord_id === user?.id) ? (
-                      <><span>{gatedData?.contact_email || 'Email Available'}</span><span>•</span><span>{gatedData?.contact_phone || 'Phone Available'}</span></>
-                    ) : (<span>Contact Details Locked</span>)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-1" id="contact-section">
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] sticky top-28 border border-gray-100/50">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-tight font-display">Contact Details</h3>
->>>>>>> Stashed changes
->>>>>>> bugs-and-warnings
               <div className="space-y-4 mb-8">
                 <div className="p-4 bg-[#F9F8F6] rounded-xl border border-gray-100">
-                   <p className="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wider">Owner</p>
+                   <p className="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wider">{t('property.sections.owner')}</p>
                    <p className="font-semibold text-gray-900">{p.profiles?.full_name || 'Listing Owner'}</p>
                 </div>
-<<<<<<< Updated upstream
 
                 {user ? (
                     (hasUnlocked || p.landlord_id === user.id) ? (
                       <div className="space-y-3">
-                        <a href={`tel:${gatedData?.contact_phone || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-colors text-[15px]">
+                        <a href={`tel:${gatedData?.contact_phone || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-[#CA3433] text-white font-bold hover:bg-[#ac2d2c] transition-colors text-[15px]">
                           <Phone size={18} /> {gatedData?.contact_phone || t('property.sections.callNow')}
                         </a>
                         <a href={`mailto:${gatedData?.contact_email || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-colors shadow-sm text-[15px]">
@@ -762,10 +524,10 @@ export const PropertyDetail = () => {
                         </a>
                       </div>
                     ) : (
-                      <div className="border border-brand-100/50 rounded-xl p-6 text-center bg-brand-50/10 relative overflow-hidden h-48 flex flex-col items-center justify-center shadow-sm border border-brand-600/20">
+                      <div className="border border-red-50 rounded-xl p-6 text-center bg-red-50/10 relative overflow-hidden h-48 flex flex-col items-center justify-center shadow-sm">
                         <div className="absolute inset-0 backdrop-blur-[15px]" />
                         <div className="relative z-10 flex flex-col items-center">
-                          <div className="w-12 h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-3 border border-brand-100 shadow-sm text-brand-500">
+                          <div className="w-12 h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-3 border border-red-100 shadow-sm text-[#CA3433]">
                             <EyeOff size={24} />
                           </div>
                           <p className="font-bold text-gray-900 mb-2 font-display text-lg">{t('property.sections.detailsLocked')}</p>
@@ -781,22 +543,7 @@ export const PropertyDetail = () => {
                       </Button>
                     </div>
                   )}
-=======
-                {hasUnlocked || p.landlord_id === user?.id ? (
-                  <div className="space-y-3">
-                    <a href={`tel:${gatedData?.contact_phone || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-colors"><Phone size={18} /> {gatedData?.contact_phone || 'Call Now'}</a>
-                    <a href={`mailto:${gatedData?.contact_email || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold shadow-sm"><Mail size={18} /> Send Email</a>
-                  </div>
-                ) : (
-                  <div className="border border-gray-100 rounded-xl p-6 text-center bg-[#fcfbf9]">
-                    <div className="w-12 h-12 bg-white border border-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400"><Phone size={20} /></div>
-                    <p className="font-bold text-gray-900 mb-2">Details Locked</p>
-                    <p className="text-[13px] text-gray-500">Unlock to see exact location and contact phone number.</p>
-                  </div>
-                )}
->>>>>>> Stashed changes
               </div>
-<<<<<<< HEAD
 
               {((user && !(hasUnlocked || p.landlord_id === user.id)) || !user) && (
                 <button 
@@ -807,11 +554,8 @@ export const PropertyDetail = () => {
                 >
                   {unlocking ? (
                     <span className="flex items-center gap-2">
-                      <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                      </svg>
-                      {t('property.sections.processing')}
+                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                       {t('property.sections.processing')}
                     </span>
                   ) : (
                     <>
@@ -821,229 +565,150 @@ export const PropertyDetail = () => {
                       <span>{t('property.labels.toUnlock')}</span>
                     </>
                   )}
-=======
-              {!hasUnlocked && p.landlord_id !== user?.id && (
-                <button onClick={handleUnlock} disabled={unlocking} className="w-full bg-gray-900 text-white font-bold py-4 rounded-full hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-70">
-                  {unlocking ? 'Processing...' : 'Unlock for ₹9'}
->>>>>>> bugs-and-warnings
                 </button>
               )}
             </div>
-<<<<<<< Updated upstream
-
-            {/* Listing Agent Card */}
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.agent')}</h2>
-              <div className="flex items-center gap-6">
-                <img src={p.profiles?.avatar_url || p.landlord?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">{p.profiles?.full_name || p.landlord?.name} <CheckCircle2 size={16} className="text-green-500" /></h3>
-                  <div className="flex flex-col text-sm text-gray-500 mt-1 gap-1">
-                    {(hasUnlocked || p.landlord_id === user?.id) ? (
-                      <>
-                        <a href={`mailto:${gatedData?.contact_email || ''}`} className="hover:text-gray-900">{gatedData?.contact_email || t('property.sections.emailLocked')}</a>
-                        <span className="hidden sm:inline">•</span>
-                        <a href={`tel:${gatedData?.contact_phone || ''}`} className="hover:text-gray-900">{gatedData?.contact_phone || t('property.sections.phoneLocked')}</a>
-                      </>
-                    ) : (
-                      <span>{t('property.sections.contactLocked')}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-=======
->>>>>>> Stashed changes
           </div>
         </div>
 
-        {/* Ratings & Reviews Section - Bottom Content */}
-        <div className="mt-8">
-            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display">{t('property.sections.reviews')}</h2>
-                  <p className="text-sm text-gray-500 font-medium mt-1">{t('property.sections.authenticFeedback')}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-3xl font-black text-gray-900">{avgRating}</p>
-                  <div className="flex justify-end gap-0.5 mt-1">
-                    {[1,2,3,4,5].map(n => (
-                      <Star key={n} size={12} className={n <= Math.round(avgRating) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Submit Review Form */}
-              {user && !myReview && (
-                <div className="mb-10 p-6 rounded-2xl bg-[#F9F8F6] border border-gray-100">
-                  <h4 className="font-bold text-gray-900 mb-4">{t('property.sections.postReview')}</h4>
-                  <div className="mb-4">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{t('property.sections.yourRating')}</p>
-                    <StarRating value={reviewRating} onChange={setReviewRating} />
-                  </div>
-                  <div className="mb-4">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{t('property.sections.yourFeedback')}</p>
-                    <textarea
-                      value={reviewText}
-                      onChange={(e) => setReviewText(e.target.value)}
-                      placeholder={t('property.sections.reviewPlaceholder')}
-                      className="w-full bg-white rounded-xl border border-gray-200 p-4 text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all min-h-[100px]"
-                    />
-                  </div>
-                  <Button
-                    variant="primary"
-                    className="w-full sm:w-auto rounded-full px-8 bg-[#CA3433]"
-                    disabled={submittingReview || !reviewRating || !reviewText.trim()}
-                    onClick={async () => {
-                      setSubmittingReview(true)
-                      try {
-                        await submitReview(p.id, reviewRating, reviewText)
-                        setReviewRating(0)
-                        setReviewText('')
-                        toast.success(t('property.sections.reviewSuccess'))
-                      } catch {
-                        toast.error(t('property.sections.reviewError'))
-                      } finally {
-                        setSubmittingReview(false)
-                      }
-                    }}
-                  >
-                    {submittingReview ? t('property.sections.posting') : t('property.sections.postReview')}
-                  </Button>
-                </div>
-              )}
-
-              {/* Reviews List */}
-              <div className="space-y-6 overflow-hidden">
-                {reviews.length === 0 ? (
-                  <div className="py-12 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-gray-300">
-                      <Star size={24} />
-                    </div>
-                    <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t('property.sections.noReviews')}</p>
-                    <p className="text-[13px] text-gray-400">{t('property.sections.beTheFirst')}</p>
-                  </div>
-                ) : (
-                  reviews.map(review => (
-                    <div key={review.id} className="group pb-6 border-b border-gray-100 last:border-0 last:pb-0 overflow-hidden">
-                      <div className="flex justify-between items-start mb-3 gap-2 flex-wrap">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <img
-                            src={review.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.profiles?.full_name || 'User')}`}
-                            alt="Reviewer"
-                            className="w-10 h-10 rounded-full bg-gray-100 object-cover flex-shrink-0"
-                          />
-                          <div className="min-w-0">
-                            <h5 className="font-bold text-gray-900 text-[15px] flex items-center gap-1.5 truncate">
-                              {review.profiles?.full_name || t('property.sections.anonymous')}
-                              <CheckCircle2 size={12} className="text-brand-500" />
-                            </h5>
-                            <StarRating value={review.rating} readonly />
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4 flex-shrink-0">
-                          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                            {new Date(review.created_at).toLocaleDateString()}
-                          </span>
-                          {user && user.id === review.reviewer_id && (
-                            <button
-                              onClick={() => deleteReview(review.id)}
-                              className="text-gray-300 hover:text-red-500 transition-colors"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                      <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap pl-0 sm:pl-13 break-words">
-                        {review.feedback}
-                      </p>
-                    </div>
-                  ))
-                )}
+        {/* Reviews Section */}
+        <div className="mt-12 bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display">{t('property.sections.reviews')}</h2>
+              <p className="text-sm text-gray-500 font-medium mt-1">{t('property.sections.authenticFeedback')}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-3xl font-black text-gray-900">{avgRating}</p>
+              <div className="flex justify-end gap-0.5 mt-1">
+                {[1,2,3,4,5].map(n => (
+                  <Star key={n} size={12} className={n <= Math.round(avgRating) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />
+                ))}
               </div>
             </div>
+          </div>
+
+          {user && !myReview && (
+            <div className="mb-10 p-6 rounded-2xl bg-[#F9F8F6] border border-gray-100">
+              <h4 className="font-bold text-gray-900 mb-4">{t('property.sections.postReview')}</h4>
+              <div className="mb-4">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{t('property.sections.yourRating')}</p>
+                <StarRating value={reviewRating} onChange={setReviewRating} />
+              </div>
+              <div className="mb-4">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{t('property.sections.yourFeedback')}</p>
+                <textarea
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder={t('property.sections.reviewPlaceholder')}
+                  className="w-full bg-white rounded-xl border border-gray-200 p-4 text-sm focus:ring-2 focus:ring-[#CA3433]/20 focus:border-[#CA3433] outline-none transition-all min-h-[100px]"
+                />
+              </div>
+              <Button
+                variant="primary"
+                className="w-full sm:w-auto rounded-full px-8 bg-[#CA3433]"
+                disabled={submittingReview || !reviewRating || !reviewText.trim()}
+                onClick={async () => {
+                  setSubmittingReview(true)
+                  try {
+                    await submitReview(p.id, reviewRating, reviewText)
+                    setReviewRating(0)
+                    setReviewText('')
+                    toast.success(t('property.sections.reviewSuccess'))
+                  } catch {
+                    toast.error(t('property.sections.reviewError'))
+                  } finally {
+                    setSubmittingReview(false)
+                  }
+                }}
+              >
+                {submittingReview ? t('property.sections.posting') : t('property.sections.postReview')}
+              </Button>
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {reviews.length === 0 ? (
+              <div className="py-12 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t('property.sections.noReviews')}</p>
+              </div>
+            ) : (
+              reviews.map(review => (
+                <div key={review.id} className="pb-6 border-b border-gray-100 last:border-0 last:pb-0">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={review.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.profiles?.full_name || 'User')}`}
+                        alt="Reviewer"
+                        className="w-10 h-10 rounded-full bg-gray-100 object-cover"
+                      />
+                      <div>
+                        <h5 className="font-bold text-gray-900 text-[15px]">{review.profiles?.full_name || t('property.sections.anonymous')}</h5>
+                        <StarRating value={review.rating} readonly />
+                      </div>
+                    </div>
+                    {user && user.id === review.reviewer_id && (
+                      <button onClick={() => deleteReview(review.id)} className="text-gray-300 hover:text-red-500 transition-colors">
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-sm leading-relaxed pl-13">{review.feedback}</p>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
-<<<<<<< Updated upstream
 
-      {/* Mobile Jump to Contact Feature */}
+      {/* Mobile Jump Feature */}
       <div className="fixed bottom-6 right-4 sm:hidden z-40">
         <button 
           onClick={() => {
-            if (showScrollToTop) {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
+            if (showScrollToTop) window.scrollTo({ top: 0, behavior: 'smooth' });
+            else {
               const section = document.getElementById('contact-section');
               if (section) {
-                const offset = 80;
-                const top = section.getBoundingClientRect().top + window.scrollY - offset;
+                const top = section.getBoundingClientRect().top + window.scrollY - 80;
                 window.scrollTo({ top, behavior: 'smooth' });
               }
             }
           }}
-          className="flex flex-col items-center justify-center p-2.5 bg-gray-900 text-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-800 active:scale-95 transition-transform"
+          className="flex items-center justify-center w-12 h-12 bg-gray-900 text-white rounded-xl shadow-lg active:scale-95 transition-transform"
         >
-          {showScrollToTop ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          {showScrollToTop ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </button>
       </div>
 
-      {/* Fullscreen Image Gallery Modal */}
+      {/* Gallery Modal */}
       {isGalleryOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md">
-          {/* Close Button */}
-          <button 
-            onClick={() => setIsGalleryOpen(false)}
-            className="absolute top-6 right-6 z-50 w-12 h-12 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-all duration-200"
-          >
-            <X size={24} />
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center">
+          <button onClick={() => setIsGalleryOpen(false)} className="absolute top-6 right-6 z-[110] text-white/70 hover:text-white transition-colors">
+            <X size={32} />
           </button>
-          
-          <div className="w-full h-full sm:h-[90%] max-w-6xl mx-auto flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center p-4">
             <Swiper
-              key={`gallery-${p.id}`}
               modules={[Navigation, Pagination]}
               initialSlide={initialSlideIndex}
-              spaceBetween={20}
-              slidesPerView={1}
-              navigation={{
-                prevEl: galleryPrevEl,
-                nextEl: galleryNextEl,
-              }}
-              pagination={{ type: 'fraction', el: '.gallery-pagination' }}
+              navigation={{ prevEl: galleryPrevEl, nextEl: galleryNextEl }}
+              pagination={{ type: 'fraction' }}
               className="w-full h-full"
             >
               {images.map((img, i) => (
-                <SwiperSlide key={i}>
-                  <div className="w-full h-full flex items-center justify-center p-4 sm:p-12">
-                    <img 
-                      src={img} 
-                      alt={`Gallery view ${i + 1}`} 
-                      className="max-w-full max-h-full object-contain rounded-lg shadow-2xl" 
-                    />
-                  </div>
+                <SwiperSlide key={i} className="flex items-center justify-center">
+                  <img src={img} className="max-w-full max-h-full object-contain" alt="" />
                 </SwiperSlide>
               ))}
-              
-              {/* Custom Navigation Icons for Gallery */}
-              <button ref={setGalleryPrevEl} className="absolute left-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer">
-                <img src="/swipe-left.svg" alt="Previous" className="w-8 h-8 brightness-0 invert" />
+              <button ref={setGalleryPrevEl} className="absolute left-6 top-1/2 -translate-y-1/2 z-50 p-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white">
+                <ArrowLeft size={24} />
               </button>
-              <button ref={setGalleryNextEl} className="absolute right-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer">
-                <img src="/swipe-right.svg" alt="Next" className="w-8 h-8 brightness-0 invert" />
+              <button ref={setGalleryNextEl} className="absolute right-6 top-1/2 -translate-y-1/2 z-50 p-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white">
+                <Share2 size={24} className="rotate-90" />
               </button>
-              
-              {/* Custom Fraction Pagination at bottom */}
-              <div className="gallery-pagination absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-white bg-black/50 px-4 py-1.5 rounded-full font-semibold tracking-widest text-sm backdrop-blur-md"></div>
             </Swiper>
           </div>
         </div>
       )}
-
-=======
->>>>>>> Stashed changes
     </div>
   )
 }

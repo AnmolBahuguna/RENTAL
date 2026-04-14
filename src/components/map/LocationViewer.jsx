@@ -33,11 +33,7 @@ export const LocationViewer = ({ latitude, longitude, title = 'Location', addres
           const canvas = document.createElement('canvas')
           canvas.width = this.width
           canvas.height = this.height
-<<<<<<< Updated upstream
           this.context = canvas.getContext('2d', { willReadFrequently: true })
-=======
-          this.context = canvas.getContext('2d')
->>>>>>> Stashed changes
         },
         render() {
           const duration = 1500
