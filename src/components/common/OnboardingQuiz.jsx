@@ -61,9 +61,10 @@ export const OnboardingQuiz = () => {
     budget: null
   })
 
-  // Open quiz when user is logged in but has no onboarding_data
+  // Open quiz only for Tenant (role='user') who haven't completed onboarding
   useEffect(() => {
-    if (user && profile && !profile.onboarding_data) {
+    const isNewTenantUser = user && profile && profile.role === 'user' && !profile.onboarding_data
+    if (isNewTenantUser) {
       setStep(0)
       setSelections({ persona: '', type: '', city: '', budget: null })
       setIsOpen(true)

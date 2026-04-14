@@ -68,7 +68,12 @@ export const AuthGateModal = () => {
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-md" />
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.1 }}
+        className="absolute inset-0 bg-black/50 backdrop-blur-md" 
+      />
 
       {/* Modal */}
       <motion.div
