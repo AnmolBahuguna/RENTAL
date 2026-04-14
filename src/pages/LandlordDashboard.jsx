@@ -312,7 +312,7 @@ export const LandlordDashboard = () => {
                         <p className="text-xs text-gray-500 font-medium truncate">
                           {p.area}, {p.city}
                         </p>
-                        <Badge variant={p.availability ? 'success' : 'danger'} className="uppercase text-[9px] tracking-widest px-1.5 py-0.5 font-bold">
+                        <Badge variant={p.availability ? 'success' : 'danger'} className="uppercase text-[8px] tracking-widest px-1.5 py-0.5 font-bold">
                           {p.availability ? 'Available' : 'Rented'}
                         </Badge>
                       </div>
