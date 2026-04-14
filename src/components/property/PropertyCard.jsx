@@ -74,9 +74,6 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
             <h3 className="font-black text-gray-900 text-base sm:text-lg leading-tight line-clamp-1 mb-1">
               {property.title}
             </h3>
-            <p className="text-[11px] sm:text-xs font-semibold text-gray-500">
-              {numBeds} {t('property.labels.bedrooms')}
-            </p>
           </div>
 
           <div className="flex items-end justify-between mt-auto pb-0.5">
@@ -156,7 +153,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
         </button>
       </div>
 
-      <div className="px-3.5 py-2.5 flex-1 flex flex-col">
+      <div className="px-3 py-2 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-0.5">
           <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
             {t(`property.types.${property.type}`) || property.type}
@@ -167,15 +164,12 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
           </div>
         </div>
         
-        <h3 className="font-extrabold text-gray-900 text-sm leading-tight line-clamp-1 mb-1">
+        <h3 className="font-extrabold text-gray-900 text-sm leading-tight line-clamp-1 mb-0.5">
           {property.title}
         </h3>
         
-        <p className="text-[11px] text-gray-500 font-bold mb-2">
-           {numBeds} {t('property.labels.beds')}
-        </p>
         
-        <div className="mt-auto pt-2 border-t border-gray-50 flex items-center justify-between">
+        <div className="mt-auto pt-1.5 border-t border-gray-50 flex items-center justify-between">
           <p className="flex flex-col">
             <span className="text-[8px] font-bold text-gray-400 uppercase leading-none">{t('property.labels.from')}</span>
             <span className="font-black text-gray-900 text-base leading-tight">₹{formatPrice(property.price)}</span>
