@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+<<<<<<< HEAD
 import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, EyeOff, X, Star, Trash2 } from 'lucide-react'
+=======
+<<<<<<< Updated upstream
+import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, EyeOff, X } from 'lucide-react'
+>>>>>>> bugs-and-warnings
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination, Navigation } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
+=======
+import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, Lock, EyeOff } from 'lucide-react'
+>>>>>>> Stashed changes
 import { useSelector, useDispatch } from 'react-redux'
 import { openAuthModal } from '../store/authSlice'
 import { useProperties } from '../hooks/useProperties'
@@ -43,6 +51,7 @@ export const PropertyDetail = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const { user } = useSelector(s => s.auth)
+<<<<<<< HEAD
   const { 
     currentProperty, fetchPropertyById, fetchGatedData, 
     favorites, toggleFavorite, loading,
@@ -63,16 +72,29 @@ export const PropertyDetail = () => {
   useEffect(() => {
     visitDateRef.current = visitDate
   }, [visitDate])
+=======
+<<<<<<< Updated upstream
+  const { currentProperty, fetchPropertyById, favorites, toggleFavorite, loading } = useProperties()
+  const [showScrollToTop, setShowScrollToTop] = useState(false)
+=======
+  
+  const { currentProperty, fetchPropertyById, fetchGatedData, favorites, toggleFavorite, loading } = useProperties()
+  
+  const [showScrollToTop, setShowScrollToTop] = useState(false)
+  const [gatedData, setGatedData] = useState(null)
+  const [hasUnlocked, setHasUnlocked] = useState(false)
+  const [unlocking, setUnlocking] = useState(false)
+>>>>>>> Stashed changes
+>>>>>>> bugs-and-warnings
 
   useEffect(() => {
     const handleScroll = () => {
-      // Toggle to Up arrow if we've scrolled past a threshold (e.g. 1000px) 
-      // or if we're near the contact section
       setShowScrollToTop(window.scrollY > 800)
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+<<<<<<< Updated upstream
 
   const [hasUnlocked, setHasUnlocked] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
@@ -87,6 +109,8 @@ export const PropertyDetail = () => {
     setInitialSlideIndex(index)
     setIsGalleryOpen(true)
   }
+=======
+>>>>>>> Stashed changes
 
   useEffect(() => {
     fetchPropertyById(id)
@@ -122,8 +146,6 @@ export const PropertyDetail = () => {
       <div className="pt-8 pb-20 bg-[#F9F8F6] min-h-screen">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <Skeleton className="h-6 w-24 mb-6" />
-          
-          {/* Image Bento Skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 h-[400px] sm:h-[550px]">
              <Skeleton className="md:col-span-2 md:row-span-2 rounded-lg sm:rounded-xl h-full" />
              <Skeleton className="hidden md:block col-span-1 row-span-1 rounded-lg sm:rounded-xl h-full" />
@@ -131,7 +153,6 @@ export const PropertyDetail = () => {
              <Skeleton className="hidden md:block col-span-1 row-span-1 rounded-lg sm:rounded-xl h-full" />
              <Skeleton className="hidden md:block col-span-1 row-span-1 rounded-lg sm:rounded-xl h-full" />
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
               <Skeleton className="h-48 w-full rounded-lg sm:rounded-xl" />
@@ -202,10 +223,9 @@ export const PropertyDetail = () => {
 
   const handleUnlock = async () => {
     if (!user) { dispatch(openAuthModal('login')); return }
-    if (unlocking) return // Prevent double-submission
+    if (unlocking) return
     setUnlocking(true)
     try {
-      // 1. Create order via Edge Function
       const { data: { session } } = await supabase.auth.getSession()
       const token = session?.access_token
       
@@ -220,21 +240,13 @@ export const PropertyDetail = () => {
       })
 
       if (response.status === 409) {
-        // Already unlocked — just refresh UI
         setHasUnlocked(true)
         await checkUnlockStatus()
         setUnlocking(false)
         return
       }
 
-      if (!response.ok) {
-        const errBody = await response.json().catch(() => ({}))
-        throw new Error(errBody.error || `HTTP ${response.status}: ${response.statusText}`)
-      }
-
       const orderData = await response.json()
-
-      // 2. Load Razorpay script robustly
       const loadRazorpay = () => {
         return new Promise((resolve) => {
           if (window.Razorpay) return resolve(true)
@@ -246,10 +258,8 @@ export const PropertyDetail = () => {
         })
       }
 
-      const scriptLoaded = await loadRazorpay()
-      if (!scriptLoaded) throw new Error('Razorpay SDK failed to load')
+      if (!(await loadRazorpay())) throw new Error('Razorpay SDK failed to load')
 
-      // 3. Open Razorpay Checkout Modal
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         order_id: orderData.id,
@@ -259,9 +269,6 @@ export const PropertyDetail = () => {
         handler: async function (response) {
           try {
             setUnlocking(true)
-            const { data: { session } } = await supabase.auth.getSession()
-            const token = session?.access_token
-
             const verifyResp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-razorpay-payment`, {
               method: 'POST',
               headers: {
@@ -276,12 +283,7 @@ export const PropertyDetail = () => {
                 property_id: p.id
               })
             })
-
-            if (!verifyResp.ok) {
-              const vErrBody = await verifyResp.json().catch(() => ({}))
-              throw new Error(vErrBody.error || `HTTP ${verifyResp.status}: ${verifyResp.statusText}`)
-            }
-
+            if (!verifyResp.ok) throw new Error('Payment verification failed')
             toast.success('Payment verified! Contact details unlocked.')
             setHasUnlocked(true)
             checkUnlockStatus() 
@@ -299,8 +301,7 @@ export const PropertyDetail = () => {
               }
             }
           } catch (vErr) {
-            console.error('Verification error:', vErr)
-            toast.error('Payment verification failed: ' + vErr.message)
+            toast.error('Payment verification failed')
           } finally {
             setUnlocking(false)
           }
@@ -310,23 +311,20 @@ export const PropertyDetail = () => {
           email: user?.email || '',
           contact: user?.user_metadata?.phone || '9999999999'
         },
+<<<<<<< Updated upstream
         theme: { color: '#CA3433' },
         modal: {
           ondismiss: function() {
             setUnlocking(false)
           }
         }
+=======
+        theme: { color: '#FF3366' }
+>>>>>>> Stashed changes
       }
-
-      const rzp = new window.Razorpay(options)
-      rzp.on('payment.failed', function (response){
-        console.error('Razorpay payment failed:', response.error)
-        const desc = response.error?.description || response.error?.reason || 'Payment could not be completed'
-        toast.error('Payment failed: ' + desc)
-        setUnlocking(false)
-      })
-      rzp.open()
+      new window.Razorpay(options).open()
     } catch (err) {
+<<<<<<< Updated upstream
       console.error('Payment initiation error:', err)
       
       // Attempt to extract detailed error from Supabase Function response
@@ -341,15 +339,17 @@ export const PropertyDetail = () => {
       }
       
       toast.error('Could not initiate payment: ' + errorMsg)
+=======
+      toast.error('Could not initiate payment')
+>>>>>>> Stashed changes
     } finally {
       setUnlocking(false)
     }
   }
 
   const images = p.images || []
-  const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f3f4f6'/%3E%3Cpath d='M370 280l30 30 30-30m-60 40h60' stroke='%23d1d5db' stroke-width='2' fill='none'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%239ca3af'%3ENo Image Available%3C/text%3E%3C/svg%3E"
-  const mainImage = images[0] || PLACEHOLDER_IMAGE
-  const otherImages = images.slice(1, 5) // up to 4 other images
+  const mainImage = images[0] || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%239ca3af'%3ENo Image Available%3C/text%3E%3C/svg%3E"
+  const otherImages = images.slice(1, 5)
 
   const renderSlider = (prefix) => (
     <div className="relative w-full aspect-square md:aspect-[4/3] bg-gray-100 rounded-xl sm:rounded-2xl overflow-hidden shadow-md group border border-gray-200/50">
@@ -404,12 +404,17 @@ export const PropertyDetail = () => {
 
   return (
     <div className="pt-8 pb-20 bg-[#F9F8F6] min-h-screen">
+<<<<<<< Updated upstream
       <div className="w-full px-4 sm:px-10 md:px-16 lg:px-20">
         
+=======
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+>>>>>>> Stashed changes
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft size={16} /> {t('property.labels.back')}
         </button>
 
+<<<<<<< Updated upstream
         {/* MOBILE SLIDER - Top of page */}
         <div className="block lg:hidden w-full mb-6">
           {renderSlider('mobile')}
@@ -422,6 +427,35 @@ export const PropertyDetail = () => {
           <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
             
             {/* Header Card - Full Width */}
+=======
+        {/* IMAGE BENTO GRID */}
+        <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ${images.length >= 5 ? 'h-[400px] sm:h-[550px]' : 'h-[400px]'}`}>
+          <div className={`${images.length >= 5 ? 'md:col-span-2 md:row-span-2' : 'md:col-span-4'} h-full rounded-lg sm:rounded-xl overflow-hidden relative group`}>
+            <img src={mainImage} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 bg-gray-200" />
+            <div className="absolute top-4 right-4 flex gap-2 z-10">
+              <Button variant="secondary" className="bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:bg-white text-gray-900 transition-colors shadow-sm" onClick={handleShare}>
+                <Share2 size={16} />
+              </Button>
+              <Button variant="secondary" className={`bg-white/90 backdrop-blur-sm border-0 rounded-full w-10 h-10 p-0 flex items-center justify-center transition-colors shadow-sm ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-900 hover:bg-white'}`} onClick={handleFav}>
+                <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
+              </Button>
+            </div>
+          </div>
+          {images.length >= 5 && otherImages.map((img, i) => (
+            <div key={i} className="hidden md:block col-span-1 row-span-1 h-full rounded-lg sm:rounded-xl overflow-hidden relative group bg-gray-200">
+              <img src={img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={`view-${i}`} />
+              {i === 3 && images.length > 5 && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-xl backdrop-blur-[2px]">
+                  +{images.length - 5}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <div className="lg:col-span-2 space-y-6">
+>>>>>>> Stashed changes
             <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <div className="flex justify-between items-start mb-4">
                  <div className="flex flex-col gap-1">
@@ -452,6 +486,7 @@ export const PropertyDetail = () => {
               </p>
             </div>
 
+<<<<<<< Updated upstream
             {/* Amenities Card - Top Left */}
             <div className="h-full">
               {p.amenities && p.amenities.length > 0 && (
@@ -505,6 +540,35 @@ export const PropertyDetail = () => {
                   {(hasUnlocked || p.landlord_id === user?.id) ? (
                     <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">
                       {p.description}
+=======
+            {p.description && (
+              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight font-display">{t('property.sections.about')}</h2>
+                <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-[15px]">{p.description}</div>
+              </div>
+            )}
+
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+               <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.keyDetails')}</h2>
+               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 gap-y-8 border-t border-gray-100 pt-6">
+                 <div><p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">Type</p><p className="text-gray-900 font-semibold">{t(`property.types.${p.type}`) || p.type}</p></div>
+                 <div><p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">City</p><p className="text-gray-900 font-semibold">{p.city}</p></div>
+                 <div><p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">Pincode</p><p className="text-gray-900 font-semibold">{p.pincode || 'N/A'}</p></div>
+                 <div><p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">Views</p><p className="text-gray-900 font-semibold">{p.views}</p></div>
+               </div>
+            </div>
+
+            {p.amenities?.length > 0 && (
+              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.amenities')}</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {p.amenities.map(a => (
+                    <div key={a} className="flex gap-3 items-center">
+                       <div className="w-10 h-10 rounded-full bg-[#F9F8F6] flex items-center justify-center text-gray-600">
+                         {(() => { const Icon = AMENITY_ICONS[a]; return Icon ? <Icon size={20} /> : null; })()}
+                       </div>
+                       <span className="font-semibold text-gray-700 capitalize text-[15px]">{a}</span>
+>>>>>>> Stashed changes
                     </div>
                   ) : (
                     <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
@@ -520,6 +584,7 @@ export const PropertyDetail = () => {
                     </div>
                   )}
                 </div>
+<<<<<<< Updated upstream
               )}
             </div>
 
@@ -596,6 +661,7 @@ export const PropertyDetail = () => {
             <div id="contact-section" className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] border border-gray-100/50">
               <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.requestContact')}</h3>
               
+<<<<<<< HEAD
               <div className="mb-6 p-5 bg-white rounded-xl border border-[#CA3433]/20 shadow-[0_4px_12px_rgb(202,52,51,0.05)] relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-[#CA3433]"></div>
                 <h4 className="font-bold text-gray-900 mb-3 text-sm flex items-center justify-between">
@@ -620,11 +686,70 @@ export const PropertyDetail = () => {
                 </div>
               </div>
 
+=======
+=======
+              </div>
+            )}
+
+            {p.nearby_landmarks && (
+              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.nearby')}</h2>
+                {(hasUnlocked || p.landlord_id === user?.id) ? (
+                  <div className="flex items-start gap-4 p-5 rounded-xl bg-[#F9F8F6]">
+                    <MapPin className="text-gray-400 mt-1 flex-shrink-0" size={20} />
+                    <p className="text-gray-700 font-medium leading-relaxed">{p.nearby_landmarks}</p>
+                  </div>
+                ) : (
+                  <div className="relative h-20 overflow-hidden rounded-xl border border-black/5 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-brand-50/20 backdrop-blur-[12px] flex items-center justify-center">
+                      <Lock size={18} className="text-brand-500 mr-2" />
+                      <p className="text-brand-900/60 font-bold tracking-widest text-[10px] uppercase">Details Locked</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {gatedData?.latitude && gatedData?.longitude ? (
+              <LocationViewer latitude={gatedData.latitude} longitude={gatedData.longitude} title={p.title} address={gatedData.exact_location || `${p.area}, ${p.city}`} />
+            ) : (
+              <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display flex items-center gap-2"><MapPin size={22} className="text-gray-300" /> Location Map</h2>
+                <div className="relative h-[260px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex flex-col items-center justify-center">
+                   <Lock size={28} className="text-brand-500 mb-2" />
+                   <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">Map Locked</p>
+                   <Button variant="primary" size="sm" className="mt-4 rounded-full px-6 bg-[#CA3433]" onClick={handleUnlock}>Unlock for ₹9</Button>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">Listing Agent</h2>
+              <div className="flex items-center gap-6">
+                <img src={p.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">{p.profiles?.full_name || 'Listing Owner'} <CheckCircle2 size={16} className="text-green-500" /></h3>
+                  <div className="flex gap-4 text-sm text-gray-500 mt-1">
+                    {(hasUnlocked || p.landlord_id === user?.id) ? (
+                      <><span>{gatedData?.contact_email || 'Email Available'}</span><span>•</span><span>{gatedData?.contact_phone || 'Phone Available'}</span></>
+                    ) : (<span>Contact Details Locked</span>)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-1" id="contact-section">
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] sticky top-28 border border-gray-100/50">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-tight font-display">Contact Details</h3>
+>>>>>>> Stashed changes
+>>>>>>> bugs-and-warnings
               <div className="space-y-4 mb-8">
                 <div className="p-4 bg-[#F9F8F6] rounded-xl border border-gray-100">
-                   <p className="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wider">{t('property.sections.owner')}</p>
-                   <p className="font-semibold text-gray-900">{p.profiles?.full_name || p.landlord?.name}</p>
+                   <p className="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wider">Owner</p>
+                   <p className="font-semibold text-gray-900">{p.profiles?.full_name || 'Listing Owner'}</p>
                 </div>
+<<<<<<< Updated upstream
 
                 {user ? (
                     (hasUnlocked || p.landlord_id === user.id) ? (
@@ -656,7 +781,22 @@ export const PropertyDetail = () => {
                       </Button>
                     </div>
                   )}
+=======
+                {hasUnlocked || p.landlord_id === user?.id ? (
+                  <div className="space-y-3">
+                    <a href={`tel:${gatedData?.contact_phone || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-colors"><Phone size={18} /> {gatedData?.contact_phone || 'Call Now'}</a>
+                    <a href={`mailto:${gatedData?.contact_email || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold shadow-sm"><Mail size={18} /> Send Email</a>
+                  </div>
+                ) : (
+                  <div className="border border-gray-100 rounded-xl p-6 text-center bg-[#fcfbf9]">
+                    <div className="w-12 h-12 bg-white border border-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400"><Phone size={20} /></div>
+                    <p className="font-bold text-gray-900 mb-2">Details Locked</p>
+                    <p className="text-[13px] text-gray-500">Unlock to see exact location and contact phone number.</p>
+                  </div>
+                )}
+>>>>>>> Stashed changes
               </div>
+<<<<<<< HEAD
 
               {((user && !(hasUnlocked || p.landlord_id === user.id)) || !user) && (
                 <button 
@@ -681,9 +821,15 @@ export const PropertyDetail = () => {
                       <span>{t('property.labels.toUnlock')}</span>
                     </>
                   )}
+=======
+              {!hasUnlocked && p.landlord_id !== user?.id && (
+                <button onClick={handleUnlock} disabled={unlocking} className="w-full bg-gray-900 text-white font-bold py-4 rounded-full hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-70">
+                  {unlocking ? 'Processing...' : 'Unlock for ₹9'}
+>>>>>>> bugs-and-warnings
                 </button>
               )}
             </div>
+<<<<<<< Updated upstream
 
             {/* Listing Agent Card */}
             <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
@@ -706,8 +852,9 @@ export const PropertyDetail = () => {
                 </div>
               </div>
             </div>
+=======
+>>>>>>> Stashed changes
           </div>
-
         </div>
 
         {/* Ratings & Reviews Section - Bottom Content */}
@@ -820,6 +967,7 @@ export const PropertyDetail = () => {
             </div>
         </div>
       </div>
+<<<<<<< Updated upstream
 
       {/* Mobile Jump to Contact Feature */}
       <div className="fixed bottom-6 right-4 sm:hidden z-40">
@@ -894,6 +1042,8 @@ export const PropertyDetail = () => {
         </div>
       )}
 
+=======
+>>>>>>> Stashed changes
     </div>
   )
 }
