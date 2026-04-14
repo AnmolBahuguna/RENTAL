@@ -1,55 +1,67 @@
 import React, { useMemo } from 'react'
-import { Sparkles, RefreshCcw, ChevronRight } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { useProperties } from '../../hooks/useProperties'
 import { PropertyCard } from './PropertyCard'
 import { useAuth } from '../../hooks/useAuth'
+import { cn } from '../../utils/helpers'
 
-export const RecommendedSection = () => {
-  const { profile } = useAuth()
+export const RecommendedSection = ({ viewMode = 'grid' }) => {
   const { getRecommendedProperties, loading } = useProperties()
   
   const recommendations = useMemo(() => getRecommendedProperties(), [getRecommendedProperties])
 
   if (loading || !recommendations.length) return null
 
-  const handleRetakeQuiz = () => {
+  const handleResetQuiz = () => {
     window.dispatchEvent(new Event('goeazy_quiz_reset'))
   }
 
   return (
-    <section className="mb-12">
-      {/* Section Header */}
-      <div className="flex items-center justify-between mb-5">
+    <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-[#CA3433] to-[#ff6b6b] rounded-xl flex items-center justify-center shadow-md shadow-red-500/20">
-            <Sparkles size={16} className="text-white fill-current" />
+          <div className="p-1.5 bg-red-50 rounded-lg">
+            <Sparkles size={16} className="text-[#CA3433]" />
           </div>
-          <div>
-            <h2 className="font-display font-bold text-xl text-gray-900">
-              Recommended for {profile?.name?.split(' ')[0] || 'You'}
-            </h2>
-            <p className="text-[11px] text-gray-400 font-medium mt-0.5">Based on your quiz preferences</p>
-          </div>
-          <span className="text-sm text-gray-400 font-medium ml-1">({recommendations.length})</span>
+          <h2 className="text-lg font-bold text-gray-900 tracking-tight">Recommended for You</h2>
         </div>
-
         <button
-          onClick={handleRetakeQuiz}
-          className="flex items-center gap-1 text-sm font-semibold text-[#CA3433] hover:text-[#ac2d2c] transition-colors"
+          onClick={handleResetQuiz}
+          className="text-xs font-bold text-[#CA3433] hover:underline px-3 py-1.5 rounded-lg border border-red-100 bg-red-50/30 transition-all active:scale-95"
         >
-          <RefreshCcw size={14} />
-          Retake <ChevronRight size={16} />
+          Reset Preferences
         </button>
       </div>
 
-      {/* Horizontal Scroll Row — same pattern as PropertySection / UserDashboard */}
-      <div className="scroll-row px-1 -mx-1">
+      {/* Horizontal Scroll with peeking cards */}
+      <div className="flex gap-3 sm:gap-6 xl:gap-8 overflow-x-auto pb-4 px-1 no-scrollbar -mx-1 snap-x snap-mandatory">
         {recommendations.map(p => (
-          <div key={p.id} className="flex-shrink-0">
-            <PropertyCard property={p} compact />
+          <div
+            key={`rec-${p.id}`}
+            className={cn(
+              "relative flex-none ring-1 ring-[#CA3433]/10 rounded-2xl group snap-start",
+              viewMode === 'list'
+                ? "w-[88%]"
+                : "w-[40%] sm:w-[25%] lg:w-[20%] xl:w-[16%]"
+            )}
+          >
+            {/* Match badge */}
+            <div className={cn(
+              "absolute z-10 px-2 py-0.5 bg-black/60 backdrop-blur-md text-white text-[9px] font-bold rounded-full uppercase tracking-widest border border-white/10",
+              viewMode === 'list' ? "bottom-3 left-3" : "top-3 left-3"
+            )}>
+              Match Found
+            </div>
+            <PropertyCard property={p} layout={viewMode} />
           </div>
         ))}
       </div>
-    </section>
+
+      {/* Divider before All Results */}
+      <div className="mt-2 pt-1 border-t border-gray-100">
+        <h3 className="text-[13px] font-black text-gray-900 uppercase tracking-[0.2em]">All Results</h3>
+      </div>
+    </div>
   )
 }
