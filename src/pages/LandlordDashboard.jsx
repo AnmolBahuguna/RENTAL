@@ -226,7 +226,7 @@ export const LandlordDashboard = () => {
 
         {/* Loading State */}
         {loading ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
             {[1, 2].map(i => (
               <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 space-y-4 shadow-sm">
                 <Skeleton className="aspect-[4/3] w-full rounded-xl" />
@@ -255,8 +255,8 @@ export const LandlordDashboard = () => {
           </div>
 
         ) : !showAll ? (
-          /* ── PREVIEW: 2 standard PropertyCards in 2-column grid ── */
-          <div className="grid grid-cols-2 gap-3 sm:gap-6">
+          /* ── PREVIEW: standard PropertyCards in responsive grid ── */
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
             {previewProperties.map(p => (
               <div key={p.id} className="relative">
                 <PropertyCard property={p} layout="grid" />
