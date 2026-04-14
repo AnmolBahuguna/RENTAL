@@ -4,7 +4,7 @@ import { Plus, Home, Eye, Edit, Trash2, ArrowRight, List as ListIcon, Calendar, 
 import { useAuth } from '../hooks/useAuth'
 import { useProperties } from '../hooks/useProperties'
 import { Button } from '../components/ui/Button'
-import { TypeBadge } from '../components/ui/Badge'
+import { Badge, TypeBadge } from '../components/ui/Badge'
 import { PropertyCard } from '../components/property/PropertyCard'
 import { formatPriceShort, cn } from '../utils/helpers'
 import toast from 'react-hot-toast'
@@ -138,8 +138,8 @@ export const LandlordDashboard = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5">
-            <div className="w-14 h-14 rounded-xl bg-[#fff5f5] flex items-center justify-center text-[#CA3433]">
-              <Home size={24} />
+            <div className="text-[#CA3433] shrink-0">
+              <Home size={32} />
             </div>
             <div className="flex-1">
               <p className="text-gray-500 text-sm font-medium">Total Listings</p>
@@ -147,8 +147,8 @@ export const LandlordDashboard = () => {
             </div>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5">
-            <div className="w-14 h-14 rounded-xl bg-green-50 flex items-center justify-center text-green-600">
-              <Eye size={24} />
+            <div className="text-green-600 shrink-0">
+              <Eye size={32} />
             </div>
             <div className="flex-1">
               <p className="text-gray-500 text-sm font-medium">Total Profile Views</p>
@@ -261,21 +261,21 @@ export const LandlordDashboard = () => {
               <div key={p.id} className="relative">
                 <PropertyCard property={p} layout="grid" />
                 {/* Management Action Bar */}
-                <div className="mt-2 flex items-center gap-2">
-                  <Button
-                    variant="secondary" size="sm"
-                    className="flex-1 h-9 text-xs font-bold rounded-xl text-blue-600 hover:bg-blue-50 border-blue-100"
-                    onClick={() => navigate(`/landlord/properties/${p.id}/edit`)}
-                  >
-                    <Edit size={14} className="mr-1" /> Edit
-                  </Button>
-                  <button
-                    className="p-2 h-9 w-9 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors border border-red-200"
-                    onClick={() => handleDelete(p.id)}
-                    title="Delete"
-                  >
-                    <Trash2 size={15} />
-                  </button>
+                <div className="mt-2 flex items-center justify-between px-1">
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => navigate(`/landlord/properties/${p.id}/edit`)}
+                      className="text-blue-500 hover:text-blue-700 transition-colors flex items-center gap-1.5 text-xs font-bold"
+                    >
+                      <Edit size={14} /> Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(p.id)}
+                      className="text-red-500 hover:text-red-700 transition-colors flex items-center gap-1.5 text-xs font-bold"
+                    >
+                      <Trash2 size={14} /> Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -290,14 +290,14 @@ export const LandlordDashboard = () => {
                 className="group bg-white rounded-2xl border border-gray-100 flex gap-4 cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
               >
                 {/* Image Section - Match PropertyCard structure */}
-                <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0 overflow-hidden bg-gray-50 rounded-r-2xl shadow-sm">
+                <div className="relative w-32 sm:w-40 self-stretch flex-shrink-0 overflow-hidden bg-gray-50 rounded-r-2xl shadow-sm">
                   <img 
                     src={p.images?.[0] || ''} 
                     alt={p.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
                   />
                   <div className="absolute top-2 left-2">
-                    <TypeBadge type={p.type} />
+                    <TypeBadge type={p.type} variant="ghost" className="text-white drop-shadow-md font-black" />
                   </div>
                 </div>
                 
@@ -316,44 +316,43 @@ export const LandlordDashboard = () => {
                       <span className="font-black text-lg text-[#CA3433] leading-none">
                         {formatPriceShort(p.price)}
                       </span>
-                      <div className={cn(
-                        'mt-1.5 px-2 py-0.5 text-[9px] uppercase font-bold rounded-md', 
-                        p.availability ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      )}>
-                        {p.availability ? 'Available' : 'Rented'}
+                      <div className="mt-2 text-right">
+                        <Badge variant={p.availability ? 'success' : 'danger'} className="uppercase text-[10px] tracking-widest px-3 py-1.5 font-black border border-transparent">
+                          {p.availability ? 'Available' : 'Rented'}
+                        </Badge>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-end justify-between mt-auto">
                     <div className="flex items-center gap-4 text-xs text-gray-400">
-                      <span className="flex items-center gap-1.5 font-bold bg-gray-50 px-2 py-1 rounded-lg">
+                      <span className="flex items-center gap-1.5 font-bold">
                         <Eye size={12} className="text-gray-400"/>
                         <span className="text-gray-700">{p.views || 0}</span>
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-4">
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigate(`/property/${p.id}`) }}
-                        className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all text-xs font-bold flex items-center gap-1.5"
+                        className="text-gray-500 hover:text-gray-900 transition-colors text-xs font-bold flex items-center gap-1.5"
                         title="View"
                       >
-                        <Eye size={14} /> <span className="hidden sm:inline">View</span>
+                        <Eye size={16} /> <span className="hidden sm:inline">View</span>
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigate(`/landlord/properties/${p.id}/edit`) }}
-                        className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all text-xs font-bold flex items-center gap-1.5 border border-blue-100"
+                        className="text-blue-500 hover:text-blue-700 transition-colors text-xs font-bold flex items-center gap-1.5"
                         title="Edit"
                       >
-                        <Edit size={14} /> <span className="hidden sm:inline">Edit</span>
+                        <Edit size={16} /> <span className="hidden sm:inline">Edit</span>
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(p.id) }}
-                        className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all border border-red-100"
+                        className="text-red-500 hover:text-red-700 transition-colors"
                         title="Delete"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
@@ -364,18 +363,6 @@ export const LandlordDashboard = () => {
         )}
 
         {/* View All CTA below cards when in preview mode */}
-        {!loading && !showAll && properties.length > 2 && (
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => setShowAll(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 hover:border-[#CA3433] hover:text-[#CA3433] transition-all shadow-sm hover:shadow-md"
-            >
-              <ListIcon size={16} />
-              View All {properties.length} Listings
-              <ArrowRight size={16} />
-            </button>
-          </div>
-        )}
 
       </div>
     </div>
