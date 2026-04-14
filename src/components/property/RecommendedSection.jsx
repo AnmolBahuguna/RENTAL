@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react'
-import { Sparkles, RefreshCcw, ArrowRight } from 'lucide-react'
+import { Sparkles, RefreshCcw, ChevronRight } from 'lucide-react'
 import { useProperties } from '../../hooks/useProperties'
 import { PropertyCard } from './PropertyCard'
 import { useAuth } from '../../hooks/useAuth'
-import { Button } from '../ui/Button'
 
 export const RecommendedSection = () => {
   const { profile } = useAuth()
@@ -18,45 +17,39 @@ export const RecommendedSection = () => {
   }
 
   return (
-    <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-[#CA3433] to-[#ff4d4d] rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/20">
-            <Sparkles size={20} className="text-white fill-current" />
+    <section className="mb-12">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#CA3433] to-[#ff6b6b] rounded-xl flex items-center justify-center shadow-md shadow-red-500/20">
+            <Sparkles size={16} className="text-white fill-current" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
+            <h2 className="font-display font-bold text-xl text-gray-900">
               Recommended for {profile?.name?.split(' ')[0] || 'You'}
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500 font-medium">Handpicked matches based on your quiz answers.</p>
+            <p className="text-[11px] text-gray-400 font-medium mt-0.5">Based on your quiz preferences</p>
           </div>
+          <span className="text-sm text-gray-400 font-medium ml-1">({recommendations.length})</span>
         </div>
 
-        <button 
+        <button
           onClick={handleRetakeQuiz}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold text-gray-500 hover:text-[#CA3433] hover:border-red-100 transition-all shadow-sm"
+          className="flex items-center gap-1 text-sm font-semibold text-[#CA3433] hover:text-[#ac2d2c] transition-colors"
         >
           <RefreshCcw size={14} />
-          Retake Quiz
+          Retake <ChevronRight size={16} />
         </button>
       </div>
 
-      <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-6 pt-2 scrollbar-hide snap-x snap-mandatory px-1 -mx-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+      {/* Horizontal Scroll Row — same pattern as PropertySection / UserDashboard */}
+      <div className="scroll-row px-1 -mx-1">
         {recommendations.map(p => (
-           <div key={p.id} className="flex-none w-[170px] xs:w-[220px] sm:w-[280px] snap-center">
-             <PropertyCard property={p} compact />
-           </div>
+          <div key={p.id} className="flex-shrink-0">
+            <PropertyCard property={p} compact />
+          </div>
         ))}
       </div>
-      
-      {recommendations.length > 2 && (
-        <div className="mt-2 flex justify-center">
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
-                <span>Swipe for more results</span>
-                <ArrowRight size={10} />
-            </p>
-        </div>
-      )}
-    </div>
+    </section>
   )
 }
