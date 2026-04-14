@@ -11,10 +11,7 @@ import { resetFilters } from '../store/propertySlice'
 import { PROPERTY_TYPES, AMENITIES, SORT_OPTIONS } from '../utils/constants'
 import { AMENITY_ICONS, cn } from '../utils/helpers'
 import { Skeleton } from '../components/ui/Skeleton'
-<<<<<<< Updated upstream
-=======
 import { useAuth } from '../hooks/useAuth'
->>>>>>> Stashed changes
 
 export const Search = () => {
   const { t } = useTranslation()
