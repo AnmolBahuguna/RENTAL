@@ -266,8 +266,8 @@ export const Search = () => {
           </div>
         </div>
 
-        {/* New Recommendation Section */}
-        <RecommendedSection />
+        {/* Recommendation Section (if quiz done) */}
+        <RecommendedSection viewMode={viewMode} />
 
         {/* Results Area */}
         {loading && listings.length === 0 ? (
