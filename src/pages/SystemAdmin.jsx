@@ -9,7 +9,7 @@ import { Button } from '../components/ui/Button'
 import toast from 'react-hot-toast'
 
 export const SystemAdmin = () => {
-  const { user, profile, role, loading, signInWithGoogle, signOut } = useAuth()
+  const { user, role, loading, signInWithGoogle, signOut } = useAuth()
   const { getAdminPendingServices, updateServiceStatus } = useServices()
   const navigate = useNavigate()
   
@@ -68,7 +68,7 @@ export const SystemAdmin = () => {
       await updateServiceStatus(id, newStatus)
       setProviders(prev => prev.map(p => p.id === id ? { ...p, verification_status: newStatus } : p))
       toast.success(`Service Provider ${newStatus}`, { id: toastId })
-    } catch (err) {
+    } catch {
       toast.error('Failed to update status', { id: toastId })
     }
   }

@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, EyeOff, X } from 'lucide-react'
+import { MapPin, Heart, Share2, Phone, Mail, ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, EyeOff, X, Star, Trash2 } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination, Navigation } from 'swiper/modules'
 import 'swiper/css'
@@ -18,15 +18,42 @@ import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../components/ui/Skeleton'
 import { LocationViewer } from '../components/map/LocationViewer'
 
+const StarRating = ({ value, onChange, readonly = false }) => (
+  <div className="flex gap-1">
+    {[1, 2, 3, 4, 5].map(n => (
+      <button
+        key={n}
+        type="button"
+        disabled={readonly}
+        onClick={() => onChange && onChange(n)}
+        className={`transition-transform ${!readonly ? 'hover:scale-125 cursor-pointer' : 'cursor-default'}`}
+      >
+        <Star
+          size={readonly ? 14 : 22}
+          className={n <= value ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}
+        />
+      </button>
+    ))}
+  </div>
+)
+
 export const PropertyDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const { user } = useSelector(s => s.auth)
-  const { currentProperty, fetchPropertyById, fetchGatedData, favorites, toggleFavorite, loading } = useProperties()
+  const { 
+    currentProperty, fetchPropertyById, fetchGatedData, 
+    favorites, toggleFavorite, loading,
+    reviews, fetchReviews, submitReview, deleteReview
+  } = useProperties()
   const [showScrollToTop, setShowScrollToTop] = useState(false)
   const [gatedData, setGatedData] = useState(null)
+  
+  const [reviewRating, setReviewRating] = useState(0)
+  const [reviewText, setReviewText] = useState('')
+  const [submittingReview, setSubmittingReview] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,6 +81,7 @@ export const PropertyDetail = () => {
 
   useEffect(() => {
     fetchPropertyById(id)
+    fetchReviews(id)
     checkUnlockStatus()
   }, [id, user])
 
@@ -113,6 +141,12 @@ export const PropertyDetail = () => {
   const isFav = favorites.includes(p.id)
   const isAvailable = p.availability !== false
 
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    : '0.0'
+
+  const myReview = reviews.find(r => r.reviewer_id === user?.id)
+
   const handleFav = () => {
     if (!user) { dispatch(openAuthModal('signup')); return }
     toggleFavorite(p.id)
@@ -120,7 +154,7 @@ export const PropertyDetail = () => {
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
-    toast.success('Link copied to clipboard!')
+    toast.success(t('property.sections.linkCopied'))
   }
 
   const handleUnlock = async () => {
@@ -334,9 +368,18 @@ export const PropertyDetail = () => {
             {/* Header Card - Full Width */}
             <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
               <div className="flex justify-between items-start mb-4">
-                 <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2 font-display">
-                   {formatPrice(p.price)}
-                 </h1>
+                 <div className="flex flex-col gap-1">
+                   <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2 font-display">
+                     {formatPrice(p.price)}
+                   </h1>
+                   <div className="flex items-center gap-2 mt-1">
+                     <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100">
+                       <Star size={14} className="text-amber-500 fill-amber-500" />
+                       <span className="text-sm font-bold text-amber-900">{avgRating}</span>
+                     </div>
+                     <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">• {reviews.length} {t('property.labels.reviews')}</span>
+                   </div>
+                 </div>
                  <div className="bg-brand-lime px-4 py-1.5 rounded-full text-brand-900 font-bold text-sm tracking-wide">
                    {isAvailable ? t('property.labels.active') : t('property.labels.inactive')}
                  </div>
@@ -346,7 +389,7 @@ export const PropertyDetail = () => {
                 <span className="text-gray-300">•</span>
                 <span>{p.area}</span>
                 <span className="text-gray-300">•</span>
-                <span>{p.city}</span>
+                <span>{t(`cities.${p.city}`) || p.city}</span>
               </div>
               <p className="text-gray-500 text-sm">
                 {(hasUnlocked || p.landlord_id === user?.id) ? (gatedData?.exact_location || `${p.area}, ${p.city}`) : `${p.area}, ${p.city} • ${p.pincode}`}
@@ -385,10 +428,10 @@ export const PropertyDetail = () => {
                  </div>
                  <div>
                    <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t('search.cityArea')}</p>
-                   <p className="text-gray-900 font-semibold">{p.city}</p>
+                   <p className="text-gray-900 font-semibold">{t(`cities.${p.city}`) || p.city}</p>
                  </div>
                  <div>
-                   <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">Pincode</p>
+                   <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">{t('property.labels.pincode')}</p>
                    <p className="text-gray-900 font-semibold mx-0">{p.pincode || 'N/A'}</p>
                  </div>
                  <div>
@@ -468,7 +511,7 @@ export const PropertyDetail = () => {
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display flex items-center gap-2">
                       <MapPin size={22} className="text-gray-300" />
-                      Location on Map
+                      {t('property.sections.locationMap')}
                     </h2>
                   </div>
                   <div className="relative h-[260px] overflow-hidden rounded-xl border border-black/5 bg-slate-50/20 flex items-center justify-center">
@@ -478,14 +521,6 @@ export const PropertyDetail = () => {
                         <Lock size={28} className="text-brand-500" />
                       </div>
                       <p className="text-brand-900/60 font-bold tracking-widest text-[12px] uppercase">{t('property.sections.locationLocked')}</p>
-                      <Button 
-                        variant="primary" 
-                        size="sm" 
-                        className="mt-4 rounded-full px-6 bg-[#CA3433] hover:bg-[#ac2d2c]"
-                        onClick={handleUnlock}
-                      >
-                        Unlock Map for ₹9
-                      </Button>
                     </div>
                   </div>
                 </div>
@@ -515,10 +550,10 @@ export const PropertyDetail = () => {
                     (hasUnlocked || p.landlord_id === user.id) ? (
                       <div className="space-y-3">
                         <a href={`tel:${gatedData?.contact_phone || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-colors text-[15px]">
-                          <Phone size={18} /> {gatedData?.contact_phone || 'Call Now'}
+                          <Phone size={18} /> {gatedData?.contact_phone || t('property.sections.callNow')}
                         </a>
                         <a href={`mailto:${gatedData?.contact_email || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-colors shadow-sm text-[15px]">
-                          <Mail size={18} /> Send Email
+                          <Mail size={18} /> {t('property.sections.sendEmail')}
                         </a>
                       </div>
                     ) : (
@@ -560,9 +595,9 @@ export const PropertyDetail = () => {
                   ) : (
                     <>
                       <Lock size={18} />
-                      <span>Pay</span>
+                      <span>{t('property.labels.pay')}</span>
                       <span className="bg-white/20 px-2 py-0.5 rounded-md text-[13px] font-black">₹9</span>
-                      <span>to Unlock Details</span>
+                      <span>{t('property.labels.toUnlock')}</span>
                     </>
                   )}
                 </button>
@@ -571,7 +606,7 @@ export const PropertyDetail = () => {
 
             {/* Listing Agent Card */}
             <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">Listing Agent</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 tracking-tight font-display">{t('property.sections.agent')}</h2>
               <div className="flex items-center gap-6">
                 <img src={p.profiles?.avatar_url || p.landlord?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.profiles?.full_name || 'Owner')}`} alt="Agent" className="w-16 h-16 rounded-full object-cover bg-gray-100" />
                 <div className="flex-1">
@@ -579,9 +614,9 @@ export const PropertyDetail = () => {
                   <div className="flex flex-col text-sm text-gray-500 mt-1 gap-1">
                     {(hasUnlocked || p.landlord_id === user?.id) ? (
                       <>
-                        <a href={`mailto:${gatedData?.contact_email || ''}`} className="hover:text-gray-900">{gatedData?.contact_email || 'Email provided after unlock'}</a>
+                        <a href={`mailto:${gatedData?.contact_email || ''}`} className="hover:text-gray-900">{gatedData?.contact_email || t('property.sections.emailLocked')}</a>
                         <span className="hidden sm:inline">•</span>
-                        <a href={`tel:${gatedData?.contact_phone || ''}`} className="hover:text-gray-900">{gatedData?.contact_phone || 'Phone provided after unlock'}</a>
+                        <a href={`tel:${gatedData?.contact_phone || ''}`} className="hover:text-gray-900">{gatedData?.contact_phone || t('property.sections.phoneLocked')}</a>
                       </>
                     ) : (
                       <span>{t('property.sections.contactLocked')}</span>
@@ -592,6 +627,116 @@ export const PropertyDetail = () => {
             </div>
           </div>
 
+        </div>
+
+        {/* Ratings & Reviews Section - Bottom Content */}
+        <div className="mt-8">
+            <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display">{t('property.sections.reviews')}</h2>
+                  <p className="text-sm text-gray-500 font-medium mt-1">{t('property.sections.authenticFeedback')}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-black text-gray-900">{avgRating}</p>
+                  <div className="flex justify-end gap-0.5 mt-1">
+                    {[1,2,3,4,5].map(n => (
+                      <Star key={n} size={12} className={n <= Math.round(avgRating) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Review Form */}
+              {user && !myReview && (
+                <div className="mb-10 p-6 rounded-2xl bg-[#F9F8F6] border border-gray-100">
+                  <h4 className="font-bold text-gray-900 mb-4">{t('property.sections.postReview')}</h4>
+                  <div className="mb-4">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{t('property.sections.yourRating')}</p>
+                    <StarRating value={reviewRating} onChange={setReviewRating} />
+                  </div>
+                  <div className="mb-4">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{t('property.sections.yourFeedback')}</p>
+                    <textarea
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      placeholder={t('property.sections.reviewPlaceholder')}
+                      className="w-full bg-white rounded-xl border border-gray-200 p-4 text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all min-h-[100px]"
+                    />
+                  </div>
+                  <Button
+                    variant="primary"
+                    className="w-full sm:w-auto rounded-full px-8 bg-[#CA3433]"
+                    disabled={submittingReview || !reviewRating || !reviewText.trim()}
+                    onClick={async () => {
+                      setSubmittingReview(true)
+                      try {
+                        await submitReview(p.id, reviewRating, reviewText)
+                        setReviewRating(0)
+                        setReviewText('')
+                        toast.success(t('property.sections.reviewSuccess'))
+                      } catch {
+                        toast.error(t('property.sections.reviewError'))
+                      } finally {
+                        setSubmittingReview(false)
+                      }
+                    }}
+                  >
+                    {submittingReview ? t('property.sections.posting') : t('property.sections.postReview')}
+                  </Button>
+                </div>
+              )}
+
+              {/* Reviews List */}
+              <div className="space-y-6 overflow-hidden">
+                {reviews.length === 0 ? (
+                  <div className="py-12 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-gray-300">
+                      <Star size={24} />
+                    </div>
+                    <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t('property.sections.noReviews')}</p>
+                    <p className="text-[13px] text-gray-400">{t('property.sections.beTheFirst')}</p>
+                  </div>
+                ) : (
+                  reviews.map(review => (
+                    <div key={review.id} className="group pb-6 border-b border-gray-100 last:border-0 last:pb-0 overflow-hidden">
+                      <div className="flex justify-between items-start mb-3 gap-2 flex-wrap">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <img
+                            src={review.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.profiles?.full_name || 'User')}`}
+                            alt="Reviewer"
+                            className="w-10 h-10 rounded-full bg-gray-100 object-cover flex-shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <h5 className="font-bold text-gray-900 text-[15px] flex items-center gap-1.5 truncate">
+                              {review.profiles?.full_name || t('property.sections.anonymous')}
+                              <CheckCircle2 size={12} className="text-brand-500" />
+                            </h5>
+                            <StarRating value={review.rating} readonly />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4 flex-shrink-0">
+                          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                            {new Date(review.created_at).toLocaleDateString()}
+                          </span>
+                          {user && user.id === review.reviewer_id && (
+                            <button
+                              onClick={() => deleteReview(review.id)}
+                              className="text-gray-300 hover:text-red-500 transition-colors"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap pl-0 sm:pl-13 break-words">
+                        {review.feedback}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
         </div>
       </div>
 

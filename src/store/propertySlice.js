@@ -23,6 +23,8 @@ const propertySlice = createSlice({
     hasMore: true,
     page: 0,
     totalCount: 0,
+    reviews: [],
+    reviewsLoading: false,
   },
   reducers: {
     setListings: (state, action) => {
@@ -71,6 +73,21 @@ const propertySlice = createSlice({
     setHasMore: (state, action) => { state.hasMore = action.payload },
     setPage: (state, action) => { state.page = action.payload },
     setTotalCount: (state, action) => { state.totalCount = action.payload },
+    setReviews: (state, action) => {
+      state.reviews = action.payload
+    },
+    addReview: (state, action) => {
+      const review = action.payload
+      const index = state.reviews.findIndex(r => r.id === review.id)
+      if (index >= 0) state.reviews[index] = review
+      else state.reviews.unshift(review)
+    },
+    removeReview: (state, action) => {
+      state.reviews = state.reviews.filter(r => r.id !== action.payload)
+    },
+    setReviewsLoading: (state, action) => {
+      state.reviewsLoading = action.payload
+    },
   },
 })
 
@@ -78,5 +95,6 @@ export const {
   setListings, appendListings, setFeatured, setCurrentProperty,
   setFavorites, toggleFavorite, setRecentlyViewed, addRecentlyViewed,
   setFilters, resetFilters, setLoading, setHasMore, setPage, setTotalCount,
+  setReviews, addReview, removeReview, setReviewsLoading
 } = propertySlice.actions
 export default propertySlice.reducer

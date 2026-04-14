@@ -6,7 +6,8 @@ import {
   setListings, appendListings, setFeatured, setCurrentProperty,
   setFavorites, toggleFavorite as toggleFav,
   setRecentlyViewed, addRecentlyViewed,
-  setLoading, setHasMore, setPage, setFilters, setTotalCount, resetFilters
+  setLoading, setHasMore, setPage, setFilters, setTotalCount, resetFilters,
+  setReviews, addReview, removeReview, setReviewsLoading
 } from '../store/propertySlice'
 
 const PAGE_SIZE = 12
@@ -20,7 +21,12 @@ const PUBLIC_PROFILE_FIELDS = 'full_name, avatar_url, bio'
 
 export const useProperties = () => {
   const dispatch = useDispatch()
-  const { listings, featured, currentProperty, favorites, recentlyViewed, filters, loading, hasMore, page, totalCount } = useSelector(s => s.property)
+  const { 
+    listings, featured, currentProperty, 
+    favorites, recentlyViewed, filters, 
+    loading, hasMore, page, totalCount,
+    reviews, reviewsLoading 
+  } = useSelector(s => s.property)
   const { user } = useSelector(s => s.auth)
 
   const fetchProperties = useCallback(async (reset = false) => {
@@ -138,6 +144,57 @@ export const useProperties = () => {
     }
   }, [user])
 
+  const fetchReviews = useCallback(async (propertyId) => {
+    dispatch(setReviewsLoading(true))
+    try {
+      const { data, error } = await supabase
+        .from('property_reviews')
+        .select('*, profiles(full_name, avatar_url)')
+        .eq('property_id', propertyId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      dispatch(setReviews(data || []))
+    } catch (err) {
+      console.error('fetchReviews error:', err)
+    } finally {
+      dispatch(setReviewsLoading(false))
+    }
+  }, [dispatch])
+
+  const submitReview = async (propertyId, rating, feedback) => {
+    if (!user) throw new Error('Must be logged in to submit a review')
+
+    const reviewData = {
+      property_id: propertyId,
+      reviewer_id: user.id,
+      rating,
+      feedback,
+    }
+
+    const { data, error } = await supabase
+      .from('property_reviews')
+      .upsert(reviewData, { onConflict: 'property_id,reviewer_id' })
+      .select('*, profiles(full_name, avatar_url)')
+      .maybeSingle()
+
+    if (error) throw error
+    dispatch(addReview(data))
+    return data
+  }
+
+  const deleteReview = async (reviewId) => {
+    if (!user) return
+    const { error } = await supabase
+      .from('property_reviews')
+      .delete()
+      .eq('id', reviewId)
+      .eq('reviewer_id', user.id)
+
+    if (error) throw error
+    dispatch(removeReview(reviewId))
+  }
+
   const createProperty = async (propertyData, images) => {
     const imageUrls = []
     for (const img of images) {
@@ -230,5 +287,7 @@ export const useProperties = () => {
     resetFilters: useCallback(() => dispatch(resetFilters()), [dispatch]),
     getRecommendedProperties,
     fetchGatedData,
+    reviews, reviewsLoading,
+    fetchReviews, submitReview, deleteReview
   }
 }

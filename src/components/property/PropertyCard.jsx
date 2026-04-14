@@ -14,7 +14,6 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
   const { user } = useSelector(s => s.auth)
   const { favorites, toggleFavorite } = useProperties()
   const [imgLoaded, setImgLoaded] = useState(false)
-  const [imgError, setImgError] = useState(false)
 
   const isFav = favorites.includes(property.id)
   const images = property.images || []
@@ -26,25 +25,13 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
     toggleFavorite(property.id)
   }
 
-  // Generate deterministic "random" values based on property ID
-  const simpleHash = (str) => {
-    let hash = 0
-    if (!str) return 0
-    for (let i = 0; i < str.length; i++) {
-      hash = ((hash << 5) - hash) + str.charCodeAt(i)
-      hash = hash & hash
-    }
-    return Math.abs(hash) % 100 / 100
-  }
-
   // Memoize values with deterministic calculation
   const { rating, numBeds } = useMemo(() => {
-    const seed = simpleHash(property.id?.toString() || '')
     return {
-      rating: property.rating || (4 + seed).toFixed(1),
-      numBeds: property.bedrooms || Math.floor(seed * 3) + 2,
+      rating: property.rating || '0.0',
+      numBeds: property.bedrooms || 0,
     }
-  }, [property.id, property.rating, property.bedrooms])
+  }, [property.rating, property.bedrooms])
 
   const formatPrice = (p) => {
     if (!p) return '0'
@@ -112,7 +99,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
   if (compact) {
     return (
       <div 
-        className="group bg-white rounded-2xl border border-gray-100 w-60 flex-shrink-0 overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 shadow-sm"
+        className="group bg-white rounded-2xl border border-gray-100 w-60 flex-shrink-0 overflow-hidden cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
         onClick={() => navigate(`/property/${property.id}`)}
       >
         <div className="relative aspect-[4/3] overflow-hidden rounded-b-xl">
@@ -139,8 +126,8 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false }) =
   return (
     <div
       className={cn(
-        'group bg-white rounded-2xl border border-gray-200 shadow-sm',
-        'hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col overflow-hidden'
+        'group bg-white rounded-2xl border border-gray-100 shadow-md',
+        'hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden'
       )}
       onClick={() => navigate(`/property/${property.id}`)}
     >

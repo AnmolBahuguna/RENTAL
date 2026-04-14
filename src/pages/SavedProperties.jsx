@@ -11,7 +11,7 @@ import { Skeleton } from '../components/ui/Skeleton'
 export const SavedProperties = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { fetchFavorites, favorites } = useProperties()
+  const { favorites } = useProperties()
   const [favProps, setFavProps] = useState([])
   const [loading, setLoading] = useState(true)
 

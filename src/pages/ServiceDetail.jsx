@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination, Navigation } from 'swiper/modules'
+import { useTranslation } from 'react-i18next'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
@@ -19,11 +20,11 @@ import { openAuthModal } from '../store/authSlice'
 import toast from 'react-hot-toast'
 import { LocationViewer } from '../components/map/LocationViewer'
 
-const CATEGORY_CONFIG = {
-  tiffin: { label: 'Tiffin', emoji: '🍱', color: 'bg-amber-100 text-amber-700', border: 'border-amber-200' },
-  laundry: { label: 'Laundry', emoji: '🧺', color: 'bg-blue-100 text-blue-700', border: 'border-blue-200' },
-  cleaning: { label: 'Cleaning', emoji: '🧹', color: 'bg-green-100 text-green-700', border: 'border-green-200' },
-}
+const getCategoryConfig = (t) => ({
+  tiffin:  { label: t('nearby.categories.tiffin'),  emoji: '🍱', color: 'bg-amber-100 text-amber-700', border: 'border-amber-200' },
+  laundry: { label: t('nearby.categories.laundry'), emoji: '🧺', color: 'bg-blue-100 text-blue-700', border: 'border-blue-200' },
+  cleaning: { label: t('nearby.categories.cleaning'), emoji: '🧹', color: 'bg-green-100 text-green-700', border: 'border-green-200' },
+})
 
 const StarRating = ({ value, onChange, readonly = false }) => (
   <div className="flex gap-1">
@@ -55,6 +56,7 @@ export const ServiceDetail = () => {
     fetchServiceById, fetchReviews, submitReview, deleteReview,
     fetchServiceGatedData 
   } = useServices()
+  const { t } = useTranslation()
 
   const [contactUnlocked, setContactUnlocked] = useState(false)
   const [gatedData, setGatedData] = useState(null)
@@ -103,16 +105,16 @@ export const ServiceDetail = () => {
   }, [service, user, id, fetchServiceGatedData])
 
   const service = currentService
-  const cat = service ? (CATEGORY_CONFIG[service.category] || {}) : {}
+  const categoryConfig = getCategoryConfig(t)
+  const cat = service ? (categoryConfig[service.category] || {}) : {}
   const images = service?.images || []
-  const mainImage = images[0] || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%239ca3af'%3ENo Image Available%3C/text%3E%3C/svg%3E"
 
   // Check if current user has already reviewed
   const myReview = reviews.find(r => r.reviewer_id === user?.id)
 
   const avgRating = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-    : (4.5 + (service?.id?.charCodeAt(0) % 5 / 10)).toFixed(1) // Deterministic fallback
+    : '0.0'
 
   const handleUnlockContact = () => {
     if (!user) {
@@ -121,26 +123,26 @@ export const ServiceDetail = () => {
     }
     setContactUnlocked(true)
     fetchServiceGatedData(id).then(setGatedData)
-    toast.success('Contact details revealed!')
+    toast.success(t('services.reviews.contactUnlocked'))
   }
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
-    toast.success('Link copied to clipboard!')
+    toast.success(t('property.sections.linkCopied'))
   }
 
   const handleSubmitReview = async () => {
     if (!user) { dispatch(openAuthModal('login')); return }
-    if (reviewRating === 0) { toast.error('Please select a rating'); return }
-    if (!reviewText.trim()) { toast.error('Please write some feedback'); return }
+    if (reviewRating === 0) { toast.error(t('property.sections.yourRating')) || toast.error('Please select a rating'); return }
+    if (!reviewText.trim()) { toast.error(t('property.sections.yourFeedback')) || toast.error('Please write some feedback'); return }
 
     setSubmittingReview(true)
     try {
       await submitReview(id, reviewRating, reviewText.trim())
       setReviewRating(0); setReviewText('')
-      toast.success(myReview ? 'Review updated!' : 'Review submitted!')
+      toast.success(myReview ? t('services.reviews.reviewUpdated') : t('services.reviews.reviewSubmitted'))
     } catch (err) {
-      toast.error(err.message || 'Could not submit review')
+      toast.error(err.message || t('property.sections.reviewError'))
     } finally {
       setSubmittingReview(false)
     }
@@ -149,8 +151,8 @@ export const ServiceDetail = () => {
   const handleDeleteReview = async (reviewId) => {
     try {
       await deleteReview(reviewId)
-      toast.success('Review deleted')
-    } catch { toast.error('Could not delete review') }
+      toast.success(t('services.reviews.reviewDeleted'))
+    } catch { toast.error(t('property.sections.reviewError')) }
   }
 
   const openGallery = (index) => {
@@ -229,7 +231,7 @@ export const ServiceDetail = () => {
       <div className="w-full px-4 sm:px-10 md:px-16 lg:px-20">
 
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 mb-6 transition-colors">
-          <ArrowLeft size={16} /> Back to Services
+          <ArrowLeft size={16} /> {t('services.labels.back')}
         </button>
 
         {/* MOBILE SLIDER */}
@@ -253,7 +255,7 @@ export const ServiceDetail = () => {
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${cat.color} ${cat.border} border`}>
                       {cat.emoji} {cat.label}
                     </span>
-                    <span>{service.area}, {service.city}</span>
+                    <span>{service.area}, {t(`cities.${service.city}`) || service.city}</span>
                   </div>
                 </div>
               </div>
@@ -264,11 +266,11 @@ export const ServiceDetail = () => {
                     <StarRating value={Math.round(parseFloat(avgRating))} readonly />
                   </div>
                   <span className="font-black text-sm text-gray-900">{avgRating}</span>
-                  <span className="text-gray-400 text-xs">({reviews.length} reviews)</span>
+                  <span className="text-gray-400 text-xs">({reviews.length} {t('property.labels.reviews')})</span>
                 </div>
                 {service.verification_status === 'verified' && (
                   <span className="flex items-center gap-1 text-xs text-green-600 font-bold bg-green-50 px-2.5 py-1 rounded-full border border-green-100">
-                    <CheckCircle2 size={14} /> Verified Provider
+                    <CheckCircle2 size={14} /> {t('services.labels.verifiedProvider')}
                   </span>
                 )}
               </div>
@@ -276,9 +278,9 @@ export const ServiceDetail = () => {
 
             {/* About & Provider Info (Combined) */}
             <div className="bg-white rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-              <h2 className="text-xl font-bold text-gray-900 mb-6 font-display">About Provider</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-6 font-display">{t('services.labels.aboutProvider')}</h2>
               <p className="text-sm text-gray-600 leading-relaxed mb-8">
-                {service.description || "Premium service provider committed to quality and reliability in the GoEazy marketplace."}
+                {service.description || t('services.labels.aboutFallback')}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -287,8 +289,8 @@ export const ServiceDetail = () => {
                     <Briefcase size={18} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Experience</p>
-                    <p className="text-sm font-bold text-gray-900">{service.experience || 'Experienced Provider'}</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('services.labels.experience')}</p>
+                    <p className="text-sm font-bold text-gray-900">{service.experience || t('services.labels.experienceFallback')}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
@@ -296,8 +298,8 @@ export const ServiceDetail = () => {
                     <Award size={18} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Speciality</p>
-                    <p className="text-sm font-bold text-gray-900">{service.speciality || 'General Services'}</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('services.labels.speciality')}</p>
+                    <p className="text-sm font-bold text-gray-900">{service.speciality || t('services.labels.specialityFallback')}</p>
                   </div>
                 </div>
               </div>
@@ -306,7 +308,7 @@ export const ServiceDetail = () => {
             {/* Service & Pricing Box */}
             {service.service_listings?.length > 0 && (
               <div className="bg-white rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                <h2 className="text-xl font-bold text-gray-900 mb-6 font-display">Services & Pricing</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-6 font-display">{t('services.labels.pricing')}</h2>
                 <div className="space-y-4">
                   {service.service_listings?.map(item => (
                     <div key={item.id} className="flex justify-between items-center p-4 rounded-xl bg-gray-50 border border-gray-100 hover:border-brand-200 transition-colors">
@@ -327,7 +329,7 @@ export const ServiceDetail = () => {
             {/* Subscription Plans Box */}
             {service.service_plans?.length > 0 && (
               <div className="bg-white rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-                <h2 className="text-xl font-bold text-gray-900 mb-6 font-display">Subscription Plans</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-6 font-display">{t('services.labels.plans')}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {service.service_plans.map(plan => (
                     <div key={plan.id} className="p-5 rounded-xl border border-gray-100 bg-white hover:shadow-md transition-shadow">
@@ -351,7 +353,7 @@ export const ServiceDetail = () => {
                 latitude={gatedData?.latitude || service.latitude}
                 longitude={gatedData?.longitude || service.longitude}
                 title={service.name}
-                address={gatedData?.address || service.map_address || service.address || `${service.area}, ${service.city}`}
+                address={gatedData?.address || service.map_address || service.address || `${service.area}, ${t(`cities.${service.city}`) || service.city}`}
               />
             )}
           </div>
@@ -366,22 +368,22 @@ export const ServiceDetail = () => {
 
             {/* CONTACT SIDEBAR (NO WORKING HOURS) */}
             <div id="contact-section" className="bg-white rounded-xl p-6 sm:p-8 shadow-[0_2px_24px_rgb(0,0,0,0.04)] border border-gray-100/50 sticky top-24">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 font-display">Provider Contact</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6 font-display">{t('services.labels.contact')}</h3>
 
               <div className="space-y-4 mb-8">
                 <div className="p-4 bg-[#F9F8F6] rounded-xl border border-gray-100">
-                  <p className="text-xs text-gray-400 font-bold mb-1 uppercase tracking-widest leading-none">Business Owner</p>
+                  <p className="text-xs text-gray-400 font-bold mb-1 uppercase tracking-widest leading-none">{t('services.labels.businessOwner')}</p>
                   <p className="font-bold text-gray-900 text-base">{service.profiles?.full_name || service.name}</p>
                 </div>
               </div>
 
               <div className="mb-8 pt-6 border-t border-gray-50">
-                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Location Detail</h4>
+                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t('services.labels.locationDetail')}</h4>
                 <div className="flex items-start gap-2">
                   <MapPin size={16} className="text-gray-400 mt-1 shrink-0" />
                   <p className="text-xs text-gray-600 font-medium leading-relaxed">
-                    {gatedData?.address || service.address || `${service.area}, ${service.city}, ${service.state}`}
-                    {service.landmark && <span className="block mt-1 text-gray-400">Near {service.landmark}</span>}
+                    {gatedData?.address || service.address || `${service.area}, ${t(`cities.${service.city}`) || service.city}, ${t('nav.state')}`}
+                    {service.landmark && <span className="block mt-1 text-gray-400">{t('services.labels.near')} {service.landmark}</span>}
                   </p>
                 </div>
               </div>
@@ -396,7 +398,7 @@ export const ServiceDetail = () => {
                         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-red-50 text-[#CA3433]">
                           <EyeOff size={24} />
                         </div>
-                        <p className="font-black text-gray-900 text-sm uppercase tracking-widest">Locked</p>
+                        <p className="font-black text-gray-900 text-sm uppercase tracking-widest">{t('services.labels.locked')}</p>
                       </div>
                     </div>
                     <button
@@ -406,11 +408,11 @@ export const ServiceDetail = () => {
                       {user ? (
                         <>
                           <Lock size={18} />
-                          <span>Pay</span>
+                          <span>{t('property.labels.pay')}</span>
                           <span className="bg-white/20 px-2 py-0.5 rounded-md text-[13px] font-black">₹9</span>
-                          <span>to Unlock Details</span>
+                          <span>{t('property.labels.toUnlock')}</span>
                         </>
-                      ) : 'Login to View Contact'}
+                      ) : t('services.labels.loginPrompt')}
                     </button>
                   </div>
                 ) : (
@@ -422,7 +424,7 @@ export const ServiceDetail = () => {
                     )}
                     {service.contact_email && (
                       <a href={`mailto:${gatedData?.contact_email || service.contact_email}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-colors shadow-sm text-[15px]">
-                        <Mail size={18} /> {gatedData?.contact_email || 'Send Email'}
+                        <Mail size={18} /> {gatedData?.contact_email || t('property.sections.sendEmail')}
                       </a>
                     )}
                   </div>
@@ -434,25 +436,25 @@ export const ServiceDetail = () => {
 
         {/* Customer Reviews (Moved to Bottom for Mobile Parity) */}
         <div className="mt-8 lg:mt-12 bg-white rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 font-display">Customer Reviews</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 font-display">{t('services.reviews.header')}</h2>
 
           {/* Post Review */}
           {user && (profile?.role === 'user' || !profile?.role) && (
             <div className="mb-8 p-6 bg-[#F9F8F6] rounded-2xl border border-gray-100">
-              <p className="font-bold text-gray-900 mb-4">{myReview ? 'Update Your Feedback' : 'Share Your Experience'}</p>
+              <p className="font-bold text-gray-900 mb-4">{myReview ? t('services.reviews.updateFeedback') : t('services.reviews.shareExperience')}</p>
               <div className="mb-4">
                 <StarRating value={reviewRating || myReview?.rating || 0} onChange={setReviewRating} />
               </div>
               <textarea
                 className="w-full bg-white border border-gray-100 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#CA3433]/10 resize-none"
                 rows={3}
-                placeholder="Tell others what you think..."
+                placeholder={t('services.reviews.sharePrompt')}
                 value={reviewText}
                 onChange={e => setReviewText(e.target.value)}
               />
               <div className="flex justify-end mt-3">
                 <Button size="sm" className="bg-[#CA3433] hover:bg-[#ac2d2c] rounded-full gap-2 px-6" loading={submittingReview} onClick={handleSubmitReview}>
-                  <Send size={14} /> {myReview ? 'Update' : 'Post Review'}
+                  <Send size={14} /> {myReview ? t('services.reviews.updateFeedback') : t('services.reviews.shareExperience')}
                 </Button>
               </div>
             </div>
@@ -480,7 +482,7 @@ export const ServiceDetail = () => {
                               {r.profiles?.full_name?.[0]?.toUpperCase() || 'U'}
                             </div>
                             <div>
-                              <p className="font-bold text-gray-900 text-sm">{r.profiles?.full_name || 'Anonymous User'}</p>
+                              <p className="font-bold text-gray-900 text-sm">{r.profiles?.full_name || t('services.reviews.anonymousUser')}</p>
                               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{new Date(r.created_at).toLocaleDateString()}</p>
                             </div>
                           </div>
@@ -509,7 +511,7 @@ export const ServiceDetail = () => {
                           {r.profiles?.full_name?.[0]?.toUpperCase() || 'U'}
                         </div>
                         <div>
-                          <p className="font-bold text-gray-900 text-sm">{r.profiles?.full_name || 'Anonymous User'}</p>
+                          <p className="font-bold text-gray-900 text-sm">{r.profiles?.full_name || t('services.reviews.anonymousUser')}</p>
                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{new Date(r.created_at).toLocaleDateString()}</p>
                         </div>
                       </div>
@@ -530,7 +532,7 @@ export const ServiceDetail = () => {
               )
             ) : (
               <div className="text-center py-10">
-                <p className="text-gray-400 text-sm">No reviews yet. Be the first to share your experience!</p>
+                <p className="text-gray-400 text-sm">{t('services.reviews.noReviewsYet')}</p>
               </div>
             )}
           </div>

@@ -47,7 +47,7 @@ export const ServiceProviderDashboard = () => {
     try {
       const data = await getMyServices()
       setMyServices(data)
-    } catch (err) {
+    } catch {
       toast.error('Could not load your listings')
     } finally {
       setLoading(false)
@@ -62,8 +62,8 @@ export const ServiceProviderDashboard = () => {
       await deleteService(id)
       setMyServices(v => v.filter(s => s.id !== id))
       toast.success('Listing deleted')
-    } catch {
-      toast.error('Could not delete listing')
+    } catch (err) {
+      toast.error('Failed to register service provider account')
     }
   }
 

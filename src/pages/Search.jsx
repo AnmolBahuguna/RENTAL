@@ -294,15 +294,15 @@ export const Search = () => {
                 onClick={handleResetQuiz}
                 className="text-xs font-bold text-[#CA3433] hover:underline px-3 py-1.5 rounded-lg border border-red-100 bg-red-50/30 transition-all active:scale-95"
               >
-                Reset Preferences
+                Reset
               </button>
             </div>
             <div className="flex gap-3 sm:gap-6 xl:gap-8 overflow-x-auto pb-4 px-1 no-scrollbar -mx-1 snap-x snap-mandatory">
               {recommendations.map(p => (
                 <div key={`rec-${p.id}`} className={cn(
                   "relative flex-none ring-1 ring-[#CA3433]/10 rounded-2xl group snap-start",
-                  viewMode === 'list' 
-                    ? "w-[88%]" 
+                  viewMode === 'list'
+                    ? "w-[88%]"
                     : "w-[40%] sm:w-[25%] lg:w-[20%] xl:w-[16%]"
                 )}>
                   <div className={cn(

@@ -4,38 +4,27 @@ import { Star, Eye, MapPin, CheckCircle } from 'lucide-react'
 import { cn } from '../../utils/helpers'
 import { useTranslation } from 'react-i18next'
 
-const CATEGORY_CONFIG = {
-  tiffin:   { label: 'Tiffin',   emoji: '🍱', color: 'bg-amber-100 text-amber-700', border: 'border-amber-200' },
-  laundry:  { label: 'Laundry',  emoji: '🧺', color: 'bg-blue-100 text-blue-700',   border: 'border-blue-200' },
-  cleaning: { label: 'Cleaning', emoji: '🧹', color: 'bg-green-100 text-green-700', border: 'border-green-200' },
-}
+const getCategoryConfig = (t) => ({
+  tiffin:   { label: t('nearby.categories.tiffin'),   emoji: '🍱', color: 'bg-amber-100 text-amber-700', border: 'border-amber-200' },
+  laundry:  { label: t('nearby.categories.laundry'),  emoji: '🧺', color: 'bg-blue-100 text-blue-700',   border: 'border-blue-200' },
+  cleaning: { label: t('nearby.categories.cleaning'), emoji: '🧹', color: 'bg-green-100 text-green-700', border: 'border-green-200' },
+})
 
 const ServiceCardComponent = ({ service, layout = 'grid' }) => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [imgLoaded, setImgLoaded] = useState(false)
   
-  const cat = CATEGORY_CONFIG[service.category] || { label: service.category, emoji: '🛠️', color: 'bg-gray-100 text-gray-700' }
+  const categoryConfig = getCategoryConfig(t)
+  const cat = categoryConfig[service.category] || { label: service.category, emoji: '🛠️', color: 'bg-gray-100 text-gray-700' }
   const mainImage = (service.images && service.images[0]) || null
-
-  // Generate deterministic "random" values based on service ID
-  const simpleHash = (str) => {
-    let hash = 0
-    if (!str) return 0
-    for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 5) - hash) + str.charCodeAt(i)
-        hash = hash & hash
-    }
-    return Math.abs(hash) % 100 / 100
-  }
 
   // Memoize values with deterministic calculation
   const { rating } = useMemo(() => {
-    const seed = simpleHash(service.id?.toString() || '')
     return {
-      rating: service.avg_rating || (4 + seed).toFixed(1),
+      rating: service.avg_rating || '0.0',
     }
-  }, [service.id, service.avg_rating])
+  }, [service.avg_rating])
 
   const formatPrice = (p) => {
     if (!p) return '0'
@@ -45,7 +34,6 @@ const ServiceCardComponent = ({ service, layout = 'grid' }) => {
 
   // Get first available price from listings
   const firstPrice = service.service_listings?.[0]?.price || 0
-  const firstUnit = service.service_listings?.[0]?.unit || 'pkg'
 
   if (layout === 'list') {
     return (
@@ -88,7 +76,7 @@ const ServiceCardComponent = ({ service, layout = 'grid' }) => {
 
           <div className="flex items-end justify-between mt-auto pb-0.5">
             <div className="flex flex-col">
-              <span className="text-[9px] font-bold text-gray-400 uppercase leading-none mb-0.5">Starting From</span>
+              <span className="text-[9px] font-bold text-gray-400 uppercase leading-none mb-0.5">{t('services.labels.startingFrom')}</span>
               <span className="font-black text-gray-900 text-base sm:text-lg leading-none">₹{formatPrice(firstPrice)}</span>
             </div>
             
@@ -106,8 +94,8 @@ const ServiceCardComponent = ({ service, layout = 'grid' }) => {
   return (
     <div
       className={cn(
-        'group bg-white rounded-2xl border border-gray-200 shadow-sm',
-        'hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col overflow-hidden'
+        'group bg-white rounded-2xl border border-gray-100 shadow-md',
+        'hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden'
       )}
       onClick={() => navigate(`/services/${service.id}`)}
     >
@@ -138,7 +126,7 @@ const ServiceCardComponent = ({ service, layout = 'grid' }) => {
       <div className="px-3.5 py-2.5 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-0.5">
           <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-1">
-            <MapPin size={10} /> {service.area}
+            <MapPin size={10} /> {service.area}, {t(`cities.${service.city}`) || service.city}
           </span>
           <div className="flex items-center gap-1 bg-gray-50/50 px-1 py-0.5 rounded-lg">
             <span className="font-black text-[9px] text-gray-900">{rating}</span>
@@ -151,12 +139,12 @@ const ServiceCardComponent = ({ service, layout = 'grid' }) => {
         </h3>
         
         <p className="text-[11px] text-gray-500 font-bold mb-2 line-clamp-1">
-           {service.speciality || 'Premium Service Provider'}
+           {service.speciality || t('services.labels.descriptionFallback') || t('services.labels.aboutFallback')}
         </p>
         
         <div className="mt-auto pt-2 border-t border-gray-50 flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="text-[8px] font-bold text-gray-400 uppercase leading-none">From</span>
+            <span className="text-[8px] font-bold text-gray-400 uppercase leading-none">{t('services.labels.from')}</span>
             <span className="font-black text-gray-900 text-base leading-tight">₹{formatPrice(firstPrice)}</span>
           </div>
           <button className="text-[#CA3433] hover:text-brand-800 transition-colors">

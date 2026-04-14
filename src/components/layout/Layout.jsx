@@ -4,7 +4,7 @@ import { Navbar } from '../layout/Navbar'
 import { Footer } from '../layout/Footer'
 import { AuthModal } from '../auth/AuthModal'
 import { Toaster } from 'react-hot-toast'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
 export const Layout = ({ children }) => {
   const location = useLocation()

@@ -14,7 +14,18 @@ const resources = {
         login: 'Login',
         dashboard: 'Dashboard',
         settings: 'Settings',
-        signOut: 'Sign Out'
+        signOut: 'Sign Out',
+        state: 'Uttarakhand'
+      },
+      cities: {
+        Dehradun: 'Dehradun',
+        Srinagar: 'Srinagar',
+        Rishikesh: 'Rishikesh',
+        Haldwani: 'Haldwani',
+        Nainital: 'Nainital',
+        Haridwar: 'Haridwar',
+        Roorkee: 'Roorkee',
+        Rudrapur: 'Rudrapur'
       },
       hero: {
         titlePrefix: 'GO',
@@ -65,7 +76,11 @@ const resources = {
           views: 'views',
           active: 'Active',
           inactive: 'Inactive',
-          back: 'Back to Search'
+          back: 'Back to Search',
+          reviews: 'Reviews',
+          pincode: 'Pincode',
+          pay: 'Pay',
+          toUnlock: 'to Unlock Details'
         },
         sections: {
           about: 'About',
@@ -84,8 +99,57 @@ const resources = {
           sendEmail: 'Send Email',
           contactLocked: 'Contact details locked. Unlock to view.',
           descLocked: 'Full description locked',
-          payToUnlockAll: 'Pay ₹9 to unlock all details',
-          landmarksLocked: 'Nearby landmarks locked'
+          landmarksLocked: 'Nearby landmarks locked',
+          locationLocked: 'Location Locked',
+          locationMap: 'Location on Map',
+          reviews: 'Ratings & Reviews',
+          noReviews: 'No reviews yet',
+          beTheFirst: 'Be the first to share your experience!',
+          linkCopied: 'Link copied to clipboard!',
+          emailLocked: 'Email provided after unlock',
+          phoneLocked: 'Phone provided after unlock',
+          authenticFeedback: 'Authentic feedback from students & professionals',
+          postReview: 'Post a Review',
+          yourRating: 'Your Rating',
+          yourFeedback: 'Your Feedback',
+          reviewPlaceholder: 'Share your experience staying here...',
+          reviewSuccess: 'Review posted successfully!',
+          reviewError: 'Failed to post review',
+          posting: 'Posting...',
+          anonymous: 'Anonymous'
+        }
+      },
+      services: {
+        labels: {
+          verifiedProvider: 'Verified Provider',
+          aboutProvider: 'About Provider',
+          experience: 'Experience',
+          speciality: 'Speciality',
+          pricing: 'Services & Pricing',
+          plans: 'Subscription Plans',
+          businessOwner: 'Business Owner',
+          locationDetail: 'Location Detail',
+          near: 'Near',
+          locked: 'Locked',
+          startingFrom: 'Starting From',
+          from: 'From',
+          back: 'Back to Services',
+          contact: 'Provider Contact',
+          aboutFallback: 'Premium service provider committed to quality and reliability in the GoEazy marketplace.',
+          experienceFallback: 'Experienced Provider',
+          specialityFallback: 'General Services',
+          loginPrompt: 'Login to View Contact'
+        },
+        reviews: {
+          header: 'Customer Reviews',
+          shareExperience: 'Share Your Experience',
+          updateFeedback: 'Update Your Feedback',
+          sharePrompt: 'Tell others what you think...',
+          reviewUpdated: 'Review updated!',
+          reviewSubmitted: 'Review submitted!',
+          reviewDeleted: 'Review deleted',
+          noReviewsYet: 'No reviews yet. Be the first to share your experience!',
+          anonymousUser: 'Anonymous User'
         }
       },
       footer: {
@@ -153,11 +217,39 @@ const resources = {
           ]
         }
       },
-      nearbyPage: {
-        title: 'Nearby Services',
-        comingSoon: 'Coming Soon',
-        desc: "We're curating a verified list of laundry, tiffin services, and essential utilities to make your stay even easier.",
-        back: 'Back to Explore'
+      nearby: {
+        header: 'Nearby',
+        services: 'Services',
+        backHome: 'Back to Home',
+        locationSel: 'Location Selection',
+        cityPlaceholder: 'City (e.g. Dehradun)',
+        areaPlaceholder: 'Area / Landmark',
+        sortBy: 'Sort By',
+        category: 'Service Category',
+        reset: 'Reset All',
+        showResults: 'Show Results',
+        allCities: 'All Cities',
+        selectCity: 'Select City',
+        searchPlaceholder: 'Search services, providers...',
+        areaSearchPlaceholder: 'Enter specific area or landmark (e.g. Rajpur Road)',
+        providersFound_one: '{{count}} provider found',
+        providersFound_other: '{{count}} providers found',
+        searching: 'Searching...',
+        noFound: 'No services found',
+        noFoundDesc: 'Try adjusting your search query or filters to find what you\'re looking for.',
+        loadMore: 'Load More Services',
+        filters: 'Filters',
+        categories: {
+          all: 'All Services',
+          tiffin: 'Tiffin',
+          laundry: 'Laundry',
+          cleaning: 'Cleaning'
+        },
+        sort: {
+          newest: 'Newest First',
+          oldest: 'Oldest First',
+          popular: 'Most Popular'
+        }
       },
       aboutPage: {
         title: 'The Story of GoEazy',
@@ -182,7 +274,18 @@ const resources = {
         login: 'लॉगिन',
         dashboard: 'डैशबोर्ड',
         settings: 'सेटिंग्स',
-        signOut: 'लॉग आउट'
+        signOut: 'लॉग आउट',
+        state: 'उत्तराखंड'
+      },
+      cities: {
+        Dehradun: 'देहरादून',
+        Srinagar: 'श्रीनगर',
+        Rishikesh: 'ऋषिकेश',
+        Haldwani: 'हल्द्वानी',
+        Nainital: 'नैनीताल',
+        Haridwar: 'हरिद्वार',
+        Roorkee: 'रुड़की',
+        Rudrapur: 'रुद्रपुर'
       },
       hero: {
         titlePrefix: 'GO',
@@ -233,7 +336,11 @@ const resources = {
           views: 'व्यूज',
           active: 'सक्रिय',
           inactive: 'निष्क्रिय',
-          back: 'खोज पर वापस जाएं'
+          back: 'खोज पर वापस जाएं',
+          reviews: 'रिव्यु',
+          pincode: 'पिनकोड',
+          pay: 'भुगतान',
+          toUnlock: 'विवरण अनलॉक करने के लिए'
         },
         sections: {
           about: 'विवरण',
@@ -252,8 +359,57 @@ const resources = {
           sendEmail: 'ईमेल भेजें',
           contactLocked: 'संपर्क विवरण लॉक हैं। देखने के लिए अनलॉक करें।',
           descLocked: 'संपूर्ण विवरण लॉक है',
-          payToUnlockAll: 'सभी विवरण अनलॉक करने के लिए ₹9 भुगतान करें',
-          landmarksLocked: 'नज़दीकी लैंडमार्क लॉक हैं'
+          landmarksLocked: 'नज़दीकी लैंडमार्क लॉक हैं',
+          locationLocked: 'लोकेशन लॉक है',
+          locationMap: 'नक्शे पर स्थान',
+          reviews: 'रेटिंग और रिव्यु',
+          noReviews: 'अभी तक कोई रिव्यु नहीं',
+          beTheFirst: 'अपना अनुभव साझा करने वाले पहले व्यक्ति बनें!',
+          linkCopied: 'लिंक क्लिपबोर्ड पर कॉपी किया गया!',
+          emailLocked: 'अनलॉक के बाद ईमेल उपलब्ध होगा',
+          phoneLocked: 'अनलॉक के बाद फोन उपलब्ध होगा',
+          authenticFeedback: 'छात्रों और पेशेवरों से वास्तविक प्रतिक्रिया',
+          postReview: 'रिव्यु पोस्ट करें',
+          yourRating: 'आपकी रेटिंग',
+          yourFeedback: 'आपकी प्रतिक्रिया',
+          reviewPlaceholder: 'यहाँ रहने के अपने अनुभव साझा करें...',
+          reviewSuccess: 'रिव्यु सफलतापूर्वक पोस्ट किया गया!',
+          reviewError: 'रिव्यु पोस्ट करने में विफल',
+          posting: 'पोस्ट हो रहा है...',
+          anonymous: 'अज्ञात'
+        }
+      },
+      services: {
+        labels: {
+          verifiedProvider: 'सत्यापित प्रदाता',
+          aboutProvider: 'प्रदाता के बारे में',
+          experience: 'अनुभव',
+          speciality: 'विशेषता',
+          pricing: 'सेवाएँ और कीमतें',
+          plans: 'सब्सक्रिप्शन प्लान',
+          businessOwner: 'बिजनेस मालिक',
+          locationDetail: 'स्थान का विवरण',
+          near: 'के पास',
+          locked: 'लॉक है',
+          startingFrom: 'से शुरू',
+          from: 'से',
+          back: 'सेवाओं पर वापस जाएं',
+          contact: 'प्रदाता संपर्क',
+          aboutFallback: 'GoEazy मार्केटप्लेस में गुणवत्ता और विश्वसनीयता के लिए प्रतिबद्ध प्रीमियम सेवा प्रदाता।',
+          experienceFallback: 'अनुभवी प्रदाता',
+          specialityFallback: 'सामान्य सेवाएँ',
+          loginPrompt: 'संपर्क देखने के लिए लॉगिन करें'
+        },
+        reviews: {
+          header: 'ग्राहक रिव्यु',
+          shareExperience: 'अपना अनुभव साझा करें',
+          updateFeedback: 'अपनी प्रतिक्रिया अपडेट करें',
+          sharePrompt: 'दूसरों को बताएं कि आप क्या सोचते हैं...',
+          reviewUpdated: 'रिव्यु अपडेट किया गया!',
+          reviewSubmitted: 'रिव्यु सबमिट किया गया!',
+          reviewDeleted: 'रिव्यु हटा दिया गया',
+          noReviewsYet: 'अभी तक कोई रिव्यु नहीं। अपना अनुभव साझा करने वाले पहले व्यक्ति बनें!',
+          anonymousUser: 'अज्ञात उपयोगकर्ता'
         }
       },
       footer: {
@@ -321,11 +477,39 @@ const resources = {
           ]
         }
       },
-      nearbyPage: {
-        title: 'नज़दीकी सेवाएँ',
-        comingSoon: 'जल्द आ रहा है',
-        desc: 'हम लॉन्ड्री, टिफिन सर्विस और अन्य आवश्यक सेवाओं की एक सत्यापित सूची तैयार कर रहे हैं ताकि आपका रहना और भी आसान हो सके।',
-        back: 'होम पर वापस जाएं'
+      nearby: {
+        header: 'पास की',
+        services: 'सेवाएँ',
+        backHome: 'होम पर वापस जाएं',
+        locationSel: 'स्थान चयन',
+        cityPlaceholder: 'शहर (जैसे देहरादून)',
+        areaPlaceholder: 'क्षेत्र / लैंडमार्क',
+        sortBy: 'क्रमबद्ध करें',
+        category: 'सेवा श्रेणी',
+        reset: 'सब रीसेट करें',
+        showResults: 'परिणाम दिखाएं',
+        allCities: 'सभी शहर',
+        selectCity: 'शहर चुनें',
+        searchPlaceholder: 'सेवाएं, प्रदाता खोजें...',
+        areaSearchPlaceholder: 'विशिष्ट क्षेत्र या लैंडमार्क दर्ज करें (जैसे राजपुर रोड)',
+        providersFound_one: '{{count}} सेवा प्रदाता मिला',
+        providersFound_other: '{{count}} सेवा प्रदाता मिले',
+        searching: 'खोज रहे हैं...',
+        noFound: 'कोई सेवा नहीं मिली',
+        noFoundDesc: 'अपनी खोज या फ़िल्टर बदलने का प्रयास करें।',
+        loadMore: 'और सेवाएँ दिखाएं',
+        filters: 'फिल्टर',
+        categories: {
+          all: 'सभी सेवाएँ',
+          tiffin: 'टिफिन',
+          laundry: 'लॉन्ड्री',
+          cleaning: 'सफाई'
+        },
+        sort: {
+          newest: 'नवीनतम पहले',
+          oldest: 'पुराना पहले',
+          popular: 'सबसे लोकप्रिय'
+        }
       },
       aboutPage: {
         title: 'GoEazy की कहानी',

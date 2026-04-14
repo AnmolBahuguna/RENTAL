@@ -1,0 +1,135 @@
+﻿
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\components\common\OnboardingQuiz.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\components\common\ScrollToTop.jsx
+  5:21  error  'search' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\components\home\PropertySection.jsx
+  89:40  warning  React Hook useEffect has a missing dependency: 'fetchFeatured'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\components\layout\BannerSlider.jsx
+  1:27  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\components\layout\Layout.jsx
+  7:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\components\property\PropertyCard.jsx
+  17:10  error  'imgError' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  17:20  error  'setImgError' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  30:9   error  'simpleHash' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u   no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\components\property\PropertyForm.jsx
+  244:53  error  'e' is defined but never used  no-unused-vars
+  244:56  error  Empty block statement          no-empty
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\components\services\ServiceCard.jsx
+  23:9  error  'simpleHash' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  48:9  error  'firstUnit' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u   no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\hooks\useAuth.js
+  36:6  warning  React Hook useEffect has missing dependencies: 'dispatch' and 'fetchProfile'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\hooks\useProperties.js
+  255:14  error  'err' is defined but never used  no-unused-vars
+  266:13  error  Empty block statement            no-empty
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\hooks\useServices.js
+  300:9   error  'payServiceListing' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  324:5   error  Duplicate key 'submitReview'                                                                       no-dupe-keys
+  324:19  error  Duplicate key 'deleteReview'                                                                       no-dupe-keys
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\LandlordDashboard.jsx
+  26:6  warning  React Hook useEffect has a missing dependency: 'loadProperties'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\NearbyServices.jsx
+    2:23  error    'useSelector' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          no-unused-vars
+   56:6   warning  React Hook useEffect has missing dependencies: 'filters.category' and 'updateFilters'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react-hooks/exhaustive-deps
+   65:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  63 |   // Sync local filters with global filters
+  64 |   useEffect(() => {
+> 65 |     setLocalFilters({
+     |     ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  66 |       city: filters.city || '', 
+  67 |       area: filters.area || '', 
+  68 |       category: filters.category || '',  react-hooks/set-state-in-effect
+  152:33  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `renderFilterContent`, but the source dependencies were [localFilters, showFilters, dispatch, t, CATEGORIES, serviceSortOptions]. Inferred different dependency than source.
+
+  150 |   )
+  151 |
+> 152 |   const filterContent = useMemo(() => renderFilterContent(), [localFilters, showFilters, dispatch, t, CATEGORIES, serviceSortOptions])
+      |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^ Could not preserve existing manual memoization
+  153 |
+  154 |   // Live search handler
+  155 |   const handleSearch = (e) => {                                                                                                           react-hooks/preserve-manual-memoization
+  152:62  warning  React Hook useMemo has a missing dependency: 'renderFilterContent'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\PropertyDetail.jsx
+    1:38  error    'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                    no-unused-vars
+   49:14  error    'reviewsLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                   no-unused-vars
+   86:6   warning  React Hook useEffect has missing dependencies: 'checkUnlockStatus', 'fetchPropertyById', and 'fetchReviews'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  295:9   error    'mainImage' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                        no-unused-vars
+  296:9   error    'otherImages' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                      no-unused-vars
+  678:32  error    'err' is defined but never used                                                                                                                                  no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\PropertyEdit.jsx
+  15:6  warning  React Hook useEffect has a missing dependency: 'fetchPropertyById'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\SavedProperties.jsx
+  14:11  error    'fetchFavorites' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                     no-unused-vars
+  22:6   warning  React Hook useEffect has a missing dependency: 'loadProperties'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\Search.jsx
+   46:3   warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+  190:62  warning  React Hook useMemo has a missing dependency: 'renderFilterContent'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\ServiceDetail.jsx
+   56:17  error  'useTranslation' is not defined                                                            no-undef
+   82:13  error  'fetchServiceById' is not defined                                                          no-undef
+   83:13  error  'fetchReviews' is not defined                                                              no-undef
+  104:19  error  'currentService' is not defined                                                            no-undef
+  108:9   error  'mainImage' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  111:20  error  'reviews' is not defined                                                                   no-undef
+  113:21  error  'reviews' is not defined                                                                   no-undef
+  114:8   error  'reviews' is not defined                                                                   no-undef
+  114:56  error  'reviews' is not defined                                                                   no-undef
+  139:13  error  'submitReview' is not defined                                                              no-undef
+  151:13  error  'deleteReview' is not defined                                                              no-undef
+  267:61  error  'reviews' is not defined                                                                   no-undef
+  463:14  error  'reviews' is not defined                                                                   no-undef
+  464:15  error  'reviews' is not defined                                                                   no-undef
+  474:20  error  'reviews' is not defined                                                                   no-undef
+  504:17  error  'reviews' is not defined                                                                   no-undef
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\ServiceNew.jsx
+  1:17  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u    no-unused-vars
+  1:38  error  'useCallback' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\ServiceProviderDashboard.jsx
+  50:14  error    'err' is defined but never used                                                                                    no-unused-vars
+  57:41  warning  React Hook useEffect has a missing dependency: 'loadMyServices'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  92:34  error    'response' is defined but never used                                                                               no-unused-vars
+  97:20  error    'err' is defined but never used                                                                                    no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\SystemAdmin.jsx
+  12:17  error    'profile' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                        no-unused-vars
+  32:6   warning  React Hook useEffect has missing dependencies: 'loadProviders' and 'role'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  71:14  error    'err' is defined but never used                                                                                                no-unused-vars
+
+C:\Users\prrii\Documents\STARTUP GOEAZY\src\pages\UserDashboard.jsx
+  13:11  error    'fetchFavorites' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                     no-unused-vars
+  13:27  error    'fetchRecentlyViewed' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                no-unused-vars
+  22:6   warning  React Hook useEffect has a missing dependency: 'loadProperties'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+Γ£û 63 problems (50 errors, 13 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

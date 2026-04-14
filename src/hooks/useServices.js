@@ -321,7 +321,7 @@ export const useServices = () => {
     getMyServices,
     getAdminPendingServices,
     updateServiceStatus,
-    submitReview, deleteReview, 
+    payServiceListing,
     setServiceFilters: useCallback((f) => dispatch(setServiceFilters(f)), [dispatch]),
     fetchServiceGatedData
   }

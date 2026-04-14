@@ -10,7 +10,7 @@ import { Skeleton } from '../components/ui/Skeleton'
 
 export const UserDashboard = () => {
   const { user, profile } = useAuth()
-  const { fetchFavorites, fetchRecentlyViewed, favorites, recentlyViewed } = useProperties()
+  const { favorites, recentlyViewed } = useProperties()
   const [favProps, setFavProps] = useState([])
   const [recentProps, setRecentProps] = useState([])
   const [loading, setLoading] = useState(true)
