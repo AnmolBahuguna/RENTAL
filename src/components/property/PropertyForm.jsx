@@ -481,12 +481,12 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
         </div>
 
         <div className="flex gap-4 pt-6">
-          <Button type="button" variant="secondary" size="lg" className="flex-1" onClick={() => navigate(-1)} disabled={loading}>
+          <Button type="button" variant="secondary" size="md" className="flex-1" onClick={() => navigate(-1)} disabled={loading}>
             Cancel
           </Button>
 
           {isEdit ? (
-            <Button type="submit" variant="primary" size="lg" className="flex-1" loading={loading} disabled={loading}>
+            <Button type="submit" variant="primary" size="md" className="flex-1" loading={loading} disabled={loading}>
               Save Changes
             </Button>
           ) : (
@@ -494,9 +494,8 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
               type="button"
               onClick={handlePayToGoLive}
               disabled={loading}
-              className="flex-1 relative overflow-hidden flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#CA3433] to-[#E63946] text-white font-extrabold text-base shadow-xl shadow-red-500/30 hover:shadow-red-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:scale-100 group"
+              className="flex-1 relative overflow-hidden flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#CA3433] to-[#E63946] text-white font-extrabold text-sm shadow-lg shadow-red-500/20 hover:shadow-red-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:scale-100 group"
             >
-              {/* Shine effect */}
               <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
               
               {loading ? (
@@ -509,9 +508,9 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
                 </span>
               ) : (
                 <>
-                  <Zap size={20} className="shrink-0" />
-                  <span>PAY to Go Live</span>
-                  <span className="ml-1 bg-white/20 px-2 py-0.5 rounded-lg text-sm font-black">₹199</span>
+                  <Zap size={18} className="shrink-0" />
+                  <span>GO LIVE</span>
+                  <span className="ml-0.5 bg-white/20 px-2 py-0.5 rounded-lg text-xs font-black">₹199</span>
                 </>
               )}
             </button>
