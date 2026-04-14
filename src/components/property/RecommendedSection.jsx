@@ -21,9 +21,7 @@ export const RecommendedSection = ({ viewMode = 'grid' }) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-red-50 rounded-lg">
-            <Sparkles size={16} className="text-[#CA3433]" />
-          </div>
+          <Sparkles size={16} className="text-[#CA3433]" />
           <h2 className="text-lg font-bold text-gray-900 tracking-tight">Recommended for You</h2>
         </div>
         <button
