@@ -533,8 +533,16 @@ export const PropertyDetail = () => {
                 {user ? (
                     (hasUnlocked || p.landlord_id === user.id) ? (
                       <div className="space-y-3">
-                        <a href={`tel:${gatedData?.contact_phone || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-[#CA3433] text-white font-bold hover:bg-[#ac2d2c] transition-colors text-[15px]">
-                          <Phone size={18} /> {gatedData?.contact_phone || t('property.sections.callNow')}
+                        <a
+                          href={`tel:${gatedData?.contact_phone || ''}`}
+                          className="flex items-center justify-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#CA3433] text-white font-bold hover:bg-[#ac2d2c] transition-colors text-[15px]"
+                        >
+                          <Phone size={18} />
+                          <span className="tracking-wide">
+                            {gatedData?.contact_phone
+                              ? gatedData.contact_phone
+                              : t('property.sections.callNow')}
+                          </span>
                         </a>
                         <a href={`mailto:${gatedData?.contact_email || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-colors shadow-sm text-[15px]">
                           <Mail size={18} /> {t('property.sections.sendEmail')}
