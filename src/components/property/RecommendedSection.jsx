@@ -48,11 +48,11 @@ export const RecommendedSection = ({ viewMode = 'grid' }) => {
           >
             {/* Creative Match Badge - Bottom Left of Image area */}
             <div className={cn(
-              "absolute z-10 flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-[#CA3433] to-[#ff4d4d] text-white text-[8px] font-black rounded-full uppercase tracking-widest border border-white/20 shadow-lg shadow-red-500/20 animate-pulse",
-              viewMode === 'list' ? "bottom-4 left-4" : "top-[58%] left-3"
+              "absolute z-10 flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-[#CA3433] to-[#ff4d4d] text-white text-[7px] font-black rounded-full uppercase tracking-widest border border-white/20 shadow-lg shadow-red-500/20 animate-pulse",
+              viewMode === 'list' ? "bottom-4 left-4" : "top-[50%] left-2.5"
             )}>
-              <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping absolute -left-0.5 -top-0.5" />
-              <Sparkles size={10} className="fill-current" />
+              <div className="w-1 h-1 bg-white rounded-full animate-ping absolute -left-0.5 -top-0.5" />
+              <Sparkles size={8} className="fill-current" />
               Match Found
             </div>
             <PropertyCard property={p} layout={viewMode} condensed={true} />
