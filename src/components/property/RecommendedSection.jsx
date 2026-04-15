@@ -1,23 +1,35 @@
-import React, { useMemo } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Sparkles } from 'lucide-react'
 import { useProperties } from '../../hooks/useProperties'
 import { PropertyCard } from './PropertyCard'
-import { useAuth } from '../../hooks/useAuth'
 import { cn } from '../../utils/helpers'
 
 export const RecommendedSection = ({ viewMode = 'grid' }) => {
   const { getRecommendedProperties, loading } = useProperties()
+  const [recommendations, setRecommendations] = useState([])
+  const isLocked = useRef(false)
 
-  const recommendations = useMemo(() => getRecommendedProperties(), [getRecommendedProperties])
+  // Lock recommendations once — prevents re-shuffle flicker on every re-render
+  useEffect(() => {
+    if (!loading && !isLocked.current) {
+      const recs = getRecommendedProperties()
+      if (recs.length > 0) {
+        setRecommendations(recs)
+        isLocked.current = true
+      }
+    }
+  }, [loading, getRecommendedProperties])
 
-  if (loading || !recommendations.length) return null
+  if (!recommendations.length) return null
 
   const handleResetQuiz = () => {
+    isLocked.current = false
+    setRecommendations([])
     window.dispatchEvent(new Event('goeazy_quiz_reset'))
   }
 
   return (
-    <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
+    <div className="mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2">
