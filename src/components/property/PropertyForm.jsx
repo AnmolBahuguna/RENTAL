@@ -417,12 +417,12 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
 
         <form onSubmit={isEdit ? handleEditSubmit : e => e.preventDefault()}>
           {/* Step Content */}
-          <div className="min-h-[320px]">
+          <div>
             {renderStep()}
           </div>
 
           {/* Navigation Buttons */}
-          <div className="flex gap-3 mt-8 pt-6 border-t border-gray-100">
+          <div className="flex gap-3 mt-4 pt-4 border-t border-gray-100">
             {step > 1 ? (
               <button type="button" onClick={back}
                 className="flex items-center gap-1.5 px-5 py-3 rounded-xl border border-gray-200 text-gray-700 font-bold text-sm hover:bg-gray-50 transition-colors">
