@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
   Plus, Edit2, Trash2, Eye, CheckCircle, AlertCircle,
-  Clock, Star, ChevronRight, BarChart2, Users, Package,
+  Clock, Star, ChevronRight, BarChart2, Users, Package, ArrowLeft
 } from 'lucide-react'
 import { useServices } from '../hooks/useServices'
 import { Button } from '../components/ui/Button'
@@ -128,6 +128,14 @@ export const ServiceProviderDashboard = () => {
     <div className="pt-6 pb-20 min-h-screen bg-gray-50/50">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
 
+        {/* Back Button */}
+        <button 
+          onClick={() => navigate('/')} 
+          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-6 font-medium transition-colors"
+        >
+          <ArrowLeft size={16} /> Back to Home
+        </button>
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
@@ -246,13 +254,9 @@ export const ServiceProviderDashboard = () => {
           <div className="text-center py-24 bg-white rounded-2xl border border-gray-100">
             <div className="text-5xl mb-4">📋</div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">No listings yet</h3>
-            <p className="text-sm text-gray-500 mb-6 max-w-xs mx-auto">
-              Create your first service listing and start connecting with customers!
+            <p className="text-sm text-gray-500 max-w-xs mx-auto">
+              Create your first service listing using the button above and start connecting with customers!
             </p>
-            <Button variant="primary" className="bg-[#CA3433] hover:bg-[#ac2d2c] rounded-xl gap-2"
-              onClick={() => navigate('/service-provider/new')}>
-              <Plus size={16} /> Create First Listing
-            </Button>
           </div>
         )}
       </div>
