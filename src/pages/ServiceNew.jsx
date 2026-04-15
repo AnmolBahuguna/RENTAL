@@ -166,24 +166,27 @@ export const ServiceNew = () => {
           <p className="text-sm text-gray-500 mt-1">Be part of the GoEazy services marketplace</p>
         </div>
 
-        {/* Step Progress */}
-        <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-1">
+        {/* Step Timeline — same style as PropertyForm */}
+        <div className="flex items-center justify-between mb-6 px-1">
           {STEPS.map((s, i) => {
-            const Icon = s.icon
-            const done = i < step
+            const done   = i < step
             const active = i === step
             return (
               <React.Fragment key={i}>
-                <div className="flex flex-col items-center gap-1 shrink-0">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${done ? 'bg-green-500 text-white' : active ? 'bg-[#CA3433] text-white' : 'bg-gray-100 text-gray-400'}`}>
-                    {done ? <Check size={14} /> : <Icon size={14} />}
+                <div className="flex flex-col items-center gap-1 min-w-0">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 border-2 ${
+                    done    ? 'bg-[#CA3433] border-[#CA3433] text-white'
+                    : active ? 'bg-white border-[#CA3433] text-[#CA3433] shadow-md shadow-red-100'
+                    : 'bg-white border-gray-200 text-gray-400'
+                  }`}>
+                    {done ? <Check size={14} /> : i + 1}
                   </div>
-                  <span className={`text-[9px] font-semibold whitespace-nowrap ${active ? 'text-[#CA3433]' : done ? 'text-green-600' : 'text-gray-400'}`}>
-                    {s.label}
-                  </span>
+                  <span className={`text-[9px] font-bold uppercase tracking-wider hidden sm:block transition-colors ${
+                    active ? 'text-[#CA3433]' : done ? 'text-gray-500' : 'text-gray-300'
+                  }`}>{s.label}</span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className={`flex-1 h-0.5 rounded mb-3 transition-all ${i < step ? 'bg-green-400' : 'bg-gray-200'}`} />
+                  <div className={`flex-1 h-[2px] mx-1 rounded transition-all duration-500 ${done ? 'bg-[#CA3433]' : 'bg-gray-200'}`} />
                 )}
               </React.Fragment>
             )
@@ -435,7 +438,7 @@ export const ServiceNew = () => {
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 mt-4">
           {step > 0 && (
             <Button variant="secondary" onClick={goPrev} className="flex-1 rounded-xl gap-2">
               <ArrowLeft size={16} /> Previous
