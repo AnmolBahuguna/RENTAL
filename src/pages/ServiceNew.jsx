@@ -153,7 +153,7 @@ export const ServiceNew = () => {
 
   return (
     <div className="pt-6 pb-20 min-h-screen bg-gray-50">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* Back */}
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-6 font-medium transition-colors">
@@ -194,7 +194,7 @@ export const ServiceNew = () => {
         </div>
 
         {/* Step Card */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+        <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-4">
 
           {/* ── Step 0: Basic Info ─────────────────────────── */}
           {step === 0 && (
@@ -422,17 +422,6 @@ export const ServiceNew = () => {
               <p className="text-sm text-gray-500">These will be shown to customers after they request access.</p>
               <InputField label="Phone Number" required type="tel" placeholder="+91 98765 43210" value={contact.contact_phone} onChange={e => setContact(v => ({ ...v, contact_phone: e.target.value }))} />
               <InputField label="Email Address" type="email" placeholder="youremail@example.com" value={contact.contact_email} onChange={e => setContact(v => ({ ...v, contact_email: e.target.value }))} />
-
-              {/* Summary */}
-              <div className="mt-4 bg-gray-50 rounded-xl p-4 space-y-2">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Listing Summary</p>
-                <p className="text-sm"><span className="text-gray-400">Provider:</span> <strong>{basicInfo.name}</strong></p>
-                <p className="text-sm"><span className="text-gray-400">Category:</span> <strong className="capitalize">{basicInfo.category}</strong></p>
-                <p className="text-sm"><span className="text-gray-400">Location:</span> <strong>{location.area}, {location.city}, {location.state}</strong></p>
-                <p className="text-sm"><span className="text-gray-400">Services:</span> <strong>{serviceItems.filter(i => i.service_name).length} items</strong></p>
-                <p className="text-sm"><span className="text-gray-400">Plans:</span> <strong>{plans.filter(p => p.plan_name).length} plans</strong></p>
-                <p className="text-sm"><span className="text-gray-400">Documents:</span> <strong>{documentFiles.length} uploaded</strong></p>
-              </div>
             </div>
           )}
         </div>
