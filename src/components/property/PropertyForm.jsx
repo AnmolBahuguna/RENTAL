@@ -390,16 +390,6 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
             <span className="text-sm font-semibold text-gray-900">Mark as Available to Rent</span>
           </label>
 
-          {/* Summary card */}
-          <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-1.5">
-            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Listing Summary</p>
-            <div className="flex justify-between text-sm"><span className="text-gray-500">Title</span><span className="font-semibold text-gray-900 text-right max-w-[60%] truncate">{form.title || '—'}</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-500">Type</span><span className="font-semibold text-gray-900">{form.type}</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-500">Rent</span><span className="font-semibold text-gray-900">₹{form.price}/mo</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-500">Location</span><span className="font-semibold text-gray-900">{[form.area, form.city].filter(Boolean).join(', ') || '—'}</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-500">Amenities</span><span className="font-semibold text-gray-900">{form.amenities.length} selected</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-500">Photos</span><span className="font-semibold text-gray-900">{previewUrls.length} uploaded</span></div>
-          </div>
         </div>
       )
 
@@ -412,7 +402,7 @@ export const PropertyForm = ({ initialData, isEdit = false }) => {
     <>
       {showSuccess && <ListingSuccessOverlay />}
 
-      <div className="max-w-2xl mx-auto bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
+      <div className="w-full bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
         <StepTimeline current={step} />
 
         <form onSubmit={isEdit ? handleEditSubmit : e => e.preventDefault()}>
