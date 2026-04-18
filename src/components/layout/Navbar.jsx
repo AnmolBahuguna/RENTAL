@@ -25,9 +25,15 @@ export const Navbar = () => {
   const [langMenuOpen, setLangMenuOpen] = useState(false)
   const [selectedCity, setSelectedCity] = useState(filters.city || 'All Cities')
   const [searchQuery, setSearchQuery] = useState(filters.query || '')
+  // Tracks if the user is actively typing in the Navbar's own search bar.
+  // Without this guard, the debounce effect fires on any re-render where
+  // searchQuery !== filters.query, causing rogue /search redirects (e.g. while
+  // filling the service provider contact form).
+  const userTypedInNavSearch = React.useRef(false)
   
-  // Debounce effect for search
+  // Debounce effect for search — only navigate if user actually typed here
   React.useEffect(() => {
+    if (!userTypedInNavSearch.current) return
     const timer = setTimeout(() => {
       if (searchQuery !== (filters.query || '')) {
         updateFilters({ query: searchQuery })
@@ -58,6 +64,7 @@ export const Navbar = () => {
   }
 
   const handleLiveSearch = (e) => {
+    userTypedInNavSearch.current = true // user is actively typing in navbar
     setSearchQuery(e.target.value)
     if (mobileMenuOpen && e.target.value.length > 3) dispatch(closeMobileMenu())
   }
