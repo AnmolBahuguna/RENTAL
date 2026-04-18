@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react'
-import mapboxgl from 'mapbox-gl'
 import { MapPin, ExternalLink } from 'lucide-react'
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
+// NOTE: mapbox-gl is loaded dynamically inside useEffect (NOT as a static import)
+// to avoid the "Cannot access 'L' before initialization" TDZ error
+// that mapbox-gl's circular deps cause in Vite/Rolldown production builds.
 
 export const LocationViewer = ({ latitude, longitude, title = 'Location', address }) => {
   const mapContainer = useRef(null)
@@ -10,89 +11,92 @@ export const LocationViewer = ({ latitude, longitude, title = 'Location', addres
 
   useEffect(() => {
     if (!latitude || !longitude || map.current) return
+    let cancelled = false
 
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [longitude, latitude],
-      zoom: 15,
-      interactive: false, // read-only for viewers
-      attributionControl: false,
-    })
+    const initMap = async () => {
+      const { default: mapboxgl } = await import('mapbox-gl')
+      if (cancelled || !mapContainer.current) return
 
-    map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-left')
+      mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
-    map.current.on('load', () => {
-      // Pulsing dot marker
-      const size = 120
-      const pulsingDot = {
-        width: size,
-        height: size,
-        data: new Uint8Array(size * size * 4),
-        onAdd() {
-          const canvas = document.createElement('canvas')
-          canvas.width = this.width
-          canvas.height = this.height
-          this.context = canvas.getContext('2d', { willReadFrequently: true })
-        },
-        render() {
-          const duration = 1500
-          const t = (performance.now() % duration) / duration
-          const radius = (size / 2) * 0.3
-          const outerRadius = (size / 2) * 0.7 * t + radius
-          const ctx = this.context
-
-          ctx.clearRect(0, 0, this.width, this.height)
-
-          // Outer pulsing ring
-          ctx.beginPath()
-          ctx.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(202, 52, 51, ${1 - t})`
-          ctx.fill()
-
-          // Inner solid dot
-          ctx.beginPath()
-          ctx.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2)
-          ctx.fillStyle = 'rgba(202, 52, 51, 1)'
-          ctx.strokeStyle = 'white'
-          ctx.lineWidth = 3
-          ctx.fill()
-          ctx.stroke()
-
-          this.data = ctx.getImageData(0, 0, this.width, this.height).data
-          map.current?.triggerRepaint()
-          return true
-        },
-      }
-
-      if (!map.current.hasImage('pulsing-dot')) {
-        map.current.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 })
-      }
-
-      map.current.addSource('location-point', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [{
-            type: 'Feature',
-            geometry: { type: 'Point', coordinates: [longitude, latitude] },
-            properties: { title },
-          }],
-        },
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [longitude, latitude],
+        zoom: 15,
+        interactive: false,
+        attributionControl: false,
       })
 
-      map.current.addLayer({
-        id: 'pulsing-dot-layer',
-        type: 'symbol',
-        source: 'location-point',
-        layout: {
-          'icon-image': 'pulsing-dot',
-          'icon-allow-overlap': true,
-        },
+      map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-left')
+
+      map.current.on('load', () => {
+        if (cancelled || !map.current) return
+
+        const size = 120
+        const pulsingDot = {
+          width: size,
+          height: size,
+          data: new Uint8Array(size * size * 4),
+          onAdd() {
+            const canvas = document.createElement('canvas')
+            canvas.width = this.width
+            canvas.height = this.height
+            this.context = canvas.getContext('2d', { willReadFrequently: true })
+          },
+          render() {
+            const duration = 1500
+            const t = (performance.now() % duration) / duration
+            const radius = (size / 2) * 0.3
+            const outerRadius = (size / 2) * 0.7 * t + radius
+            const ctx = this.context
+            ctx.clearRect(0, 0, this.width, this.height)
+            ctx.beginPath()
+            ctx.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(202, 52, 51, ${1 - t})`
+            ctx.fill()
+            ctx.beginPath()
+            ctx.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2)
+            ctx.fillStyle = 'rgba(202, 52, 51, 1)'
+            ctx.strokeStyle = 'white'
+            ctx.lineWidth = 3
+            ctx.fill()
+            ctx.stroke()
+            this.data = ctx.getImageData(0, 0, this.width, this.height).data
+            map.current?.triggerRepaint()
+            return true
+          },
+        }
+
+        if (!map.current.hasImage('pulsing-dot')) {
+          map.current.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 })
+        }
+
+        map.current.addSource('location-point', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: [{
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [longitude, latitude] },
+              properties: { title },
+            }],
+          },
+        })
+
+        map.current.addLayer({
+          id: 'pulsing-dot-layer',
+          type: 'symbol',
+          source: 'location-point',
+          layout: { 'icon-image': 'pulsing-dot', 'icon-allow-overlap': true },
+        })
       })
-    })
+    }
+
+    initMap().catch(console.error)
 
     return () => {
+      cancelled = true
       map.current?.remove()
       map.current = null
     }
@@ -126,10 +130,7 @@ export const LocationViewer = ({ latitude, longitude, title = 'Location', addres
         </p>
       )}
 
-      <div
-        className="rounded-xl overflow-hidden border border-gray-100 shadow-sm"
-        style={{ height: '260px' }}
-      >
+      <div className="rounded-xl overflow-hidden border border-gray-100 shadow-sm" style={{ height: '260px' }}>
         <div ref={mapContainer} className="w-full h-full" />
       </div>
 

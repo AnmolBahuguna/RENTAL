@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import mapboxgl from 'mapbox-gl'
 import { MapPin, Search, Navigation, X, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
+// NOTE: mapbox-gl is loaded dynamically inside useEffect (NOT as a static import)
+// to avoid the "Cannot access 'L' before initialization" TDZ error
+// that mapbox-gl's circular deps cause in Vite/Rolldown production builds.
 
-// Default center: Dehradun, Uttarakhand
 const DEFAULT_CENTER = [78.0322, 30.3165]
 const DEFAULT_ZOOM = 11
 
@@ -13,13 +13,16 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
   const mapContainer = useRef(null)
   const map = useRef(null)
   const marker = useRef(null)
+  const mapboxRef = useRef(null) // stores the dynamically-loaded mapboxgl instance
+  const searchRef = useRef(null)
+  const debounceRef = useRef(null)
+
   const [gpsLoading, setGpsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchResults, setSearchResults] = useState([])
   const [showResults, setShowResults] = useState(false)
   const [hasPin, setHasPin] = useState(false)
-  const searchRef = useRef(null)
 
   // Reverse geocode coordinates → human-readable address
   const reverseGeocode = useCallback(async (lng, lat) => {
@@ -34,14 +37,13 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
     }
   }, [])
 
-  // Place/update the draggable marker
+  // Place/update the draggable marker — uses mapboxRef for mapboxgl.Marker
   const placeMarker = useCallback(async (lng, lat, addressOverride) => {
-    if (!map.current) return
+    const mgl = mapboxRef.current
+    if (!map.current || !mgl) return
 
-    // Remove existing marker
     if (marker.current) marker.current.remove()
 
-    // Create custom marker element
     const el = document.createElement('div')
     el.style.cssText = `
       width: 40px; height: 40px;
@@ -51,7 +53,7 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
       cursor: grab;
     `
 
-    marker.current = new mapboxgl.Marker({ element: el, draggable: true, anchor: 'bottom' })
+    marker.current = new mgl.Marker({ element: el, draggable: true, anchor: 'bottom' })
       .setLngLat([lng, lat])
       .addTo(map.current)
 
@@ -59,11 +61,8 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
     setHasPin(true)
 
     const address = addressOverride || await reverseGeocode(lng, lat)
-
-    // Emit to parent
     onChange?.({ latitude: lat, longitude: lng, map_address: address })
 
-    // Update on drag end
     marker.current.on('dragend', async () => {
       const { lng: newLng, lat: newLat } = marker.current.getLngLat()
       const newAddress = await reverseGeocode(newLng, newLat)
@@ -71,35 +70,47 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
     })
   }, [reverseGeocode, onChange])
 
-  // Init map
+  // Init map — dynamically imports mapbox-gl to avoid bundler TDZ error
   useEffect(() => {
     if (map.current) return
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: value?.longitude ? [value.longitude, value.latitude] : DEFAULT_CENTER,
-      zoom: value?.longitude ? 15 : DEFAULT_ZOOM,
-      attributionControl: false,
-    })
+    let cancelled = false
 
-    map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right')
-    map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-left')
+    const initMap = async () => {
+      const { default: mapboxgl } = await import('mapbox-gl')
+      if (cancelled || !mapContainer.current) return
 
-    // Click on map → place marker
-    map.current.on('click', (e) => {
-      placeMarker(e.lngLat.lng, e.lngLat.lat)
-    })
+      mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
+      mapboxRef.current = mapboxgl // store for use in callbacks
 
-    // If we have an initial value, show the marker
-    if (value?.latitude && value?.longitude) {
-      map.current.on('load', () => {
-        placeMarker(value.longitude, value.latitude, value.map_address)
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: value?.longitude ? [value.longitude, value.latitude] : DEFAULT_CENTER,
+        zoom: value?.longitude ? 15 : DEFAULT_ZOOM,
+        attributionControl: false,
       })
+
+      map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right')
+      map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-left')
+
+      map.current.on('click', (e) => {
+        if (!cancelled) placeMarker(e.lngLat.lng, e.lngLat.lat)
+      })
+
+      if (value?.latitude && value?.longitude) {
+        map.current.on('load', () => {
+          if (!cancelled) placeMarker(value.longitude, value.latitude, value.map_address)
+        })
+      }
     }
 
+    initMap().catch(console.error)
+
     return () => {
+      cancelled = true
       map.current?.remove()
       map.current = null
+      mapboxRef.current = null
     }
   }, []) // eslint-disable-line
 
@@ -143,8 +154,6 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
     }
   }, [])
 
-  // Debounce search
-  const debounceRef = useRef(null)
   const handleSearchInput = (e) => {
     const q = e.target.value
     setSearchQuery(q)
