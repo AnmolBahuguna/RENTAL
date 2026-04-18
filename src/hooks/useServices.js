@@ -11,7 +11,7 @@ import {
 const PAGE_SIZE = 12
 
 const PUBLIC_SERVICE_FIELDS = `
-  id, provider_id, name, category, description, experience, speciality, area, city, state, is_open, images, verification_status, payment_status, views, created_at
+  id, provider_id, name, category, description, experience, speciality, area, city, state, is_open, images, verification_status, views, created_at
 `
 
 const PUBLIC_PROFILE_FIELDS = 'full_name, avatar_url, bio'
@@ -83,8 +83,8 @@ export const useServices = () => {
       if (error) throw error
       dispatch(setCurrentService(data))
 
-      // Increment views only for publicly accessible (verified+paid) listings
-      if (data?.verification_status === 'verified' && data?.payment_status === 'paid') {
+      // Increment views for verified (publicly visible) listings
+      if (data?.verification_status === 'verified') {
         await supabase.rpc('increment_service_views', { p_service_id: id })
       }
     } catch (err) {
