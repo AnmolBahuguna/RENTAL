@@ -87,6 +87,7 @@ export const ServiceDetail = () => {
       setLoading(false)
     }
     load()
+    // eslint-disable-next-line
   }, [id])
 
   // Check if current user is the provider or has unlocked (if we have unlock records for services)
@@ -224,7 +225,18 @@ export const ServiceDetail = () => {
     </div>
   )
 
-  if (!service) return null
+  if (!service && !loading) return (
+    <div className="pt-20 pb-20 min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center">
+      <div className="text-center max-w-sm mx-auto px-4">
+        <div className="text-6xl mb-4">😕</div>
+        <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Service Not Found</h2>
+        <p className="text-gray-500 text-sm mb-6">This listing may have been removed or is not available yet.</p>
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 mx-auto text-sm font-semibold text-[#CA3433] hover:underline">
+          <ArrowLeft size={16} /> Go Back
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="pt-8 pb-20 bg-[#F9F8F6] min-h-screen">

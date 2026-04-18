@@ -11,7 +11,7 @@ import {
 const PAGE_SIZE = 12
 
 const PUBLIC_SERVICE_FIELDS = `
-  id, provider_id, name, category, description, experience, speciality, area, city, state, is_open, images, verification_status, views, created_at
+  id, provider_id, name, category, description, experience, speciality, area, city, state, is_open, images, verification_status, payment_status, views, created_at
 `
 
 const PUBLIC_PROFILE_FIELDS = 'full_name, avatar_url, bio'
@@ -43,8 +43,8 @@ export const useServices = () => {
 
       const from = reset ? 0 : page * PAGE_SIZE
       const { data, error } = await query
-        .eq('verification_status', 'verified')
-        .eq('payment_status', 'paid')
+        .eq('verification_status', 'verified')   // Admin must approve
+        .eq('payment_status', 'paid')             // Provider must have paid
         .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
         .range(from, from + PAGE_SIZE - 1)
 
@@ -64,9 +64,13 @@ export const useServices = () => {
   }, [filters, page, dispatch])
 
   // ── Fetch Single Service ────────────────────────────────────────────
+  // Clears stale data first, then fetches. Providers can view their own
+  // service regardless of verification/payment status.
   const fetchServiceById = useCallback(async (id) => {
+    dispatch(setCurrentService(null)) // Clear stale service immediately
     try {
       const { data, error } = await supabase
+        .from('service_providers')
         .select(`
           ${PUBLIC_SERVICE_FIELDS},
           profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS}),
@@ -79,8 +83,10 @@ export const useServices = () => {
       if (error) throw error
       dispatch(setCurrentService(data))
 
-      // Increment views
-      await supabase.rpc('increment_service_views', { p_service_id: id })
+      // Increment views only for publicly accessible (verified+paid) listings
+      if (data?.verification_status === 'verified' && data?.payment_status === 'paid') {
+        await supabase.rpc('increment_service_views', { p_service_id: id })
+      }
     } catch (err) {
       console.error('fetchServiceById error:', err)
       dispatch(setCurrentService(null))
@@ -308,6 +314,9 @@ export const useServices = () => {
     if (error) throw error
   }
 
+  // updateFilters is the primary alias used across all pages (NearbyServices, etc.)
+  const updateFilters = useCallback((f) => dispatch(setServiceFilters(f)), [dispatch])
+
   return {
     services, currentService, reviews, filters, loading, reviewsLoading, hasMore, page,
     fetchServices,
@@ -322,7 +331,8 @@ export const useServices = () => {
     getAdminPendingServices,
     updateServiceStatus,
     payServiceListing,
-    setServiceFilters: useCallback((f) => dispatch(setServiceFilters(f)), [dispatch]),
+    updateFilters,
+    setServiceFilters: updateFilters,
     fetchServiceGatedData
   }
 }

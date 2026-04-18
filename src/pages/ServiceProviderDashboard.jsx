@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
-  Plus, Edit2, Trash2, Eye, CheckCircle, AlertCircle,
-  Clock, Star, ChevronRight, BarChart2, Users, Package, ArrowLeft
+  Plus, Trash2, Eye, CheckCircle, AlertCircle,
+  Clock, Package, ArrowLeft, Zap
 } from 'lucide-react'
 import { useServices } from '../hooks/useServices'
 import { Button } from '../components/ui/Button'
 import { Skeleton } from '../components/ui/Skeleton'
+import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
-import { Zap } from 'lucide-react'
 
 const CATEGORY_CONFIG = {
   tiffin:   { label: 'Tiffin',   emoji: '🍱', color: 'bg-amber-100 text-amber-700' },
@@ -35,12 +35,10 @@ const StatusBadge = ({ status }) => {
 export const ServiceProviderDashboard = () => {
   const navigate = useNavigate()
   const { profile } = useSelector(s => s.auth)
-  const { getMyServices, deleteService } = useServices()
+  const { getMyServices, deleteService, payServiceListing } = useServices()
 
   const [myServices, setMyServices] = useState([])
   const [loading, setLoading] = useState(true)
-  const [loadingAction, setLoadingAction] = useState(null)
-  const { payServiceListing } = useServices()
 
   const loadMyServices = async () => {
     setLoading(true)
@@ -63,60 +61,78 @@ export const ServiceProviderDashboard = () => {
       setMyServices(v => v.filter(s => s.id !== id))
       toast.success('Listing deleted')
     } catch (err) {
-      toast.error('Failed to register service provider account')
+      toast.error('Failed to delete listing')
     }
   }
 
-  const handlePayment = async (service) => {
-    if (loadingAction) return
-    setLoadingAction(service.id)
+  // ── Pay to Go Live ─────────────────────────────────────────────
+  const [payingId, setPayingId] = useState(null)
+
+  const handlePayToGoLive = async (serviceId) => {
+    if (payingId) return
+    setPayingId(serviceId)
     try {
-      const loadRazorpay = () => new Promise((resolve) => {
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token
+      if (!token) { toast.error('Session expired — please log in again'); setPayingId(null); return }
+
+      // Load Razorpay SDK dynamically
+      const loadRazorpay = () => new Promise(resolve => {
         if (window.Razorpay) return resolve(true)
-        const script = document.createElement('script')
-        script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-        script.onload = () => resolve(true)
-        script.onerror = () => resolve(false)
-        document.body.appendChild(script)
+        const s = document.createElement('script')
+        s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+        s.onload = () => resolve(true); s.onerror = () => resolve(false)
+        document.body.appendChild(s)
       })
+      if (!await loadRazorpay()) throw new Error('Razorpay SDK failed to load')
 
-      const loaded = await loadRazorpay()
-      if (!loaded) throw new Error('Failed to load Razorpay SDK')
+      // Create order via Edge Function
+      const orderResp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-listing-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY
+        }
+      })
+      if (!orderResp.ok) {
+        const errJson = await orderResp.json().catch(() => ({}))
+        throw new Error(errJson.error || `Order creation failed (HTTP ${orderResp.status})`)
+      }
+      const orderData = await orderResp.json()
 
-      const options = {
+      const rzp = new window.Razorpay({
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: 19900, // ₹199 in paise
+        order_id: orderData.id,
         currency: 'INR',
         name: 'GoEazy',
-        description: `Publishing fee for ${service.name}`,
-        handler: async function (response) {
+        description: 'Service Listing — Go Live',
+        image: '/favicon.svg',
+        handler: async function(response) {
           try {
-            await payServiceListing(service.id)
-            toast.success('Payment successful! Your listing is now public.')
-            loadMyServices()
+            // Mark payment as paid in DB
+            await payServiceListing(serviceId)
+            // Refresh the service in UI
+            setMyServices(prev => prev.map(s =>
+              s.id === serviceId ? { ...s, payment_status: 'paid' } : s
+            ))
+            toast.success('🎉 Payment successful! Your listing is now LIVE on GoEazy.')
           } catch (err) {
-            toast.error('Payment finalized but failed to update status')
-          }
+            toast.error('Payment recorded but DB update failed. Contact support.')
+          } finally { setPayingId(null) }
         },
-        prefill: {
-          name: profile?.full_name || 'Service Provider',
-          email: profile?.email || '',
-        },
+        prefill: { name: profile?.full_name || '', email: '' },
         theme: { color: '#CA3433' },
-        modal: {
-          ondismiss: () => setLoadingAction(null)
-        }
-      }
-
-      const rzp = new window.Razorpay(options)
-      rzp.on('payment.failed', (resp) => {
-        toast.error('Payment failed: ' + (resp.error?.description || 'Could not complete payment'))
-        setLoadingAction(null)
+        modal: { ondismiss: () => setPayingId(null) }
+      })
+      rzp.on('payment.failed', resp => {
+        toast.error('Payment failed: ' + (resp.error?.description || 'Unknown error'))
+        setPayingId(null)
       })
       rzp.open()
     } catch (err) {
-      toast.error('Payment Error: ' + err.message)
-      setLoadingAction(null)
+      toast.error(err.message || 'Could not initiate payment')
+      setPayingId(null)
     }
   }
 
@@ -201,40 +217,42 @@ export const ServiceProviderDashboard = () => {
                     <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
                       <span className="flex items-center gap-1"><Eye size={11} /> {service.views || 0} views</span>
                       <span className="flex items-center gap-1"><Package size={11} /> {service.service_listings?.length || 0} items</span>
-                      {service.payment_status === 'paid' && (
+                      {/* LIVE = admin verified AND provider paid */}
+                      {service.verification_status === 'verified' && service.payment_status === 'paid' && (
                         <span className="flex items-center gap-1 text-green-600 font-bold ml-2">
-                          <CheckCircle size={11} /> PUBLISHED
+                          <CheckCircle size={11} /> LIVE
+                        </span>
+                      )}
+                      {/* Awaiting payment after admin approval */}
+                      {service.verification_status === 'verified' && service.payment_status !== 'paid' && (
+                        <span className="flex items-center gap-1 text-amber-600 font-bold ml-2">
+                          <AlertCircle size={11} /> Payment Pending
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Payment CTA for Verified but Unpaid */}
-                  {service.verification_status === 'verified' && service.payment_status !== 'paid' && (
-                    <div className="shrink-0 mr-2 xl:mr-6">
-                      <button
-                        onClick={() => handlePayment(service)}
-                        disabled={loadingAction === service.id}
-                        className="relative overflow-hidden flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#CA3433] to-[#E63946] text-white font-extrabold text-sm shadow-lg shadow-red-500/20 hover:shadow-red-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-70 group"
-                      >
-                         <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                         {loadingAction === service.id ? (
-                           <span className="animate-pulse">Processing...</span>
-                         ) : (
-                           <>
-                             <Zap size={14} className="shrink-0" /> PAY ₹199 to Publish
-                           </>
-                         )}
-                      </button>
-                    </div>
-                  )}
-
                   {/* Actions */}
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+                    {/* Pay to Go Live — shown only when verified but not yet paid */}
+                    {service.verification_status === 'verified' && service.payment_status !== 'paid' && (
+                      <button
+                        onClick={() => handlePayToGoLive(service.id)}
+                        disabled={payingId === service.id}
+                        className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[#CA3433] to-[#E63946] text-white text-xs font-extrabold shadow-md shadow-red-200 hover:shadow-red-300 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 disabled:scale-100"
+                        title="Pay to publish your listing"
+                      >
+                        {payingId === service.id ? (
+                          <><svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Processing…</>
+                        ) : (
+                          <><Zap size={13} /> Pay ₹199 to Go Live</>
+                        )}
+                      </button>
+                    )}
                     <button
                       onClick={() => navigate(`/services/${service.id}`)}
                       className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:text-[#CA3433] hover:border-[#CA3433]/30 transition-all"
-                      title="View"
+                      title="Preview"
                     >
                       <Eye size={16} />
                     </button>
