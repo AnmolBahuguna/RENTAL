@@ -30,42 +30,23 @@ export const useServices = () => {
     try {
       const from = reset ? 0 : page * PAGE_SIZE
 
-      // Helper: build the base query with all current filters
-      const buildBase = () => {
-        let q = supabase
-          .from('service_providers')
-          .select(`${PUBLIC_SERVICE_FIELDS}, profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS})`)
-        if (filters.category) q = q.eq('category', filters.category)
-        if (filters.state)    q = q.ilike('state', `%${filters.state}%`)
-        if (filters.city)     q = q.ilike('city', `%${filters.city}%`)
-        if (filters.area)     q = q.ilike('area', `%${filters.area}%`)
-        if (filters.query) {
-          const fq = `%${filters.query}%`
-          q = q.or(`name.ilike.${fq},area.ilike.${fq},city.ilike.${fq},description.ilike.${fq}`)
-        }
-        return q
+      let query = supabase
+        .from('service_providers')
+        .select(`${PUBLIC_SERVICE_FIELDS}, profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS})`)
+        .eq('verification_status', 'verified') // Admin approval is the public gate
+
+      if (filters.category) query = query.eq('category', filters.category)
+      if (filters.state)    query = query.ilike('state', `%${filters.state}%`)
+      if (filters.city)     query = query.ilike('city', `%${filters.city}%`)
+      if (filters.area)     query = query.ilike('area', `%${filters.area}%`)
+      if (filters.query) {
+        const fq = `%${filters.query}%`
+        query = query.or(`name.ilike.${fq},area.ilike.${fq},city.ilike.${fq},description.ilike.${fq}`)
       }
 
-      // Try with payment_status filter first
-      const { data: dataPaid, error: errorPaid } = await buildBase()
-        .eq('verification_status', 'verified')
-        .eq('payment_status', 'paid')
+      const { data, error } = await query
         .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
         .range(from, from + PAGE_SIZE - 1)
-
-      let data = dataPaid
-      let error = errorPaid
-
-      if (errorPaid) {
-        // payment_status column missing or schema cache stale (HTTP 400) — fall back
-        console.warn('payment_status filter failed, falling back to verified-only:', errorPaid.message)
-        const { data: dataFallback, error: errorFallback } = await buildBase()
-          .eq('verification_status', 'verified')
-          .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
-          .range(from, from + PAGE_SIZE - 1)
-        data = dataFallback
-        error = errorFallback
-      }
 
       if (error) throw error
 
