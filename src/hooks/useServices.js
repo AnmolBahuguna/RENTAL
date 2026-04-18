@@ -28,38 +28,43 @@ export const useServices = () => {
   const fetchServices = useCallback(async (reset = false) => {
     dispatch(setServiceLoading(true))
     try {
-      let query = supabase
-        .from('service_providers')
-        .select(`${PUBLIC_SERVICE_FIELDS}, profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS})`)
-
-      if (filters.category) query = query.eq('category', filters.category)
-      if (filters.state)    query = query.ilike('state', `%${filters.state}%`)
-      if (filters.city)     query = query.ilike('city', `%${filters.city}%`)
-      if (filters.area)     query = query.ilike('area', `%${filters.area}%`)
-      if (filters.query) {
-        const q = `%${filters.query}%`
-        query = query.or(`name.ilike.${q},area.ilike.${q},city.ilike.${q},description.ilike.${q}`)
-      }
-
       const from = reset ? 0 : page * PAGE_SIZE
 
-      // Try with both filters first; fall back to verified-only if payment_status
-      // column doesn't exist yet in the production DB (migration not applied → 400)
-      let { data, error } = await query
+      // Helper: build the base query with all current filters
+      const buildBase = () => {
+        let q = supabase
+          .from('service_providers')
+          .select(`${PUBLIC_SERVICE_FIELDS}, profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS})`)
+        if (filters.category) q = q.eq('category', filters.category)
+        if (filters.state)    q = q.ilike('state', `%${filters.state}%`)
+        if (filters.city)     q = q.ilike('city', `%${filters.city}%`)
+        if (filters.area)     q = q.ilike('area', `%${filters.area}%`)
+        if (filters.query) {
+          const fq = `%${filters.query}%`
+          q = q.or(`name.ilike.${fq},area.ilike.${fq},city.ilike.${fq},description.ilike.${fq}`)
+        }
+        return q
+      }
+
+      // Try with payment_status filter first
+      const { data: dataPaid, error: errorPaid } = await buildBase()
         .eq('verification_status', 'verified')
         .eq('payment_status', 'paid')
         .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
         .range(from, from + PAGE_SIZE - 1)
 
-      if (error?.code === 'PGRST200' || error?.code === 'PGRST204' || (error?.message || '').includes('payment_status') || error?.status === 400) {
-        // payment_status column not in DB yet — fall back to verified-only
-        console.warn('payment_status column unavailable, falling back to verified-only filter')
-        const fallback = await query
+      let data = dataPaid
+      let error = errorPaid
+
+      if (errorPaid) {
+        // payment_status column missing or schema cache stale (HTTP 400) — fall back
+        console.warn('payment_status filter failed, falling back to verified-only:', errorPaid.message)
+        const { data: dataFallback, error: errorFallback } = await buildBase()
           .eq('verification_status', 'verified')
           .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
           .range(from, from + PAGE_SIZE - 1)
-        data = fallback.data
-        error = fallback.error
+        data = dataFallback
+        error = errorFallback
       }
 
       if (error) throw error

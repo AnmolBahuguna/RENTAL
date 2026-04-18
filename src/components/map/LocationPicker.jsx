@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { MapPin, Search, Navigation, X, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-// NOTE: mapbox-gl is loaded dynamically inside useEffect (NOT as a static import)
-// to avoid the "Cannot access 'L' before initialization" TDZ error
-// that mapbox-gl's circular deps cause in Vite/Rolldown production builds.
+// mapbox-gl is loaded via CDN script in index.html (window.mapboxgl)
+// NOT imported/bundled — prevents "Cannot access X before initialization" TDZ
+// error caused by mapbox-gl's circular deps in Vite/Rolldown Web Worker bundles.
 
 const DEFAULT_CENTER = [78.0322, 30.3165]
 const DEFAULT_ZOOM = 11
@@ -13,7 +13,6 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
   const mapContainer = useRef(null)
   const map = useRef(null)
   const marker = useRef(null)
-  const mapboxRef = useRef(null) // stores the dynamically-loaded mapboxgl instance
   const searchRef = useRef(null)
   const debounceRef = useRef(null)
 
@@ -37,10 +36,10 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
     }
   }, [])
 
-  // Place/update the draggable marker — uses mapboxRef for mapboxgl.Marker
+  // Place/update the draggable marker
   const placeMarker = useCallback(async (lng, lat, addressOverride) => {
-    const mgl = mapboxRef.current
-    if (!map.current || !mgl) return
+    const mapboxgl = window.mapboxgl
+    if (!map.current || !mapboxgl) return
 
     if (marker.current) marker.current.remove()
 
@@ -53,7 +52,7 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
       cursor: grab;
     `
 
-    marker.current = new mgl.Marker({ element: el, draggable: true, anchor: 'bottom' })
+    marker.current = new mapboxgl.Marker({ element: el, draggable: true, anchor: 'bottom' })
       .setLngLat([lng, lat])
       .addTo(map.current)
 
@@ -70,47 +69,38 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
     })
   }, [reverseGeocode, onChange])
 
-  // Init map — dynamically imports mapbox-gl to avoid bundler TDZ error
+  // Init map using window.mapboxgl (loaded from CDN in index.html)
   useEffect(() => {
     if (map.current) return
-    let cancelled = false
+    const mapboxgl = window.mapboxgl
+    if (!mapboxgl) { console.error('mapbox-gl not loaded from CDN'); return }
 
-    const initMap = async () => {
-      const { default: mapboxgl } = await import('mapbox-gl')
-      if (cancelled || !mapContainer.current) return
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
-      mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
-      mapboxRef.current = mapboxgl // store for use in callbacks
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: value?.longitude ? [value.longitude, value.latitude] : DEFAULT_CENTER,
+      zoom: value?.longitude ? 15 : DEFAULT_ZOOM,
+      attributionControl: false,
+    })
 
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: value?.longitude ? [value.longitude, value.latitude] : DEFAULT_CENTER,
-        zoom: value?.longitude ? 15 : DEFAULT_ZOOM,
-        attributionControl: false,
+    map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right')
+    map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-left')
+
+    map.current.on('click', (e) => {
+      placeMarker(e.lngLat.lng, e.lngLat.lat)
+    })
+
+    if (value?.latitude && value?.longitude) {
+      map.current.on('load', () => {
+        placeMarker(value.longitude, value.latitude, value.map_address)
       })
-
-      map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right')
-      map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-left')
-
-      map.current.on('click', (e) => {
-        if (!cancelled) placeMarker(e.lngLat.lng, e.lngLat.lat)
-      })
-
-      if (value?.latitude && value?.longitude) {
-        map.current.on('load', () => {
-          if (!cancelled) placeMarker(value.longitude, value.latitude, value.map_address)
-        })
-      }
     }
 
-    initMap().catch(console.error)
-
     return () => {
-      cancelled = true
       map.current?.remove()
       map.current = null
-      mapboxRef.current = null
     }
   }, []) // eslint-disable-line
 
