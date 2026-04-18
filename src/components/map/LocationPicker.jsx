@@ -4,8 +4,6 @@ import { MapPin, Search, Navigation, X, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
-// Disable Mapbox telemetry to prevent ERR_BLOCKED_BY_CLIENT from ad blockers
-mapboxgl.config.EVENTS_URL = ''
 
 // Default center: Dehradun, Uttarakhand
 const DEFAULT_CENTER = [78.0322, 30.3165]

@@ -3,8 +3,6 @@ import mapboxgl from 'mapbox-gl'
 import { MapPin, ExternalLink } from 'lucide-react'
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
-// Disable Mapbox telemetry to prevent ERR_BLOCKED_BY_CLIENT from ad blockers
-mapboxgl.config.EVENTS_URL = ''
 
 export const LocationViewer = ({ latitude, longitude, title = 'Location', address }) => {
   const mapContainer = useRef(null)
