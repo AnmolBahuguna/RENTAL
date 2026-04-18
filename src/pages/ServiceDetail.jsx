@@ -71,6 +71,11 @@ export const ServiceDetail = () => {
   const [galleryNextEl, setGalleryNextEl] = useState(null)
   const [showScrollToTop, setShowScrollToTop] = useState(false)
 
+  const service = currentService
+  const categoryConfig = getCategoryConfig(t)
+  const cat = service ? (categoryConfig[service.category] || {}) : {}
+  const images = service?.images || []
+
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollToTop(window.scrollY > 800)
@@ -104,11 +109,6 @@ export const ServiceDetail = () => {
     }
     checkStatus()
   }, [service, user, id, fetchServiceGatedData])
-
-  const service = currentService
-  const categoryConfig = getCategoryConfig(t)
-  const cat = service ? (categoryConfig[service.category] || {}) : {}
-  const images = service?.images || []
 
   // Check if current user has already reviewed
   const myReview = reviews.find(r => r.reviewer_id === user?.id)
