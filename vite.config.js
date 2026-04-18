@@ -32,6 +32,11 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  // Exclude mapbox-gl from Vite's pre-bundling to fix
+  // "Cannot access 'L' before initialization" circular dep error
+  optimizeDeps: {
+    exclude: ['mapbox-gl'],
+  },
   server: {
     hmr: {
       overlay: false,

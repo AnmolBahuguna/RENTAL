@@ -42,11 +42,25 @@ export const useServices = () => {
       }
 
       const from = reset ? 0 : page * PAGE_SIZE
-      const { data, error } = await query
-        .eq('verification_status', 'verified')   // Admin must approve
-        .eq('payment_status', 'paid')             // Provider must have paid
+
+      // Try with both filters first; fall back to verified-only if payment_status
+      // column doesn't exist yet in the production DB (migration not applied → 400)
+      let { data, error } = await query
+        .eq('verification_status', 'verified')
+        .eq('payment_status', 'paid')
         .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
         .range(from, from + PAGE_SIZE - 1)
+
+      if (error?.code === 'PGRST200' || error?.code === 'PGRST204' || (error?.message || '').includes('payment_status') || error?.status === 400) {
+        // payment_status column not in DB yet — fall back to verified-only
+        console.warn('payment_status column unavailable, falling back to verified-only filter')
+        const fallback = await query
+          .eq('verification_status', 'verified')
+          .order(filters.sortBy || 'created_at', { ascending: filters.sortOrder === 'asc' })
+          .range(from, from + PAGE_SIZE - 1)
+        data = fallback.data
+        error = fallback.error
+      }
 
       if (error) throw error
 
