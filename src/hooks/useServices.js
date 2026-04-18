@@ -10,11 +10,8 @@ import {
 
 const PAGE_SIZE = 12
 
-const PUBLIC_SERVICE_FIELDS = `
-  id, provider_id, name, category, description, experience, speciality, area, city, state, is_open, images, verification_status, views, created_at
-`
-
-const PUBLIC_PROFILE_FIELDS = 'full_name, avatar_url, bio'
+// Profile fields joined from profiles table (bio excluded - may not exist in all envs)
+const PUBLIC_PROFILE_FIELDS = 'full_name, avatar_url'
 
 export const useServices = () => {
   const dispatch = useDispatch()
@@ -32,7 +29,9 @@ export const useServices = () => {
 
       let query = supabase
         .from('service_providers')
-        .select(`${PUBLIC_SERVICE_FIELDS}, profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS})`)
+        // Use * to avoid 400 from PostgREST stale schema cache rejecting specific column names.
+        // profiles!provider_id uses column-name hint (more portable than FK constraint name).
+        .select(`*, profiles!provider_id(${PUBLIC_PROFILE_FIELDS})`)
         .eq('verification_status', 'verified') // Admin approval is the public gate
 
       if (filters.category) query = query.eq('category', filters.category)
@@ -71,12 +70,7 @@ export const useServices = () => {
     try {
       const { data, error } = await supabase
         .from('service_providers')
-        .select(`
-          ${PUBLIC_SERVICE_FIELDS},
-          profiles!service_providers_provider_id_fkey(${PUBLIC_PROFILE_FIELDS}),
-          service_listings(*),
-          service_plans(*)
-        `)
+        .select(`*, profiles!provider_id(${PUBLIC_PROFILE_FIELDS}), service_listings(*), service_plans(*)`)
         .eq('id', id)
         .maybeSingle()
 
