@@ -3,6 +3,7 @@
 **GoEazy** is a premium, high-performance real estate ecosystem tailored for students and professionals. Born out of the struggle to find quality housing in Dehradun and Srinagar, it combines a **Red Dot award-tier aesthetic** with **industrial-grade engineering**.
 
 ---
+🔗https://goeazy.vercel.app/
 
 ## 🚀 The Mission: Solving the Student Housing Crisis
 
