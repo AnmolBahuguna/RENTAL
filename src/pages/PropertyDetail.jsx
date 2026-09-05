@@ -95,16 +95,29 @@ export const PropertyDetail = () => {
 
   const checkUnlockStatus = async () => {
     if (!user || !id) return
-    const { data } = await supabase
-      .from('unlocked_properties')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('property_id', id)
-      .maybeSingle()
-    if (data) {
-      setHasUnlocked(true)
-      const gated = await fetchGatedData(id)
-      setGatedData(gated)
+    try {
+      const { data, error } = await supabase
+        .from('unlocked_properties')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('property_id', id)
+        .maybeSingle()
+
+      if (error) {
+        const msg = String(error.message || '')
+        if (/404|not found|does not exist|relation .*unlocked_properties/i.test(msg)) {
+          return
+        }
+        throw error
+      }
+
+      if (data) {
+        setHasUnlocked(true)
+        const gated = await fetchGatedData(id)
+        setGatedData(gated)
+      }
+    } catch (err) {
+      console.warn('Unlock status unavailable:', err)
     }
   }
 
@@ -171,7 +184,7 @@ export const PropertyDetail = () => {
     if (!user) { dispatch(openAuthModal('login')); return }
     if (p.landlord_id === user.id) { toast.error('You cannot book a visit for your own property'); return }
     if (!visitDate) { toast.error('Please select a date for the visit'); return }
-    
+
     if (!hasUnlocked) {
        setPulseUnlock(true)
        const unlockBtn = document.getElementById('unlock-button')
@@ -180,7 +193,7 @@ export const PropertyDetail = () => {
        setTimeout(() => setPulseUnlock(false), 2000)
        return
     }
-    
+
     setBookingVisit(true)
     try {
       const { error } = await supabase.from('site_visits').insert({
@@ -190,11 +203,18 @@ export const PropertyDetail = () => {
         visit_date: visitDate,
         status: 'pending'
       })
-      if (error) throw error
+      if (error) {
+        const msg = String(error.message || '')
+        if (/404|not found|does not exist|relation .*site_visits/i.test(msg)) {
+          toast.error('Visit booking is unavailable because the backend is not configured yet.')
+          return
+        }
+        throw error
+      }
       toast.success('Visit Request Sent! Track it in your dashboard.')
       setVisitDate('')
     } catch (err) {
-      console.error(err)
+      console.warn('Visit booking unavailable:', err)
       toast.error('Failed to book visit.')
     } finally {
       setBookingVisit(false)

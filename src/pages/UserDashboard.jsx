@@ -35,11 +35,22 @@ export const UserDashboard = () => {
         supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
         supabase.from('site_visits').select('*, property:properties(title, city)').eq('user_id', user.id).order('created_at', { ascending: false })
       ])
-      
+
       if (!notifRes.error) setNotifications(notifRes.data || [])
-      if (!visitRes.error) setMyVisits(visitRes.data || [])
+      if (visitRes.error) {
+        const msg = String(visitRes.error.message || '')
+        if (/404|not found|does not exist|relation .*site_visits/i.test(msg)) {
+          setMyVisits([])
+        } else {
+          throw visitRes.error
+        }
+      } else {
+        setMyVisits(visitRes.data || [])
+      }
     } catch (err) {
-      console.error(err)
+      console.warn('User dashboard data unavailable:', err)
+      setMyVisits([])
+      setNotifications([])
     } finally {
       setLoadingData(false)
     }

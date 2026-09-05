@@ -67,11 +67,20 @@ export const LandlordDashboard = () => {
         .eq('landlord_id', user.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: false })
-      
-      if (error) throw error
+
+      if (error) {
+        const msg = String(error.message || '')
+        if (/404|not found|does not exist|relation .*site_visits/i.test(msg)) {
+          setSiteVisits([])
+          return
+        }
+        throw error
+      }
+
       setSiteVisits(data || [])
     } catch (err) {
-      console.error('Failed to load visits:', err)
+      console.warn('Visit feature unavailable in this environment:', err)
+      setSiteVisits([])
     } finally {
       setLoadingVisits(false)
     }

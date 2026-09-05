@@ -2,14 +2,19 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 
 const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
   'https://goeazy.in', 'https://www.goeazy.in',
-  'https://goeazy.vercel.app', 'https://goeazy.app', 'https://www.goeazy.app',
+  'https://goeazy.app', 'https://www.goeazy.app',
 ]
 
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get('origin') || ''
-  const isLocalhost = origin.startsWith('http://localhost:')
-  const allowed = (ALLOWED_ORIGINS.includes(origin) || isLocalhost) ? origin : ALLOWED_ORIGINS[0]
+  const isLocalhost = /^(https?:\/\/)(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+  const isAllowedOrigin = ALLOWED_ORIGINS.includes(origin)
+  const allowed = (isAllowedOrigin || isLocalhost) ? origin || '*' : '*'
   return {
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -34,6 +39,39 @@ async function verifySignature(orderId: string, paymentId: string, signature: st
   const signatureBuffer = await crypto.subtle.sign('HMAC', key, encoder.encode(text))
   const hashHex = Array.from(new Uint8Array(signatureBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
   return timingSafeEqual(hashHex, signature)
+}
+
+function extractMissingPropertiesColumn(errorMessage: string): string | null {
+  const match = errorMessage.match(/Could not find the '([^']+)' column of 'properties' in the schema cache/i)
+  return match?.[1] || null
+}
+
+async function insertPropertyWithSchemaFallback(
+  supabaseAdmin: ReturnType<typeof createClient>,
+  payload: Record<string, unknown>
+) {
+  const insertPayload: Record<string, unknown> = { ...payload }
+
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const { data, error } = await supabaseAdmin
+      .from('properties')
+      .insert(insertPayload)
+      .select()
+      .single()
+
+    if (!error) {
+      return { data, error: null }
+    }
+
+    const missingColumn = extractMissingPropertiesColumn(error.message || '')
+    if (!missingColumn || !(missingColumn in insertPayload)) {
+      return { data: null, error }
+    }
+
+    delete insertPayload[missingColumn]
+  }
+
+  return { data: null, error: { message: 'Failed to create listing after schema fallback attempts' } }
 }
 
 serve(async (req: Request) => {
@@ -118,15 +156,23 @@ serve(async (req: Request) => {
       })
     }
 
-    // 4. All checks pass — create the property using the same admin client
-    const { data: property, error: insertError } = await supabaseAdmin
-      .from('properties')
-      .insert({
-        ...property_data,
-        landlord_id: user.id,
+    const normalizedPropertyData =
+      property_data && typeof property_data === 'object' && !Array.isArray(property_data)
+        ? property_data as Record<string, unknown>
+        : null
+
+    if (!normalizedPropertyData) {
+      return new Response(JSON.stringify({ error: 'Invalid property_data payload' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400,
       })
-      .select()
-      .single()
+    }
+
+    // 4. All checks pass — create the property using the same admin client.
+    // If DB schema is missing optional columns, prune them and retry automatically.
+    const { data: property, error: insertError } = await insertPropertyWithSchemaFallback(
+      supabaseAdmin,
+      { ...normalizedPropertyData, landlord_id: user.id }
+    )
 
     if (insertError) {
       console.error('Failed to insert property:', insertError)

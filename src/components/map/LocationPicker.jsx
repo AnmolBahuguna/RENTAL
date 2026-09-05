@@ -10,6 +10,7 @@ const DEFAULT_CENTER = [78.0322, 30.3165]
 const DEFAULT_ZOOM = 11
 
 export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' }) => {
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
   const mapContainer = useRef(null)
   const map = useRef(null)
   const marker = useRef(null)
@@ -71,11 +72,12 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
 
   // Init map using window.mapboxgl (loaded from CDN in index.html)
   useEffect(() => {
+    if (!mapboxToken) return
     if (map.current) return
     const mapboxgl = window.mapboxgl
     if (!mapboxgl) { console.error('mapbox-gl not loaded from CDN'); return }
 
-    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
+    mapboxgl.accessToken = mapboxToken
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -106,6 +108,10 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
 
   // GPS: Use Current Location
   const handleGPS = () => {
+    if (!mapboxToken) {
+      toast.error('Add VITE_MAPBOX_TOKEN in your .env file to enable map location features')
+      return
+    }
     if (!navigator.geolocation) {
       toast.error('Geolocation is not supported by your browser')
       return
@@ -128,11 +134,16 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
 
   // Mapbox Geocoding Search
   const handleSearch = useCallback(async (query) => {
+    if (!mapboxToken) {
+      setSearchResults([])
+      setShowResults(false)
+      return
+    }
     if (!query.trim() || query.trim().length < 3) { setSearchResults([]); setShowResults(false); return }
     setSearchLoading(true)
     try {
       const res = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}&country=IN&proximity=78.0322,30.3165&language=en&limit=5`
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapboxToken}&country=IN&proximity=78.0322,30.3165&language=en&limit=5`
       )
       const data = await res.json()
       setSearchResults(data.features || [])
@@ -172,6 +183,15 @@ export const LocationPicker = ({ value, onChange, label = 'Pin Location on Map' 
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
+
+  if (!mapboxToken) {
+    return (
+      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+        <p className="font-bold mb-1">Map disabled</p>
+        <p>Add <code className="font-mono">VITE_MAPBOX_TOKEN</code> to your <code className="font-mono">.env</code> file to enable location pinning and address search.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-3">

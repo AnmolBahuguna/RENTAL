@@ -2,17 +2,22 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 
 const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
   'https://goeazy.in',
   'https://www.goeazy.in',
-  'https://goeazy.vercel.app',
   'https://goeazy.app',
   'https://www.goeazy.app',
 ]
 
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get('origin') || ''
-  const isLocalhost = origin.startsWith('http://localhost:')
-  const allowed = (ALLOWED_ORIGINS.includes(origin) || isLocalhost) ? origin : ALLOWED_ORIGINS[0]
+  const isLocalhost = /^(https?:\/\/)(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+  const isAllowedOrigin = ALLOWED_ORIGINS.includes(origin)
+  const allowed = (isAllowedOrigin || isLocalhost) ? origin || '*' : '*'
+
   return {
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',

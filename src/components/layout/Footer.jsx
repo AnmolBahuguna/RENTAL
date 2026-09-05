@@ -38,11 +38,11 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.contact')}</h4>
             <div className="space-y-3">
-              <a href="mailto:supportgoeazy@gmail.com" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
-                <Mail size={15} className="text-[#CA3433]" /> supportgoeazy@gmail.com
+              <a href="mailto: anmolbahuguna12@gmail.com" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
+                <Mail size={15} className="text-[#CA3433]" /> anmolbahuguna12@gmail.com
               </a>
-              <a href="tel:8979452055" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
-                <Phone size={15} className="text-[#CA3433]" /> +91 89794 52055
+              <a href="tel:9259311870" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-white transition-colors">
+                <Phone size={15} className="text-[#CA3433]" /> +91 9259311870
               </a>
             </div>
           </div>

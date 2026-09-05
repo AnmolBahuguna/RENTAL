@@ -6,15 +6,17 @@ import { MapPin, ExternalLink } from 'lucide-react'
 // error caused by mapbox-gl's circular deps in Vite/Rolldown Web Worker bundles.
 
 export const LocationViewer = ({ latitude, longitude, title = 'Location', address }) => {
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
   const mapContainer = useRef(null)
   const map = useRef(null)
 
   useEffect(() => {
+    if (!mapboxToken) return
     if (!latitude || !longitude || map.current) return
     const mapboxgl = window.mapboxgl
     if (!mapboxgl) { console.error('mapbox-gl not loaded from CDN'); return }
 
-    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
+    mapboxgl.accessToken = mapboxToken
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -96,6 +98,36 @@ export const LocationViewer = ({ latitude, longitude, title = 'Location', addres
   }, [latitude, longitude, title])
 
   if (!latitude || !longitude) return null
+
+  if (!mapboxToken) {
+    return (
+      <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgb(0,0,0,0.03)] border border-gray-100/50">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight font-display flex items-center gap-2">
+            <MapPin size={22} className="text-[#CA3433]" />
+            Location on Map
+          </h2>
+          <a
+            href={`https://www.google.com/maps?q=${latitude},${longitude}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs font-bold text-[#CA3433] hover:text-[#ac2d2c] transition-colors"
+          >
+            Open in Maps <ExternalLink size={12} />
+          </a>
+        </div>
+        {address && (
+          <p className="text-sm text-gray-500 mb-4 leading-relaxed flex items-start gap-2">
+            <MapPin size={14} className="text-gray-400 shrink-0 mt-0.5" />
+            {address}
+          </p>
+        )}
+        <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
+          Add <span className="font-mono">VITE_MAPBOX_TOKEN</span> to your environment to show the interactive map.
+        </p>
+      </div>
+    )
+  }
 
   const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`
 
